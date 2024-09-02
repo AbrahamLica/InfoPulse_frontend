@@ -12,7 +12,7 @@ export class ApiService {
 
   environment = {
     production: false,
-    urlBackend: 'http://localhost:8080/api/',
+    urlBackend: 'http://localhost:8080/api',
     urlFilesBackend: 'http://localhost:8080'
 };
 

@@ -1,7 +1,14 @@
-<div>
-    <div>
-        <label for="Usuario"></label>
-        <input type="text">
+<div class="flex center items-center justify-center h-screen w-screen">
+  <form class="flex flex-col items-center justify-center w-2/5 h-4/5 bg-red-300 rounded-xl" autocomplete="off">
+    <h2>Login</h2>
+    <h3>Entre com as suas credenciais</h3>
+
+    <div class="flex flex-col">
+      <input class="p-2 m-2 rounded-lg" type="text" placeholder="Digite seu login" name="username" [(ngModel)]="credentials.username" autocomplete="off">
+      <input class="p-2 m-2 rounded-lg" type="password" placeholder="Digite sua senha" name="password" [(ngModel)]="credentials.password" autocomplete="new-password">
     </div>
+
+    <button type="button" (click)="login()">Login</button>
     
+  </form>
 </div>
