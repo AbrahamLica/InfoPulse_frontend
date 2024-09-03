@@ -1,14 +1,62 @@
-<div class="flex center items-center justify-center h-screen w-screen">
-  <form class="flex flex-col items-center justify-center w-2/5 h-4/5 bg-red-300 rounded-xl" autocomplete="off">
-    <h2>Login</h2>
-    <h3>Entre com as suas credenciais</h3>
-
-    <div class="flex flex-col">
-      <input class="p-2 m-2 rounded-lg" type="text" placeholder="Digite seu login" name="username" [(ngModel)]="credentials.username" autocomplete="off">
-      <input class="p-2 m-2 rounded-lg" type="password" placeholder="Digite sua senha" name="password" [(ngModel)]="credentials.password" autocomplete="new-password">
+<div class="flex center items-center justify-center h-screen w-screen bg-backgroundColor">
+  <form
+    class="flex flex-col items-center justify-center w-2/6 h-4/5 rounded-xl shadow-2xl"
+    autocomplete="off"
+  >
+    <div class="flex flex-col flex-1 items-center justify-center w-full">
+      <h1 class="text-4xl">Login</h1>
+      <h2 class="mt-10 text-xl">Entre com as suas credenciais</h2>
     </div>
 
-    <button type="button" (click)="login()">Login</button>
-    
+    <div class="flex flex-col items-center justify-center flex-1 w-full">
+      <input
+        class="p-2 m-2 rounded-lg border-2 border-opacity-10 w-4/5"
+        type="text"
+        placeholder="Digite seu login"
+        name="username"
+        [(ngModel)]="credentials.username"
+        autocomplete="off"
+      />
+
+      <div class="relative w-4/5">
+        <input
+          class="p-2 mt-2 rounded-lg border-2 border-opacity-10 w-full pr-10"
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Digite sua senha"
+          name="password"
+          [(ngModel)]="credentials.password"
+          autocomplete="new-password"
+          maxlength="15"
+          minlength="5"
+        />
+        <button
+          type="button"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+          (click)="togglePasswordVisibility()"
+        >
+         
+          <span *ngIf="!showPassword">🔒</span>
+          <span *ngIf="showPassword">👁️</span> 
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-1 w-full items-center justify-center">
+      <button
+        class="bg-primary w-4/5 text-center rounded-lg p-2"
+        type="button"
+        (click)="login()"
+      >
+        Login
+      </button>
+    </div>
+
+    <p-button label="Button 1"></p-button>
+
+    <p-button styleClass="p-button-secondary" label="Button 2asda"></p-button>
+
+    <p-button styleClass="p-button-help" label="Button 3"></p-button>
+
+
   </form>
 </div>

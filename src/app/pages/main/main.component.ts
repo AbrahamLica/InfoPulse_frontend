@@ -20,8 +20,12 @@ export class MainComponent {
     //@ts-ignore
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`)
 
-    console.log(this.noticias);
+    // console.log(this.noticias);
     
+  }
+
+  logout() {
+    this.userService.deslogar()
   }
 
 }

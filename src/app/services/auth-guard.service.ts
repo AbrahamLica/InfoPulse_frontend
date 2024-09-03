@@ -12,9 +12,6 @@ export class AuthGuardService implements CanActivate{
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
 
-      console.log();
-      
-      
 
         if (this.usuarioService.verificarLogado()) {
 

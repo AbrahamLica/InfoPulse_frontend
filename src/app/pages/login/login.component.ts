@@ -17,6 +17,8 @@ export class LoginComponent {
       rememberMe: true,
     };
 
+    showPassword = false;
+
   constructor(
     private usuarioService: UsuarioService,
     private apiService: ApiService,
@@ -25,6 +27,9 @@ export class LoginComponent {
   ) {}
 
   async login() {
+    if(this.credentials) {
+      
+    }
     try {
       const result = await this.http
         .post<{ id_token: string; usuario: Usuario }>(
@@ -35,11 +40,13 @@ export class LoginComponent {
       if (result) {
         this.usuarioService.setarDadosUsuario(result);
         this.router.navigateByUrl('/home');
-        console.log(result);
-        
       }
     } catch (e) {
       console.log(e);
     }
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 }

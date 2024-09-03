@@ -20,26 +20,21 @@ export class UsuarioService {
     private dadosNavegador: DadosNavegadorService,
     private router: Router
   ) {
+
     const usuarioData = dadosNavegador.get('usuario');
     this.dadosUsuario = usuarioData ? JSON.parse(usuarioData) : { id_token: "", usuario: null };
     
-    if (this.dadosUsuario.usuario?.grupoUsuario) {
-      this.dadosUsuario.usuario.grupoUsuario.permissoes = JSON.parse(
-        dadosNavegador.get('permissoes') || '[]'
-      );
-    } else {
-      this.deslogar();
-    }
+    // if (this.dadosUsuario.usuario?.grupoUsuario) {
+    //   this.dadosUsuario.usuario.grupoUsuario.permissoes = JSON.parse(
+    //     dadosNavegador.get('permissoes') || '[]'
+    //   );
+    // } else {
+    //   this.deslogar();
+    // }
   }
   
 
   verificarLogado() {
-
-    console.log(this.dadosUsuario);
-
-    console.log(this.dadosNavegador);
-    
-
     if (this.dadosUsuario) {
       return true;
     } else {
