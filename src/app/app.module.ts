@@ -7,22 +7,32 @@ import { FooterComponent } from './pages/footer/footer.component';
 import { HeaderComponent } from './pages/header/header.component';
 import { LoginComponent } from './pages/login/login.component';
 import { MainComponent } from './pages/main/main.component';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'; // 
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http'; //
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from 'primeng/button';
+import { RouterModule } from '@angular/router';
 
-
-@NgModule({ declarations: [
-        AppComponent,
-        FooterComponent,
-        HeaderComponent,
-        LoginComponent,
-        MainComponent
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-        BrowserAnimationsModule,
-        ButtonModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
-export class AppModule { }
+@NgModule({
+  declarations: [
+    AppComponent,
+    FooterComponent,
+    HeaderComponent,
+    LoginComponent,
+    MainComponent,
+  ],
+  bootstrap: [AppComponent],
+  imports: [
+    RouterModule.forRoot(routes),2w2
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    ButtonModule,
+  ],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
+})
+export class AppModule {}
