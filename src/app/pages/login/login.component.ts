@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Router} from '@angular/router'; // Importe o RouterModule
+import { Router} from '@angular/router';
 import { environment } from 'src/app/classes/environment';
 import Usuario from 'src/app/classes/usuario';
 import { ApiService } from 'src/app/services/api.service'; 
@@ -9,11 +9,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ButtonModule], 
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, InputTextModule ], 
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
