@@ -1,48 +1,52 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router} from '@angular/router'; // Importe o RouterModule
 import { environment } from 'src/app/classes/environment';
 import Usuario from 'src/app/classes/usuario';
-import { ApiService } from 'src/app/services/api.service';
+import { ApiService } from 'src/app/services/api.service'; 
 import { UsuarioService } from 'src/app/services/usuario.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule], 
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  credentials: { username?: string; password?: string; rememberMe?: boolean } =
-    {
-      rememberMe: true,
-    };
+  credentials: { username?: string; password?: string; rememberMe?: boolean } = {
+    rememberMe: true,
+  };
 
-    showPassword = false;
+  showPassword = false;
 
   constructor(
     private usuarioService: UsuarioService,
     private apiService: ApiService,
     private http: HttpClient,
-    private router: Router
+    private router: Router // Router agora pode ser injetado corretamente
   ) {}
 
   async login() {
-    if(this.credentials) {
-
-    }
-    try {
-      const result = await this.http
-        .post<{ id_token: string; usuario: Usuario }>(
-          `${environment.urlBackend}authenticate`,
-          this.credentials
-        )
-        .toPromise();
-      if (result) {
-        this.usuarioService.setarDadosUsuario(result);
-        this.router.navigateByUrl('/home');
+    if (this.credentials) {
+      try {
+        const result = await this.http
+          .post<{ id_token: string; usuario: Usuario }>(
+            `${environment.urlBackend}authenticate`,
+            this.credentials
+          )
+          .toPromise();
+        if (result) {
+          this.usuarioService.setarDadosUsuario(result);
+          this.router.navigateByUrl('/home');
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
     }
   }
 

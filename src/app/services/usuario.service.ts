@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import Usuario from '../classes/usuario';
 import VinculoGrupoUsuario from '../classes/vinculoGrupoUsuario';
 import { DadosNavegadorService } from './dados-navegador.service';
-import DadosUsuario from './dadosUsuario';
 
 @Injectable({
   providedIn: 'root',
@@ -13,42 +12,27 @@ export class UsuarioService {
   dadosUsuario: {
     id_token: string;
     usuario: Usuario | null;
-  } = {id_token: "", usuario: null}
+  } = { id_token: '', usuario: null };
 
   constructor(
     private http: HttpClient,
     private dadosNavegador: DadosNavegadorService,
-    private router: Router
+    @Inject(Router) private router: Router // Use o decorador @Inject
   ) {
-
-    const usuarioData = dadosNavegador.get('usuario');
-    this.dadosUsuario = usuarioData ? JSON.parse(usuarioData) : { id_token: "", usuario: null };
-    
-    // if (this.dadosUsuario.usuario?.grupoUsuario) {
-    //   this.dadosUsuario.usuario.grupoUsuario.permissoes = JSON.parse(
-    //     dadosNavegador.get('permissoes') || '[]'
-    //   );
-    // } else {
-    //   this.deslogar();
-    // }
+    const usuarioData = this.dadosNavegador.get('usuario');
+    this.dadosUsuario = usuarioData ? JSON.parse(usuarioData) : { id_token: '', usuario: null };
   }
-  
 
   verificarLogado() {
-    if (this.dadosUsuario) {
-      return true;
-    } else {
-      return false;
-    }
+    return !!this.dadosUsuario.id_token;
   }
 
   deslogar() {
-    this.dadosUsuario = { id_token: "", usuario: null };
-    this.dadosNavegador.set("usuario", "");
-    this.dadosNavegador.set("permissoes", "");
-    this.router.navigateByUrl("/login");
+    this.dadosUsuario = { id_token: '', usuario: null };
+    this.dadosNavegador.set('usuario', '');
+    this.dadosNavegador.set('permissoes', '');
+    this.router.navigateByUrl('/login');
   }
-  
 
   getDadosUsuario() {
     return this.dadosUsuario;
@@ -63,16 +47,14 @@ export class UsuarioService {
     if (this.dadosUsuario?.usuario?.grupoUsuario) {
       //@ts-ignore
       return this.dadosUsuario.usuario.grupoUsuario.permissoes
-        .filter((value) => {
-          return value.habilitado;
-        })
+        .filter((value) => value.habilitado)
         .map((value) => {
           //@ts-ignore
           return value.permissao.nome;
         });
     } else {
       this.deslogar();
-      return undefined; // Adicione este return para cobrir este caminho
+      return undefined;
     }
   }
 
