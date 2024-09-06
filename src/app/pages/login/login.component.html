@@ -1,48 +1,45 @@
-<div class="w-screen h-screen flex align-items-center justify-content-center">
-  <div
-   class="w-26rem p-4 flex flex-column align-items-center justify-content-center border-round-3xl shadow-6"
-  >
-    <form
-      class="flex flex-column align-items-center justify-content-center w-full"
-      autocomplete="off"
-    >
-      <div class="text-center">
+<div class="flex align-items-center justify-content-center w-screen h-screen">
+
+  <div class="p-4 w-26rem border-round-3xl shadow-6">
+    <form class="p-fluid" autocomplete="off">
+      <div class="text-center mb-4">
         <h1>Login</h1>
         <h2>Entre com as suas credenciais</h2>
       </div>
 
-      <div class="p-fluid w-full mt-4">
-        <input
-          type="text"
-          pInputText
-          [(ngModel)]="credentials.username"
-          placeholder="Digite seu login"
-          class="w-full"
-          name="username"
-        />
+      <div class="mb-5">
+        <p-floatLabel>
+          <input
+            type="text"
+            pInputText
+            [(ngModel)]="credentials.username"
+            placeholder="Digite seu login"
+            name="login"
+          />
 
-        <div class="p-field mt-3">
+          <label for="username">Login</label>
+        </p-floatLabel>
+      </div>
+
+      <div>
+        <p-floatLabel>
           <p-password
             [(ngModel)]="credentials.password"
             [toggleMask]="true"
             placeholder="Digite sua senha"
             name="password"
-            weakLabel="Senha fraca"
-            mediumLabel="Senha média"
-            strongLabel="Senha Forte"
             showClear="true"
-            promptLabel="Digite a senha"
+            [feedback]="false"
           />
-        </div>
+          <label for="password">Senha</label>
+        </p-floatLabel>
       </div>
 
       <p-button
-        styleClass="w-full mt-4 bg-red-500"
+        styleClass="w-full mt-4"
         type="button"
         label="Login"
         (click)="login()"
-        [raised]="true"
-         
       />
     </form>
   </div>

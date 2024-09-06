@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import {RippleModule} from 'primeng/ripple';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +12,10 @@ import { RouterModule } from '@angular/router';
 })
 export class AppComponent {
   title = 'InfoPulse_frontend';
+
+  constructor(private primengConfig: PrimeNGConfig) {}
+
+  ngOnInit() {
+    this.primengConfig.ripple = true;
+}
 }

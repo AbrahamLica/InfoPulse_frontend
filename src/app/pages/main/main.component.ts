@@ -5,11 +5,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { TopBarComponent } from "../../util/top-bar/top-bar.component";
+import { DataViewModule } from 'primeng/dataview';
+import { DataViewComponent } from "../../util/data-view/data-view.component";
+import { TagModule } from 'primeng/tag';
+
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ButtonModule], 
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, TopBarComponent, DataViewModule, DataViewComponent, TagModule], 
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
@@ -26,7 +31,7 @@ export class MainComponent {
     //@ts-ignore
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`)
 
-    // console.log(this.noticias);
+    console.log(this.noticias);
     
   }
 

@@ -1,11 +1,28 @@
-<main class="w-screen">
+<main class="w-screen flex flex-column align-items-center justify-content-center">
 
-  <button (click)="logout()">Logout</button>
+  <app-top-bar></app-top-bar>
 
-    <section *ngFor="let noticia of noticias">
-      <h2>{{ noticia.title }}</h2>
-      <p>{{ noticia.content }}</p>
-    </section>
-  
+  <div class="mt-8 w-9 p-3">
+
+    <p-dataView #dv [value]="noticias">
+
+      <ng-template pTemplate="list" let-products>
+
+        <div
+          class="border-2 p-2 m-3"
+          *ngFor="let item of products; let first = first"
+        >
+
+          <div class="m-3">
+            <p>{{ item.titulo }}</p>
+          </div>
+
+        </div>
+
+      </ng-template>
+
+    </p-dataView>
+
+  </div>
+
 </main>
-  
