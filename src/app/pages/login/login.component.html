@@ -1,50 +1,49 @@
-<div class="">
-  <form class="" autocomplete="off">
-    <div class="">
-      <h1>Login</h1>
-      <h2>Entre com as suas credenciais</h2>
-    </div>
+<div class="w-screen h-screen flex align-items-center justify-content-center">
+  <div
+   class="w-26rem p-4 flex flex-column align-items-center justify-content-center border-round-3xl shadow-6"
+  >
+    <form
+      class="flex flex-column align-items-center justify-content-center w-full"
+      autocomplete="off"
+    >
+      <div class="text-center">
+        <h1>Login</h1>
+        <h2>Entre com as suas credenciais</h2>
+      </div>
 
-    <div class="">
-      <input
-        type="text"
-        pInputText
-        [(ngModel)]="credentials.username"
-        placeholder="Digite seu login"
-      />
-
-      <div class="">
+      <div class="p-fluid w-full mt-4">
         <input
           type="text"
           pInputText
-          [(ngModel)]="credentials.password"
-          placeholder="Digite sua senha"
-          [type]="showPassword ? 'text' : 'password'"
-          name="password"
-          autocomplete="new-password"
-          maxlength="15"
-          minlength="5"
+          [(ngModel)]="credentials.username"
+          placeholder="Digite seu login"
+          class="w-full"
+          name="username"
         />
 
-        <button type="button" class="" (click)="togglePasswordVisibility()">
-          <span *ngIf="!showPassword">🔒</span>
-          <span *ngIf="showPassword">👁️</span>
-        </button>
-
+        <div class="p-field mt-3">
+          <p-password
+            [(ngModel)]="credentials.password"
+            [toggleMask]="true"
+            placeholder="Digite sua senha"
+            name="password"
+            weakLabel="Senha fraca"
+            mediumLabel="Senha média"
+            strongLabel="Senha Forte"
+            showClear="true"
+            promptLabel="Digite a senha"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="">
-      <p-button class="" type="button" (click)="login()"/>
-    </div>
-
-    <p-button label="Primary" />
-    <p-button label="Secondary" severity="secondary" />
-    <p-button label="Success" severity="success" />
-    <p-button label="Info" severity="info" />
-    <p-button label="Warning" severity="warning" />
-    <p-button label="Help" severity="help" />
-    <p-button label="Danger" severity="danger" />
-    <p-button label="Contrast" severity="contrast" />
-  </form>
+      <p-button
+        styleClass="w-full mt-4 bg-red-500"
+        type="button"
+        label="Login"
+        (click)="login()"
+        [raised]="true"
+         
+      />
+    </form>
+  </div>
 </div>

@@ -10,11 +10,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { PanelModule } from 'primeng/panel';
+import { PasswordModule } from 'primeng/password';
+import { RippleModule } from 'primeng/ripple';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, InputTextModule ], 
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, InputTextModule, PanelModule, PasswordModule, RippleModule ], 
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })

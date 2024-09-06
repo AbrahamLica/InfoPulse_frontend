@@ -22,6 +22,7 @@
     "info-pulse-frontend": "file:",
     "lodash": "^4.17.21",
     "lodash-contrib": "^4.1200.1",
+    "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.9",
     "rxjs": "~7.8.0",

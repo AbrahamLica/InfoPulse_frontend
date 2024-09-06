@@ -15,6 +15,8 @@ import { HeaderComponent } from './app/pages/header/header.component';
 import { LoginComponent } from './app/pages/login/login.component';
 import { MainComponent } from './app/pages/main/main.component';
 import { AuthGuardService } from './app/services/auth-guard.service';
+import { BrowserModule } from '@angular/platform-browser';
+import { RippleModule } from 'primeng/ripple';
 
 // Definição das rotas
 const routes: Routes = [
@@ -37,7 +39,9 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       FormsModule,
       BrowserAnimationsModule,
+      BrowserModule,
       ButtonModule,
+      RippleModule,
       RouterModule.forRoot(routes, {
         useHash: false,
         onSameUrlNavigation: 'reload',
