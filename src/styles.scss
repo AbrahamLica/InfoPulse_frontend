@@ -1,15 +1,16 @@
 @import 'primeflex/primeflex.css';
 
 
-body {
-  @apply font-poppins;
-}
 
 html,
 body {
   height: 100%;
+  font-family: 'Poppins', sans-serif !important;
 }
+
+/* Defina a fonte padrão para o body */
 body {
   margin: 0;
-  font-family: "Poppins", "Helvetica Neue", sans-serif;
+  padding: 0;
+  font-family: 'Poppins', sans-serif !important;
 }

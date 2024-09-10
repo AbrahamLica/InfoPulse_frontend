@@ -1,20 +1,21 @@
-<main
-  class="w-screen flex flex-column align-items-center justify-content-center"
->
-  <app-top-bar></app-top-bar>
+<main class="w-full flex flex-column justify-content-center align-items-center" style="background-color: #f0eeee;">
 
-  <div class="mt-8 w-7 p-3">
+
+  <div class="w-full">
+    <app-top-bar></app-top-bar>
+  </div>
+
+  <div class="mt-5 w-10 p-3">
     <!-- <input type="file" (change)="onFileSelected($event)" />
     <button (click)="uploadFile()">Upload</button> -->
 
     <p-dataView #dv [value]="noticias">
       <ng-template pTemplate="list" let-products>
         <div
-          class="border-2 p-3 m-3 bg-purple-300 w-full"
+          class="border-bottom-1 pb-3 m-3"
           *ngFor="let item of products; let first = first"
         >
           <div class="flex justify-content-between w-full">
-
             <div class="w-5 mr-3">
               <p-image
                 src="{{ item.imagemContentType }}"
@@ -27,16 +28,18 @@
               ></p-image>
             </div>
 
-            <div class="w-full flex flex-column bg-red-300 p-2">
+            <div class="w-full flex flex-column p-2">
               <p>{{ item.titulo }}</p>
               <p>{{ item.resumo }}</p>
               <p>{{ item.autor }}</p>
               <p>{{ item.dataPublicacao }}</p>
             </div>
-
           </div>
         </div>
       </ng-template>
     </p-dataView>
   </div>
+
+
+
 </main>
