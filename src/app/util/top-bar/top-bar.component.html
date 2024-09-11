@@ -43,19 +43,34 @@
 </p-toolbar>
 
 <!-- Sidebar -->
-<p-sidebar [(visible)]="visibleSidebar" position="left" styleClass="p-sidebar-sm">
+<p-sidebar
+  [(visible)]="visibleSidebar"
+  position="left"
+  styleClass="p-sidebar-sm"
+>
   <h2 class="text-black-alpha-90">Menu</h2>
 
   <div class="flex flex-column">
-    <a class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center" href="#" (click)="goHome()">
+    <a
+      class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center"
+      href="#"
+      (click)="goHome()"
+    >
       Home
       <i class="pi pi-home text-2xl"></i>
     </a>
-    <a class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center cursor-pointer" (click)="irParaPainelJornalista()">
+
+    <a
+      class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center cursor-pointer"
+      (click)="irParaPainelJornalista()"
+    >
       Painel do Jornalista
       <i class="pi pi-objects-column text-2xl"></i>
     </a>
-    <a class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center" href="#">
+    <a
+      class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center"
+      href="#"
+    >
       Configurações
       <i class="pi pi-cog text-2xl"></i>
     </a>

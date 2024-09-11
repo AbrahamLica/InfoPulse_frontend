@@ -23,8 +23,7 @@ export class TopBarComponent {
   }
 
   irParaPainelJornalista() {
-    console.log("teste");
-    
+    this.router.navigateByUrl('/painel-jornalista');
   }
 
 }

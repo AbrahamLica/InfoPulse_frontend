@@ -6,11 +6,12 @@ import { PrimeNGConfig } from 'primeng/api';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { TopBarComponent } from './util/top-bar/top-bar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, TopBarComponent,],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

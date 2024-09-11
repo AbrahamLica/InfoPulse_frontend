@@ -15,6 +15,7 @@ import { MainComponent } from './app/pages/main/main.component';
 import { AuthGuardService } from './app/services/auth-guard.service';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
+import { PainelJornalistaComponent } from './app/pages/painel-jornalista/painel-jornalista.component';
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -27,18 +28,45 @@ const firebaseConfig = {
 };
 
 // Rotas
+// const routes: Routes = [
+//   {
+//     path: '',
+//     component: MainComponent,
+//     children: [
+//       { path: '', redirectTo: '/home', pathMatch: 'full' },
+//       { path: 'home', component: MainComponent },
+//       {path: 'painel-jornalista', component: PainelJornalistaComponent }
+//     ],
+//     canActivate: [AuthGuardService],
+//   },
+//   { path: 'login', component: LoginComponent },
+//   { path: '**', redirectTo: '/notfound' },
+// ];
+
 const routes: Routes = [
   {
     path: '',
-    component: MainComponent,
-    children: [
-      { path: '', redirectTo: '/home', pathMatch: 'full' },
-      { path: 'home', component: MainComponent },
-    ],
-    canActivate: [AuthGuardService],
+    redirectTo: '/home',
+    pathMatch: 'full'
   },
-  { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: '/notfound' },
+  {
+    path: 'home',
+    component: MainComponent,
+    canActivate: [AuthGuardService]  // Protege a rota home
+  },
+  {
+    path: 'painel-jornalista',
+    component: PainelJornalistaComponent,
+    canActivate: [AuthGuardService]  // Protege a rota do painel do jornalista
+  },
+  {
+    path: 'login',
+    component: LoginComponent  // Rota de login não precisa de proteção
+  },
+  {
+    path: '**',
+    redirectTo: '/notfound'  // Rota padrão para URLs não encontradas
+  }
 ];
 
 // Bootstrap da aplicação
