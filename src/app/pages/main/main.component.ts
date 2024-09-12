@@ -9,8 +9,7 @@ import { TopBarComponent } from '../../util/top-bar/top-bar.component';
 import { DataViewModule } from 'primeng/dataview';
 import { DataViewComponent } from '../../util/data-view/data-view.component';
 import { TagModule } from 'primeng/tag';
-import { FirebaseStorageService } from 'src/app/services/firebase-storage.service';
-import { Noticia } from 'src/app/classes/noticia';
+import  Noticia from 'src/app/classes/noticia';
 import { ImageModule } from 'primeng/image';
 
 @Component({
@@ -31,16 +30,12 @@ import { ImageModule } from 'primeng/image';
   styleUrls: ['./main.component.scss'],
 })
 export class MainComponent {
-  selectedFile: File | null = null;
-  uploadProgress: number | null = null;
-  downloadURL: string | null = null;
-  error: string | null = null;
+  
   noticias: Noticia[] = [];
 
   constructor(
     private apiService: ApiService,
     private userService: UsuarioService,
-    private fireBaseStorage: FirebaseStorageService
   ) {
     this.init();
   }
@@ -56,30 +51,5 @@ export class MainComponent {
     this.userService.deslogar();
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-    }
-  }
-
-  uploadFile(): void {
-    if (this.selectedFile) {
-      this.fireBaseStorage.uploadFile(this.selectedFile).subscribe({
-        next: (url: string) => {
-          this.downloadURL = url;
-          this.uploadProgress = null; // Reset progress after successful upload
-        },
-        error: (err) => {
-          this.error = `Upload failed: ${err.message}`;
-          this.uploadProgress = null; // Reset progress on error
-        },
-        complete: () => {
-          console.log('Upload complete');
-        },
-      });
-    } else {
-      this.error = 'No file selected';
-    }
-  }
+  
 }

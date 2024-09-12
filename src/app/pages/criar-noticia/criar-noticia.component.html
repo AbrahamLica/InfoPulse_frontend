@@ -1,0 +1,73 @@
+<div class="p-fluid">
+  <div class="p-field mb-3">
+    <label>Tìtulo: </label>
+    <input
+      type="text"
+      autocomplete="anystring"
+      pInputText
+      [(ngModel)]="noticia.titulo"
+      placeholder="Título"
+    />
+  </div>
+
+  <textarea
+    rows="5"
+    cols="30"
+    pInputTextarea
+    [(ngModel)]="noticia.conteudo"
+  ></textarea>
+
+  <textarea
+    rows="5"
+    cols="30"
+    pInputTextarea
+    [(ngModel)]="noticia.resumo"
+  ></textarea>
+
+  <div class="p-field mb-3">
+    <label>Status: </label>
+    <p-dropdown
+      [options]="statusOptions"
+      optionLabel="nome"
+      placeholder="Selecione um status"
+      [(ngModel)]="noticia.ativo"
+      appendTo="body"
+    ></p-dropdown>
+  </div>
+
+  <div class="p-field mb-3">
+    <label>Categoria: </label>
+    <p-dropdown
+      [options]="categorias"
+      optionLabel="nome"
+      placeholder="Selecione uma Categoria"
+      [(ngModel)]="noticia.categoria"
+      appendTo="body"
+    ></p-dropdown>
+  </div>
+
+  <div class="p-field">
+    <input type="file" (change)="onFileSelected($event)" />
+    <button (click)="uploadFile()">Upload</button>
+  </div>
+
+  <div class="flex w-full justify-content-between">
+    <p-button
+      styleClass="w-full mt-4"
+      type="button"
+      label="Cancelar"
+      (click)="cancelar()"
+      icon="pi pi-times"
+      class="p-button-text p-button-danger"
+    />
+
+    <p-button
+      styleClass="w-full mt-4"
+      type="button"
+      label="Salvar"
+      (click)="salvar()"
+      icon="pi pi-check"
+      class="p-button-text p-button-success"
+    />
+  </div>
+</div>
