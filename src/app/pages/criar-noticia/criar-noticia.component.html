@@ -1,42 +1,48 @@
-<div class="p-fluid">
-  <div class="p-field mb-3">
-    <label>Tìtulo: </label>
+<div class="p-fluid p-2 w-full">
+  <div class="p-field mb-4">
+    <label>Tìtulo: * </label>
     <input
       type="text"
       autocomplete="anystring"
       pInputText
       [(ngModel)]="noticia.titulo"
-      placeholder="Título"
     />
   </div>
 
-  <textarea
-    rows="5"
-    cols="30"
-    pInputTextarea
-    [(ngModel)]="noticia.conteudo"
-  ></textarea>
+  <div class="p-field mb-4">
+    <label>Conteúdo: *</label>
+    <textarea
+      rows="5"
+      cols="30"
+      pInputTextarea
+      [(ngModel)]="noticia.conteudo"
+    ></textarea>
+  </div>
 
-  <textarea
-    rows="5"
-    cols="30"
-    pInputTextarea
-    [(ngModel)]="noticia.resumo"
-  ></textarea>
+  <div class="p-field mb-4">
+    <label>Resumo: *</label>
+    <textarea
+      rows="5"
+      cols="30"
+      pInputTextarea
+      [(ngModel)]="noticia.resumo"
+    ></textarea>
+  </div>
 
-  <div class="p-field mb-3">
-    <label>Status: </label>
+  <div class="p-field mb-4">
+    <label>Status: *</label>
     <p-dropdown
       [options]="statusOptions"
       optionLabel="nome"
+      optionValue="value"
       placeholder="Selecione um status"
       [(ngModel)]="noticia.ativo"
       appendTo="body"
     ></p-dropdown>
   </div>
 
-  <div class="p-field mb-3">
-    <label>Categoria: </label>
+  <div class="p-field mb-4">
+    <label>Categoria: *</label>
     <p-dropdown
       [options]="categorias"
       optionLabel="nome"
@@ -46,28 +52,51 @@
     ></p-dropdown>
   </div>
 
-  <div class="p-field">
+  <div class="card flex justify-content-center"></div>
+  <p-toast />
+  <p-fileUpload
+    showUploadButton="false"
+    name="demo[]"
+    url="https://www.primefaces.org/cdn/api/upload.php"
+    cancelLabel="Cancelar"
+    chooseLabel="Escolher" 
+    chooseIcon="pi pi-upload"
+    (onSelect)="selecionarImagem($event)"
+    [multiple]="false"
+    accept="image/*"
+    maxFileSize="1000000"
+  >
+    <ng-template pTemplate="content">
+      <ul *ngIf="selectedFile">
+        <li>
+          {{ selectedFile.name }} - {{ selectedFile.size }} bytes
+        </li>
+      </ul>
+    </ng-template>
+  </p-fileUpload>
+</div>
+
+<!-- <div class="p-field">
     <input type="file" (change)="onFileSelected($event)" />
     <button (click)="uploadFile()">Upload</button>
-  </div>
+  </div> -->
 
-  <div class="flex w-full justify-content-between">
-    <p-button
-      styleClass="w-full mt-4"
-      type="button"
-      label="Cancelar"
-      (click)="cancelar()"
-      icon="pi pi-times"
-      class="p-button-text p-button-danger"
-    />
+<div class="flex w-full justify-content-between">
+  <p-button
+    styleClass="w-full mt-4"
+    type="button"
+    label="Cancelar"
+    (click)="cancelar()"
+    icon="pi pi-times"
+    class="p-button-text p-button-danger"
+  />
 
-    <p-button
-      styleClass="w-full mt-4"
-      type="button"
-      label="Salvar"
-      (click)="salvar()"
-      icon="pi pi-check"
-      class="p-button-text p-button-success"
-    />
-  </div>
+  <p-button
+    styleClass="w-full mt-4"
+    type="button"
+    label="Salvar"
+    (click)="salvar()"
+    icon="pi pi-check"
+    class="p-button-text p-button-success"
+  />
 </div>

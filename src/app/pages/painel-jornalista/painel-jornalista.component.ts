@@ -48,7 +48,7 @@ export class PainelJornalistaComponent {
 
   excluirNoticia() {}
 
-  criarNoticia(noticia?: Noticia) {
+  async criarNoticia(noticia?: Noticia) {
 
     let caixaDeDialogo = this.dialogService.open(CriarNoticiaComponent, {
       header: noticia ? (noticia.id ? 'Editar' : 'Cadastrar') : 'Cadastrar',
@@ -83,4 +83,6 @@ export class PainelJornalistaComponent {
       }
     });
   }
+
+  
 }
