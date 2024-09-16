@@ -7,6 +7,6 @@ export default class Noticia {
   autor?: string;
   ativo?: boolean;
   imagem?: any;
-  imagenContentType?: string;
+  imagemContentType?: string | null | undefined;
   categoria?: any;
 }

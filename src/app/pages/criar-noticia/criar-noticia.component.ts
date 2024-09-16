@@ -1,12 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import Noticia from 'src/app/classes/noticia';
-import {
-  DialogService,
-  DynamicDialogConfig,
-  DynamicDialogRef,
-} from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ApiService } from 'src/app/services/api.service';
 import { FormsModule } from '@angular/forms';
 import { FirebaseStorageService } from 'src/app/services/firebase-storage.service';
@@ -17,8 +13,9 @@ import { MessageService } from 'primeng/api';
 import { FileUploadModule, UploadEvent } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import Categoria from 'src/app/classes/categoria';
-import { AlertModalComponent } from 'src/app/util/alert-modal/alert-modal.component';
 import { AlertService } from 'src/app/services/alert.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-criar-noticia',
@@ -32,6 +29,7 @@ import { AlertService } from 'src/app/services/alert.service';
     InputTextModule,
     FileUploadModule,
     ToastModule,
+    ProgressSpinnerModule,
   ],
   templateUrl: './criar-noticia.component.html',
   styleUrl: './criar-noticia.component.scss',
@@ -39,10 +37,11 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class CriarNoticiaComponent {
   selectedFile: File | null = null;
-  categorias: Categoria[] = []
+  categorias: Categoria[] = [];
   uploadProgress: number | null = null;
-  downloadURL: string | null = null;
+  downloadURL: string | null | undefined = null;
   error: string | null = null;
+  loading: boolean = false;
 
   noticia: Noticia;
   statusOptions = [
@@ -57,41 +56,50 @@ export class CriarNoticiaComponent {
     private apiService: ApiService,
     private fireBaseStorage: FirebaseStorageService,
     private messageService: MessageService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private usuarioService: UsuarioService
   ) {
     this.noticia = this.config.data.noticia;
-    this.init()
+    this.init();
   }
 
   async init() {
     //@ts-ignore
-    this.categorias = await this.apiService.makeGetRequest("categorias?size=99999")
+    this.categorias = await this.apiService.makeGetRequest('categorias?size=99999');
+
+    this.noticia.dataPublicacao = new Date();
+
+    console.log(this.noticia.dataPublicacao);
   }
 
-  onUpload() {
-    if (this.selectedFile) {
-      this.fireBaseStorage.uploadFile(this.selectedFile).subscribe({
-        next: (url: string) => {
-          this.downloadURL = url;
-          this.uploadProgress = null; // Reset progress after successful upload
-          this.noticia.imagenContentType = this.downloadURL
-        },
-        error: (err) => {
-          this.error = `Upload failed: ${err.message}`;
-          this.uploadProgress = null; // Reset progress on error
-        },
-        complete: () => {
-          console.log('Upload complete');
-        },
-      });
-    } else {
-      this.error = 'No file selected';
-    }
-
-    this.messageService.add({
-      severity: 'info',
-      summary: 'File Uploaded',
-      detail: 'Arquivo carregado com sucesso!',
+  async onUpload(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this.selectedFile) {
+        this.fireBaseStorage.uploadFile(this.selectedFile).subscribe({
+          next: (url: string) => {
+            this.downloadURL = url;
+            this.uploadProgress = null;
+          },
+          error: (err) => {
+            this.error = `Upload failed: ${err.message}`;
+            this.uploadProgress = null;
+            reject(err);
+          },
+          complete: () => {
+            console.log('Upload complete');
+            this.noticia.imagemContentType = this.downloadURL;
+            this.messageService.add({
+              severity: 'info',
+              summary: 'File Uploaded',
+              detail: 'Arquivo carregado com sucesso!',
+            });
+            resolve();
+          },
+        });
+      } else {
+        this.error = 'No file selected';
+        reject(new Error('No file selected'));
+      }
     });
   }
 
@@ -103,46 +111,48 @@ export class CriarNoticiaComponent {
     this.ref.close(false);
   }
 
-  salvar() {
+  async salvar() {
+    let formValido = true;
 
-    let formValido = true
-
-    if(!this.noticia.titulo) {
-      this.alertService.exibirErroOuAlerta("Erro", "O campo 'Título' não pode ser vazio")
-      formValido = false
+    if (!this.noticia.titulo) {
+      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Título' não pode ser vazio");
+      formValido = false;
     }
 
-    if(!this.noticia.resumo) {
-      this.alertService.exibirErroOuAlerta("Erro", "O campo 'Resumo' não pode ser vazio")
-      formValido = false
+    if (!this.noticia.conteudo) {
+      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Conteúdo' não pode ser vazio");
+      formValido = false;
     }
 
-    if(!this.noticia.conteudo) {
-      this.alertService.exibirErroOuAlerta("Erro", "O campo 'Conteúdo' não pode ser vazio")
-      formValido = false
+    if (!this.noticia.resumo) {
+      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Resumo' não pode ser vazio");
+      formValido = false;
     }
 
-    if(this.noticia.ativo == null) {
-      this.alertService.exibirErroOuAlerta("Erro", "O campo 'Status' não pode ser vazio")
-      formValido = false
+    if (this.noticia.ativo == null) {
+      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Status' não pode ser vazio");
+      formValido = false;
     }
 
-    if(!this.noticia.categoria) {
-      this.alertService.exibirErroOuAlerta("Erro", "O campo 'Categoria' não pode ser vazio")
-      formValido = false
+    if (!this.noticia.categoria) {
+      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Categoria' não pode ser vazio");
+      formValido = false;
     }
 
-    if(!this.selectedFile) {
-      this.alertService.exibirErroOuAlerta("Erro", "Você deve selecionar uma imagem para a noticia antes de continuar.")
-      formValido = false
+    if (!this.selectedFile) {
+      this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
+      formValido = false;
     }
 
-    if(formValido) {
-      this.onUpload()
+    if (formValido) {
+      this.loading = true;
+      await this.onUpload();
+      let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
+      let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
+      this.noticia.autor = `${primeiroNome} ${ultimoNome}`;
+      this.noticia.dataPublicacao = new Date();
+      this.loading = false;
       this.ref.close(this.noticia);
-    } 
-    
+    }
   }
-
-
 }

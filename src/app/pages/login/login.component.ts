@@ -28,21 +28,20 @@ import { FloatLabelModule } from 'primeng/floatlabel';
     PanelModule,
     PasswordModule,
     AlertModalComponent,
-    FloatLabelModule
+    FloatLabelModule,
   ],
   providers: [DialogService],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-
   credentials: { username?: string; password?: string; rememberMe?: boolean } =
     {
       rememberMe: true,
     };
 
   showPassword = false;
-  value: string = ""
+  value: string = '';
 
   constructor(
     private usuarioService: UsuarioService,
@@ -56,17 +55,18 @@ export class LoginComponent {
     if (this.credentials) {
       try {
         const result = await this.http
-          .post<{ id_token: string; usuario: Usuario }>(
+          .post<{ id_token: string; user: Usuario }>(
             `${environment.urlBackend}authenticate`,
             this.credentials
           )
           .toPromise();
         if (result) {
+          console.log(result);
+          
           this.usuarioService.setarDadosUsuario(result);
           this.router.navigateByUrl('/home');
         }
       } catch (e: any) {
-        
         this.dialogService.open(AlertModalComponent, {
           header: 'Erro',
           width: '50%',

@@ -2,11 +2,11 @@ import GrupoUsuario from "./grupoUsuario";
 
 export default class Usuario {
     id?: number;
-    perfil?: "ADMINISTRADOR" | "ATENDENTE"
-    ficha: any
-    nome?: string;
-    login?: string;
-    senha?: string;
+    login?: string
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    imageUrl?: string
+    ativo?: boolean
     grupoUsuario?: GrupoUsuario;
-    status?: String;
 }

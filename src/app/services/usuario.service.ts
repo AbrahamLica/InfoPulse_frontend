@@ -9,26 +9,41 @@ import { DadosNavegadorService } from './dados-navegador.service';
   providedIn: 'root',
 })
 export class UsuarioService {
+
   dadosUsuario: {
     id_token: string;
-    usuario: Usuario | null;
-  } = { id_token: '', usuario: null };
+    user: Usuario | null;
+  } | undefined;
 
   constructor(
     private http: HttpClient,
     private dadosNavegador: DadosNavegadorService,
     @Inject(Router) private router: Router // Use o decorador @Inject
   ) {
-    const usuarioData = this.dadosNavegador.get('usuario');
-    this.dadosUsuario = usuarioData ? JSON.parse(usuarioData) : { id_token: '', usuario: null };
+    if(this.dadosNavegador.get('usuario')) {
+      //@ts-ignore
+    this.dadosUsuario = JSON.parse(dadosNavegador.get('usuario'));
+    } else {
+      if (this.dadosUsuario?.user?.grupoUsuario) {
+        //@ts-ignore
+        this.dadosUsuario.user.grupoUsuario.permissoes = JSON.parse(dadosNavegador.get('permissoes'));
+      } else {
+        this.deslogar();
+      }
+    }
+    
   }
 
   verificarLogado() {
-    return !!this.dadosUsuario.id_token;
+    if (this.dadosUsuario) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   deslogar() {
-    this.dadosUsuario = { id_token: '', usuario: null };
+    this.dadosUsuario = { id_token: '', user: null };
     this.dadosNavegador.set('usuario', '');
     this.dadosNavegador.set('permissoes', '');
     this.router.navigateByUrl('/login');
@@ -38,15 +53,15 @@ export class UsuarioService {
     return this.dadosUsuario;
   }
 
-  setarDadosUsuario(dados: { id_token: string; usuario: Usuario }) {
+  setarDadosUsuario(dados: { id_token: string; user: Usuario }) {
     this.dadosUsuario = dados;
     this.dadosNavegador.set('usuario', JSON.stringify(dados));
   }
 
   getPermissoes() {
-    if (this.dadosUsuario?.usuario?.grupoUsuario) {
+    if (this.dadosUsuario?.user?.grupoUsuario) {
       //@ts-ignore
-      return this.dadosUsuario.usuario.grupoUsuario.permissoes
+      return this.dadosUsuario.user.grupoUsuario.permissoes
         .filter((value) => value.habilitado)
         .map((value) => {
           //@ts-ignore
@@ -60,7 +75,7 @@ export class UsuarioService {
 
   setarPermissoes(permissoes: VinculoGrupoUsuario[]) {
     //@ts-ignore
-    this.dadosUsuario.usuario.grupoUsuario.permissoes = permissoes;
+    this.dadosUsuario.user.grupoUsuario.permissoes = permissoes;
     this.dadosNavegador.set('permissoes', JSON.stringify(permissoes));
   }
 }

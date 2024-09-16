@@ -3,9 +3,9 @@
     <label>Tìtulo: * </label>
     <input
       type="text"
-      autocomplete="anystring"
       pInputText
       [(ngModel)]="noticia.titulo"
+      #titulo
     />
   </div>
 
@@ -16,6 +16,7 @@
       cols="30"
       pInputTextarea
       [(ngModel)]="noticia.conteudo"
+      #conteudo
     ></textarea>
   </div>
 
@@ -26,6 +27,7 @@
       cols="30"
       pInputTextarea
       [(ngModel)]="noticia.resumo"
+      #resumo
     ></textarea>
   </div>
 
@@ -38,6 +40,7 @@
       placeholder="Selecione um status"
       [(ngModel)]="noticia.ativo"
       appendTo="body"
+      #ativo
     ></p-dropdown>
   </div>
 
@@ -49,6 +52,7 @@
       placeholder="Selecione uma Categoria"
       [(ngModel)]="noticia.categoria"
       appendTo="body"
+      #categoria
     ></p-dropdown>
   </div>
 
@@ -59,27 +63,21 @@
     name="demo[]"
     url="https://www.primefaces.org/cdn/api/upload.php"
     cancelLabel="Cancelar"
-    chooseLabel="Escolher" 
+    chooseLabel="Escolher"
     chooseIcon="pi pi-upload"
     (onSelect)="selecionarImagem($event)"
     [multiple]="false"
     accept="image/*"
     maxFileSize="1000000"
+    #upload
   >
     <ng-template pTemplate="content">
       <ul *ngIf="selectedFile">
-        <li>
-          {{ selectedFile.name }} - {{ selectedFile.size }} bytes
-        </li>
+        <li>{{ selectedFile.name }} - {{ selectedFile.size }} bytes</li>
       </ul>
     </ng-template>
   </p-fileUpload>
 </div>
-
-<!-- <div class="p-field">
-    <input type="file" (change)="onFileSelected($event)" />
-    <button (click)="uploadFile()">Upload</button>
-  </div> -->
 
 <div class="flex w-full justify-content-between">
   <p-button
@@ -99,4 +97,18 @@
     icon="pi pi-check"
     class="p-button-text p-button-success"
   />
+
+  <div
+    *ngIf="loading"
+    class="p-overlay p-overlay-mask"
+  >
+    <div class="flex justify-content-center align-items-center w-full h-full absolute">
+      <p-progressSpinner
+        styleClass="w-4rem h-4rem"
+        strokeWidth="5"
+        fill="var(--surface-ground)"
+        animationDuration="10s"
+      />
+    </div>
+  </div>
 </div>

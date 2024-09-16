@@ -27,21 +27,6 @@ const firebaseConfig = {
   appId: "1:555170457547:web:be097c66ae9db63439384e",
 };
 
-// Rotas
-// const routes: Routes = [
-//   {
-//     path: '',
-//     component: MainComponent,
-//     children: [
-//       { path: '', redirectTo: '/home', pathMatch: 'full' },
-//       { path: 'home', component: MainComponent },
-//       {path: 'painel-jornalista', component: PainelJornalistaComponent }
-//     ],
-//     canActivate: [AuthGuardService],
-//   },
-//   { path: 'login', component: LoginComponent },
-//   { path: '**', redirectTo: '/notfound' },
-// ];
 
 const routes: Routes = [
   {
