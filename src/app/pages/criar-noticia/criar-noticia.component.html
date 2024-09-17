@@ -1,114 +1,149 @@
-<div class="p-fluid p-2 w-full">
-  <div class="p-field mb-4">
-    <label>Tìtulo: * </label>
-    <input
-      type="text"
-      pInputText
-      [(ngModel)]="noticia.titulo"
-      #titulo
-    />
-  </div>
-
-  <div class="p-field mb-4">
-    <label>Conteúdo: *</label>
-    <textarea
-      rows="5"
-      cols="30"
-      pInputTextarea
-      [(ngModel)]="noticia.conteudo"
-      #conteudo
-    ></textarea>
-  </div>
-
-  <div class="p-field mb-4">
-    <label>Resumo: *</label>
-    <textarea
-      rows="5"
-      cols="30"
-      pInputTextarea
-      [(ngModel)]="noticia.resumo"
-      #resumo
-    ></textarea>
-  </div>
-
-  <div class="p-field mb-4">
-    <label>Status: *</label>
-    <p-dropdown
-      [options]="statusOptions"
-      optionLabel="nome"
-      optionValue="value"
-      placeholder="Selecione um status"
-      [(ngModel)]="noticia.ativo"
-      appendTo="body"
-      #ativo
-    ></p-dropdown>
-  </div>
-
-  <div class="p-field mb-4">
-    <label>Categoria: *</label>
-    <p-dropdown
-      [options]="categorias"
-      optionLabel="nome"
-      placeholder="Selecione uma Categoria"
-      [(ngModel)]="noticia.categoria"
-      appendTo="body"
-      #categoria
-    ></p-dropdown>
-  </div>
-
-  <div class="card flex justify-content-center"></div>
-  <p-toast />
-  <p-fileUpload
-    showUploadButton="false"
-    name="demo[]"
-    url="https://www.primefaces.org/cdn/api/upload.php"
-    cancelLabel="Cancelar"
-    chooseLabel="Escolher"
-    chooseIcon="pi pi-upload"
-    (onSelect)="selecionarImagem($event)"
-    [multiple]="false"
-    accept="image/*"
-    maxFileSize="1000000"
-    #upload
-  >
-    <ng-template pTemplate="content">
-      <ul *ngIf="selectedFile">
-        <li>{{ selectedFile.name }} - {{ selectedFile.size }} bytes</li>
-      </ul>
-    </ng-template>
-  </p-fileUpload>
-</div>
-
-<div class="flex w-full justify-content-between">
-  <p-button
-    styleClass="w-full mt-4"
-    type="button"
-    label="Cancelar"
-    (click)="cancelar()"
-    icon="pi pi-times"
-    class="p-button-text p-button-danger"
-  />
-
-  <p-button
-    styleClass="w-full mt-4"
-    type="button"
-    label="Salvar"
-    (click)="salvar()"
-    icon="pi pi-check"
-    class="p-button-text p-button-success"
-  />
-
-  <div
-    *ngIf="loading"
-    class="p-overlay p-overlay-mask"
-  >
-    <div class="flex justify-content-center align-items-center w-full h-full absolute">
-      <p-progressSpinner
-        styleClass="w-4rem h-4rem"
-        strokeWidth="5"
-        fill="var(--surface-ground)"
-        animationDuration="10s"
+<form
+  [formGroup]="noticiaForm"
+  (ngSubmit)="salvar()"
+>
+  <div class="p-fluid p-2 w-full">
+    <div class="p-field mb-4">
+      <label>Tìtulo: * </label>
+      <input
+        type="text"
+        pInputText
+        id="titulo"
+        formControlName="titulo"
       />
+
+      <small
+        class="p-error"
+        *ngIf="noticiaForm.get('titulo')?.touched && noticiaForm.get('titulo')?.invalid"
+      >
+        O campo título precisa ter no mínimo 5 caracteres</small
+      >
+    </div>
+
+    <div class="p-field mb-4">
+      <label>Conteúdo: *</label>
+      <textarea
+        rows="5"
+        cols="30"
+        pInputTextarea
+        id="conteudo"
+        formControlName="conteudo"
+      ></textarea>
+      <small
+        class="p-error"
+        *ngIf="noticiaForm.get('conteudo')?.touched && noticiaForm.get('conteudo')?.invalid"
+      >
+        O campo conteúdo precisa ter no mínimo 10 caracteres</small
+      >
+    </div>
+
+    <div class="p-field mb-4">
+      <label>Resumo: *</label>
+      <textarea
+        rows="5"
+        cols="30"
+        pInputTextarea
+        id="resumo"
+        formControlName="resumo"
+      ></textarea>
+      <small
+        class="p-error"
+        *ngIf="noticiaForm.get('resumo')?.touched && noticiaForm.get('resumo')?.invalid"
+      >
+        O campo resumo precisa ter no mínimo 10 caracteres</small
+      >
+    </div>
+
+    <div class="p-field mb-4">
+      <label>Status: *</label>
+      <p-dropdown
+        [options]="statusOptions"
+        optionLabel="nome"
+        optionValue="value"
+        placeholder="Selecione um status"
+        appendTo="body"
+        id="ativo"
+        formControlName="ativo"
+      ></p-dropdown>
+      <small
+        class="p-error"
+        *ngIf="noticiaForm.get('ativo')?.touched && noticiaForm.get('ativo')?.invalid"
+      >
+        O Status precisa ser selecionado</small
+      >
+    </div>
+
+    <div class="p-field mb-4">
+      <label>Categoria: *</label>
+      <p-dropdown
+        [options]="categorias"
+        optionLabel="nome"
+        placeholder="Selecione uma Categoria"
+        appendTo="body"
+        id="categoria"
+        formControlName="categoria"
+      ></p-dropdown>
+      <small
+        class="p-error"
+        *ngIf="noticiaForm.get('categoria')?.touched && noticiaForm.get('categoria')?.invalid"
+      >
+        A categoria precisa ser selecionada</small
+      >
+    </div>
+
+    <div class="card flex justify-content-center"></div>
+    <p-toast />
+    <p-fileUpload
+      showUploadButton="false"
+      name="demo[]"
+      url="https://www.primefaces.org/cdn/api/upload.php"
+      cancelLabel="Cancelar"
+      chooseLabel="Escolher"
+      chooseIcon="pi pi-upload"
+      (onSelect)="selecionarImagem($event)"
+      [multiple]="false"
+      accept="image/*"
+      maxFileSize="1000000"
+    >
+      <ng-template pTemplate="content">
+        <ul *ngIf="selectedFile">
+          <li>{{ selectedFile.name }} - {{ selectedFile.size }} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
+
+  <div class="flex w-full justify-content-between">
+    <p-button
+      styleClass="w-full mt-4"
+      type="button"
+      label="Cancelar"
+      (click)="cancelar()"
+      icon="pi pi-times"
+      class="p-button-text p-button-danger"
+    />
+
+    <p-button
+      styleClass="w-full mt-4"
+      type="button"
+      label="Salvar"
+      (click)="salvar()"
+      icon="pi pi-check"
+      class="p-button-text p-button-success"
+    />
+
+    <div
+      *ngIf="loading"
+      class="p-overlay p-overlay-mask"
+    >
+      <div class="flex justify-content-center align-items-center w-full h-full absolute">
+        <p-progressSpinner
+          styleClass="w-4rem h-4rem"
+          strokeWidth="5"
+          fill="var(--surface-ground)"
+          animationDuration="10s"
+        />
+      </div>
     </div>
   </div>
-</div>
+</form>

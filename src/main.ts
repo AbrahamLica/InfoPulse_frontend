@@ -16,59 +16,53 @@ import { AuthGuardService } from './app/services/auth-guard.service';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { PainelJornalistaComponent } from './app/pages/painel-jornalista/painel-jornalista.component';
+import { IMAGE_CONFIG } from '@angular/common';
 
 // Configuração do Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyC79TlmeowXQ6beGgu3C_KzWr2wZt5G6vg",
-  authDomain: "galeria-ccb52.firebaseapp.com",
-  projectId: "galeria-ccb52",
-  storageBucket: "galeria-ccb52.appspot.com",
-  messagingSenderId: "555170457547",
-  appId: "1:555170457547:web:be097c66ae9db63439384e",
+  apiKey: 'AIzaSyC79TlmeowXQ6beGgu3C_KzWr2wZt5G6vg',
+  authDomain: 'galeria-ccb52.firebaseapp.com',
+  projectId: 'galeria-ccb52',
+  storageBucket: 'galeria-ccb52.appspot.com',
+  messagingSenderId: '555170457547',
+  appId: '1:555170457547:web:be097c66ae9db63439384e',
 };
-
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: '/home',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'home',
     component: MainComponent,
-    canActivate: [AuthGuardService]  // Protege a rota home
+    canActivate: [AuthGuardService], // Protege a rota home
   },
   {
     path: 'painel-jornalista',
     component: PainelJornalistaComponent,
-    canActivate: [AuthGuardService]  // Protege a rota do painel do jornalista
+    canActivate: [AuthGuardService], // Protege a rota do painel do jornalista
   },
   {
     path: 'login',
-    component: LoginComponent  // Rota de login não precisa de proteção
+    component: LoginComponent, // Rota de login não precisa de proteção
   },
   {
     path: '**',
-    redirectTo: '/notfound'  // Rota padrão para URLs não encontradas
-  }
+    redirectTo: '/notfound', // Rota padrão para URLs não encontradas
+  },
 ];
 
 // Bootstrap da aplicação
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(
-      FormsModule,
-      BrowserAnimationsModule,
-      BrowserModule,
-      ButtonModule,
-      RippleModule,
-      RouterModule.forRoot(routes),
-    ),
+    importProvidersFrom(FormsModule, BrowserAnimationsModule, BrowserModule, ButtonModule, RippleModule, RouterModule.forRoot(routes)),
     provideHttpClient(withInterceptorsFromDi()),
     AuthGuardService,
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideStorage(() => getStorage()),
     provideFirestore(() => getFirestore()),
+    { provide: IMAGE_CONFIG, useValue: { disableImageSizeWarning: true, disableImageLazyLoadWarning: true } },
   ],
 }).catch((err) => console.error(err));

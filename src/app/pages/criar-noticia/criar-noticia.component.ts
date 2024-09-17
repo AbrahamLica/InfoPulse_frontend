@@ -4,7 +4,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import Noticia from 'src/app/classes/noticia';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ApiService } from 'src/app/services/api.service';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, Validators } from '@angular/forms';
 import { FirebaseStorageService } from 'src/app/services/firebase-storage.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -16,6 +16,8 @@ import Categoria from 'src/app/classes/categoria';
 import { AlertService } from 'src/app/services/alert.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-criar-noticia',
@@ -30,12 +32,28 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     FileUploadModule,
     ToastModule,
     ProgressSpinnerModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './criar-noticia.component.html',
   styleUrl: './criar-noticia.component.scss',
   providers: [MessageService, AlertService],
 })
 export class CriarNoticiaComponent {
+  @ViewChild('titulo') titulo!: ElementRef;
+  @ViewChild('conteudo') conteudo!: ElementRef;
+  @ViewChild('resumo') resumo!: ElementRef;
+  @ViewChild('categoria') categoria!: ElementRef;
+  @ViewChild('ativo') ativo!: ElementRef;
+
+  public noticiaForm = new FormGroup({
+    titulo: new FormControl('', Validators.minLength(5)),
+    conteudo: new FormControl('', Validators.minLength(10)),
+    resumo: new FormControl('', Validators.minLength(10)),
+    ativo: new FormControl('', Validators.required),
+    categoria: new FormControl('', Validators.required),
+    file: new FormControl(),
+  });
+
   selectedFile: File | null = null;
   categorias: Categoria[] = [];
   uploadProgress: number | null = null;
@@ -68,8 +86,6 @@ export class CriarNoticiaComponent {
     this.categorias = await this.apiService.makeGetRequest('categorias?size=99999');
 
     this.noticia.dataPublicacao = new Date();
-
-    console.log(this.noticia.dataPublicacao);
   }
 
   async onUpload(): Promise<void> {
@@ -112,47 +128,47 @@ export class CriarNoticiaComponent {
   }
 
   async salvar() {
-    let formValido = true;
-
-    if (!this.noticia.titulo) {
-      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Título' não pode ser vazio");
-      formValido = false;
-    }
-
-    if (!this.noticia.conteudo) {
-      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Conteúdo' não pode ser vazio");
-      formValido = false;
-    }
-
-    if (!this.noticia.resumo) {
-      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Resumo' não pode ser vazio");
-      formValido = false;
-    }
-
-    if (this.noticia.ativo == null) {
-      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Status' não pode ser vazio");
-      formValido = false;
-    }
-
-    if (!this.noticia.categoria) {
-      this.alertService.exibirErroOuAlerta('Erro', "O campo 'Categoria' não pode ser vazio");
-      formValido = false;
-    }
-
     if (!this.selectedFile) {
       this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
-      formValido = false;
+      return;
     }
 
-    if (formValido) {
-      this.loading = true;
-      await this.onUpload();
-      let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
-      let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
-      this.noticia.autor = `${primeiroNome} ${ultimoNome}`;
-      this.noticia.dataPublicacao = new Date();
-      this.loading = false;
-      this.ref.close(this.noticia);
+    if (this.noticiaForm.get('titulo')?.invalid) {
+      this.titulo.nativeElement.focus();
+      return;
     }
+
+    if (this.noticiaForm.get('conteudo')?.invalid) {
+      this.conteudo.nativeElement.focus();
+      return;
+    }
+
+    if (this.noticiaForm.get('resumo')?.invalid) {
+      this.resumo.nativeElement.focus();
+      return;
+    }
+
+    if (this.noticiaForm.get('ativo')?.invalid) {
+      this.ativo.nativeElement.focus();
+      return;
+    }
+
+    if (this.noticiaForm.get('categoria')?.invalid) {
+      this.categoria.nativeElement.focus();
+      return;
+    }
+
+    // this.loading = true;
+    // await this.onUpload();
+    // this.noticiaForm.patchValue({
+    //   file: this.downloadURL,
+    // });
+    // let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
+    // let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
+    // this.noticia.autor = `${primeiroNome} ${ultimoNome}`;
+    // this.noticia.dataPublicacao = new Date();
+    // this.loading = false;
+    // this.ref.close(this.noticia);
+    console.log(this.noticiaForm.value);
   }
 }

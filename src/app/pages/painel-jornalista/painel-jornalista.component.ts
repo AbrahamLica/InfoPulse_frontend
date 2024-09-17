@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DataViewModule } from 'primeng/dataview';
 import { DataViewComponent } from '../../util/data-view/data-view.component';
 import { ImageModule } from 'primeng/image';
-import Noticia  from 'src/app/classes/noticia';
+import Noticia from 'src/app/classes/noticia';
 import { CommonModule } from '@angular/common';
 import { ApiService } from 'src/app/services/api.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
@@ -14,14 +14,7 @@ import { CriarNoticiaComponent } from '../criar-noticia/criar-noticia.component'
 @Component({
   selector: 'app-painel-jornalista',
   standalone: true,
-  imports: [
-    DataViewModule,
-    DataViewComponent,
-    ImageModule,
-    CommonModule,
-    ToolbarModule,
-    ButtonModule,
-  ],
+  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule],
   providers: [DialogService],
   templateUrl: './painel-jornalista.component.html',
   styleUrl: './painel-jornalista.component.scss',
@@ -29,19 +22,13 @@ import { CriarNoticiaComponent } from '../criar-noticia/criar-noticia.component'
 export class PainelJornalistaComponent {
   noticias: Noticia[] = [];
 
-  constructor(
-    private apiService: ApiService,
-    private userService: UsuarioService,
-    private dialogService: DialogService
-  ) {
+  constructor(private apiService: ApiService, private userService: UsuarioService, private dialogService: DialogService) {
     this.init();
   }
 
   async init() {
     //@ts-ignore
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
-
-    console.log(this.noticias);
   }
 
   editarNoticia() {}
@@ -49,7 +36,6 @@ export class PainelJornalistaComponent {
   excluirNoticia() {}
 
   async criarNoticia(noticia?: Noticia) {
-
     let caixaDeDialogo = this.dialogService.open(CriarNoticiaComponent, {
       header: noticia ? (noticia.id ? 'Editar' : 'Cadastrar') : 'Cadastrar',
       width: '70%',
@@ -62,10 +48,7 @@ export class PainelJornalistaComponent {
       if (noticia) {
         // @ts-ignore
         let noticiaSaved: any = noticia.id
-          ? await this.apiService.makePutRequest(
-              'noticias/' + noticia.id,
-              noticia
-            )
+          ? await this.apiService.makePutRequest('noticias/' + noticia.id, noticia)
           : await this.apiService.makePostRequest('noticias', noticia);
 
         if (!noticiaSaved) {
@@ -78,11 +61,8 @@ export class PainelJornalistaComponent {
           } else {
             this.noticias = [...this.noticias, noticiaSaved];
           }
-
         }
       }
     });
   }
-
-  
 }

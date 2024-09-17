@@ -6,12 +6,7 @@ import { AlertModalComponent } from '../util/alert-modal/alert-modal.component';
   providedIn: 'root',
 })
 export class AlertService {
-
-  constructor(
-    private ref: DynamicDialogRef,
-    private config: DynamicDialogConfig,
-    private dialogService: DialogService
-  ) {}
+  constructor(private ref: DynamicDialogRef, private config: DynamicDialogConfig, private dialogService: DialogService) {}
 
   exibirErroOuAlerta(titulo: string, conteudo: string): DynamicDialogRef {
     return this.dialogService.open(AlertModalComponent, {
@@ -22,6 +17,9 @@ export class AlertService {
       data: {
         content: conteudo,
       },
+      focusOnShow: false,
+      focusTrap: false,
+      closeOnEscape: false,
     });
   }
 }
