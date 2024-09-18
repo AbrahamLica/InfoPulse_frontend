@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import Noticia from 'src/app/classes/noticia';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ApiService } from 'src/app/services/api.service';
-import { FormGroup, FormsModule, Validators } from '@angular/forms';
+import { FormGroup, FormsModule, MinLengthValidator, Validators } from '@angular/forms';
 import { FirebaseStorageService } from 'src/app/services/firebase-storage.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -38,21 +38,19 @@ import { FormControl } from '@angular/forms';
   styleUrl: './criar-noticia.component.scss',
   providers: [MessageService, AlertService],
 })
-export class CriarNoticiaComponent {
-  @ViewChild('titulo') titulo!: ElementRef;
-  @ViewChild('conteudo') conteudo!: ElementRef;
-  @ViewChild('resumo') resumo!: ElementRef;
-  @ViewChild('categoria') categoria!: ElementRef;
-  @ViewChild('ativo') ativo!: ElementRef;
+export class CriarNoticiaComponent implements OnInit {
+  noticiaForm!: FormGroup;
 
-  public noticiaForm = new FormGroup({
-    titulo: new FormControl('', Validators.minLength(5)),
-    conteudo: new FormControl('', Validators.minLength(10)),
-    resumo: new FormControl('', Validators.minLength(10)),
-    ativo: new FormControl('', Validators.required),
-    categoria: new FormControl('', Validators.required),
-    file: new FormControl(),
-  });
+  ngOnInit(): void {
+    this.noticiaForm = new FormGroup({
+      titulo: new FormControl('', [Validators.required, Validators.minLength(5)]),
+      conteudo: new FormControl('', [Validators.required, Validators.minLength(10)]),
+      resumo: new FormControl('', [Validators.required, Validators.minLength(10)]),
+      ativo: new FormControl('', Validators.required),
+      categoria: new FormControl('', Validators.required),
+      file: new FormControl(),
+    });
+  }
 
   selectedFile: File | null = null;
   categorias: Categoria[] = [];
@@ -124,51 +122,28 @@ export class CriarNoticiaComponent {
   }
 
   cancelar() {
-    this.ref.close(false);
+    // this.ref.close(false);
+    console.log(this.noticiaForm);
   }
 
   async salvar() {
-    if (!this.selectedFile) {
+    if (!this.selectedFile && this.noticiaForm.valid) {
       this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
       return;
     }
 
-    if (this.noticiaForm.get('titulo')?.invalid) {
-      this.titulo.nativeElement.focus();
-      return;
+    if (this.noticiaForm.valid) {
+      this.loading = true;
+      await this.onUpload();
+      this.noticiaForm.patchValue({
+        file: this.downloadURL,
+      });
+      let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
+      let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
+      this.noticia.autor = `${primeiroNome} ${ultimoNome}`;
+      this.noticia.dataPublicacao = new Date();
+      this.loading = false;
+      this.ref.close(this.noticia);
     }
-
-    if (this.noticiaForm.get('conteudo')?.invalid) {
-      this.conteudo.nativeElement.focus();
-      return;
-    }
-
-    if (this.noticiaForm.get('resumo')?.invalid) {
-      this.resumo.nativeElement.focus();
-      return;
-    }
-
-    if (this.noticiaForm.get('ativo')?.invalid) {
-      this.ativo.nativeElement.focus();
-      return;
-    }
-
-    if (this.noticiaForm.get('categoria')?.invalid) {
-      this.categoria.nativeElement.focus();
-      return;
-    }
-
-    // this.loading = true;
-    // await this.onUpload();
-    // this.noticiaForm.patchValue({
-    //   file: this.downloadURL,
-    // });
-    // let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
-    // let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
-    // this.noticia.autor = `${primeiroNome} ${ultimoNome}`;
-    // this.noticia.dataPublicacao = new Date();
-    // this.loading = false;
-    // this.ref.close(this.noticia);
-    console.log(this.noticiaForm.value);
   }
 }
