@@ -31,8 +31,6 @@ export class PainelJornalistaComponent {
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
   }
 
-  editarNoticia() {}
-
   excluirNoticia() {}
 
   async criarNoticia(noticia?: Noticia) {

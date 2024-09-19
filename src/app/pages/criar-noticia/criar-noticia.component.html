@@ -4,7 +4,6 @@
   #formDir="ngForm"
 >
   <div class="p-fluid p-2 w-full">
-    <!-- Título -->
     <div class="p-field mb-4">
       <label>Título: * </label>
       <input
@@ -29,7 +28,6 @@
       </div>
     </div>
 
-    <!-- Conteúdo -->
     <div class="p-field mb-4">
       <label>Conteúdo: *</label>
       <textarea
@@ -55,7 +53,6 @@
       </div>
     </div>
 
-    <!-- Resumo -->
     <div class="p-field mb-4">
       <label>Resumo: *</label>
       <textarea
@@ -119,6 +116,34 @@
         A categoria precisa ser selecionada
       </small>
     </div>
+
+    <div class="card flex justify-content-center"></div>
+    <p-toast />
+    <p-fileUpload
+      showUploadButton="false"
+      name="demo[]"
+      url="https://www.primefaces.org/cdn/api/upload.php"
+      cancelLabel="Cancelar"
+      chooseLabel="Escolher"
+      chooseIcon="pi pi-upload"
+      (onSelect)="selecionarImagem($event)"
+      [multiple]="false"
+      accept="image/*"
+      maxFileSize="1000000"
+    >
+      <ng-template pTemplate="content">
+        <ul *ngIf="selectedFile">
+          <li *ngIf="selectedFile.url">
+            <img
+              [src]="selectedFile.url"
+              alt="Imagem carregada"
+              style="max-width: 200px; max-height: 200px"
+            />
+          </li>
+          <li *ngIf="!selectedFile.url">{{ selectedFile.name }} - {{ selectedFile.size }} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
   </div>
 
   <!-- Botões -->
@@ -140,7 +165,6 @@
       class="p-button-text p-button-success"
     />
 
-    <!-- Loading Spinner -->
     <div
       *ngIf="loading"
       class="p-overlay p-overlay-mask"

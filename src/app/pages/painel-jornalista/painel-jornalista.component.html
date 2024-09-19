@@ -1,34 +1,40 @@
 <div class="flex flex-column justify-content-center align-items-center">
-
-
   <div class="w-full p-3">
-
     <p-toolbar>
-
       <div class="p-toolbar-group-start">
-        <p-button icon="pi pi-plus" class="mr-2" (click)="criarNoticia()" />
+        <p-button
+          icon="pi pi-plus"
+          class="mr-2"
+          (click)="criarNoticia()"
+        />
       </div>
 
       <div class="p-toolbar-group-center">
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
-          <input pInputText placeholder="Search" />
+          <input
+            pInputText
+            placeholder="Search"
+          />
         </span>
       </div>
-
     </p-toolbar>
-
   </div>
 
   <div class="w-10 p-4 mt-5">
-    <p-dataView #dv [value]="noticias">
-      <ng-template pTemplate="list" let-products>
+    <p-dataView
+      #dv
+      [value]="noticias"
+    >
+      <ng-template
+        pTemplate="list"
+        let-products
+      >
         <div
           class="border-bottom-1 pb-3 m-3"
           *ngFor="let item of products; let first = first"
         >
           <div class="flex justify-content-between w-full">
-
             <div class="w-5 mr-3">
               <p-image
                 src="{{ item.imagemContentType }}"
@@ -49,10 +55,16 @@
             </div>
 
             <div class="flex flex-column">
-              <p-button icon="pi pi-pencil" class="mb-2" (click)="editarNoticia()"/>
-              <p-button icon="pi pi-trash" (click)="excluirNoticia()"/>
+              <p-button
+                icon="pi pi-pencil"
+                class="mb-2"
+                (click)="criarNoticia(item)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                (click)="excluirNoticia()"
+              />
             </div>
-
           </div>
         </div>
       </ng-template>

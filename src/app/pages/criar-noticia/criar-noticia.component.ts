@@ -38,28 +38,16 @@ import { FormControl } from '@angular/forms';
   styleUrl: './criar-noticia.component.scss',
   providers: [MessageService, AlertService],
 })
-export class CriarNoticiaComponent implements OnInit {
+export class CriarNoticiaComponent {
   noticiaForm!: FormGroup;
-
-  ngOnInit(): void {
-    this.noticiaForm = new FormGroup({
-      titulo: new FormControl('', [Validators.required, Validators.minLength(5)]),
-      conteudo: new FormControl('', [Validators.required, Validators.minLength(10)]),
-      resumo: new FormControl('', [Validators.required, Validators.minLength(10)]),
-      ativo: new FormControl('', Validators.required),
-      categoria: new FormControl('', Validators.required),
-      file: new FormControl(),
-    });
-  }
-
-  selectedFile: File | null = null;
+  selectedFile: File | any = null;
   categorias: Categoria[] = [];
   uploadProgress: number | null = null;
   downloadURL: string | null | undefined = null;
   error: string | null = null;
   loading: boolean = false;
 
-  noticia: Noticia;
+  noticia: Noticia | undefined;
   statusOptions = [
     { nome: 'ATIVO', value: true },
     { nome: 'INATIVO', value: false },
@@ -75,15 +63,55 @@ export class CriarNoticiaComponent implements OnInit {
     private alertService: AlertService,
     private usuarioService: UsuarioService
   ) {
-    this.noticia = this.config.data.noticia;
     this.init();
   }
 
   async init() {
+    let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
+    let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
+
+    this.noticiaForm = new FormGroup({
+      id: new FormControl(null),
+      titulo: new FormControl('', [Validators.required, Validators.minLength(5)]),
+      conteudo: new FormControl('', [Validators.required, Validators.minLength(10)]),
+      resumo: new FormControl('', [Validators.required, Validators.minLength(10)]),
+      ativo: new FormControl('', Validators.required),
+      categoria: new FormControl(null, Validators.required),
+      autor: new FormControl(`${primeiroNome} ${ultimoNome}`, Validators.required),
+      dataPublicacao: new FormControl(new Date(), Validators.required),
+      imagemContentType: new FormControl(),
+    });
+
+    if (this.config.data.noticia) {
+      this.noticiaForm.patchValue(this.config.data.noticia);
+
+      if (this.noticiaForm.get('imagemContentType')?.value) {
+        this.selectedFile = {
+          name: 'Imagem Carregada',
+          size: null,
+          url: this.noticiaForm.get('imagemContentType')?.value,
+        } as any;
+      }
+    }
+
     //@ts-ignore
     this.categorias = await this.apiService.makeGetRequest('categorias?size=99999');
 
-    this.noticia.dataPublicacao = new Date();
+    //carregar manualmente a categoria do objeto salvo anteriormente
+    if (this.noticiaForm.get('id')?.value) {
+      let categoria = this.noticiaForm.get('categoria')?.value;
+
+      let categoriaEncontrada = this.categorias.find((val) => {
+        //@ts-ignore
+        return val.id == categoria.id;
+      });
+
+      this.noticiaForm.patchValue({
+        categoria: categoriaEncontrada,
+      });
+    }
+
+    console.log(this.noticiaForm.value);
   }
 
   async onUpload(): Promise<void> {
@@ -101,7 +129,6 @@ export class CriarNoticiaComponent implements OnInit {
           },
           complete: () => {
             console.log('Upload complete');
-            this.noticia.imagemContentType = this.downloadURL;
             this.messageService.add({
               severity: 'info',
               summary: 'File Uploaded',
@@ -122,8 +149,7 @@ export class CriarNoticiaComponent implements OnInit {
   }
 
   cancelar() {
-    // this.ref.close(false);
-    console.log(this.noticiaForm);
+    this.ref.close(false);
   }
 
   async salvar() {
@@ -136,14 +162,10 @@ export class CriarNoticiaComponent implements OnInit {
       this.loading = true;
       await this.onUpload();
       this.noticiaForm.patchValue({
-        file: this.downloadURL,
+        imagemContentType: this.downloadURL,
       });
-      let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
-      let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
-      this.noticia.autor = `${primeiroNome} ${ultimoNome}`;
-      this.noticia.dataPublicacao = new Date();
       this.loading = false;
-      this.ref.close(this.noticia);
+      this.ref.close(this.noticiaForm.value);
     }
   }
 }
