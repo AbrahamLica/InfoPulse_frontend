@@ -10,6 +10,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CriarNoticiaComponent } from '../criar-noticia/criar-noticia.component';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-painel-jornalista',
@@ -31,7 +32,9 @@ export class PainelJornalistaComponent {
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
   }
 
-  excluirNoticia() {}
+  excluirNoticia(item: any) {
+    console.log(item);
+  }
 
   async criarNoticia(noticia?: Noticia) {
     let caixaDeDialogo = this.dialogService.open(CriarNoticiaComponent, {
@@ -45,9 +48,7 @@ export class PainelJornalistaComponent {
     caixaDeDialogo.onClose.subscribe(async (noticia: Noticia) => {
       if (noticia) {
         // @ts-ignore
-        let noticiaSaved: any = noticia.id
-          ? await this.apiService.makePutRequest('noticias/' + noticia.id, noticia)
-          : await this.apiService.makePostRequest('noticias', noticia);
+        let noticiaSaved: any = noticia.id ? await this.apiService.makePutRequest('noticias/' + noticia.id, noticia) : await this.apiService.makePostRequest('noticias', noticia);
 
         if (!noticiaSaved) {
           this.criarNoticia(noticia);

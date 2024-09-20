@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import Noticia from 'src/app/classes/noticia';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ApiService } from 'src/app/services/api.service';
-import { FormGroup, FormsModule, MinLengthValidator, Validators } from '@angular/forms';
+import { FormGroup, FormsModule, Validators } from '@angular/forms';
 import { FirebaseStorageService } from 'src/app/services/firebase-storage.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
-import { FileUploadModule, UploadEvent } from 'primeng/fileupload';
+import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import Categoria from 'src/app/classes/categoria';
 import { AlertService } from 'src/app/services/alert.service';
@@ -22,18 +22,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-criar-noticia',
   standalone: true,
-  imports: [
-    DropdownModule,
-    CommonModule,
-    FormsModule,
-    ButtonModule,
-    InputTextareaModule,
-    InputTextModule,
-    FileUploadModule,
-    ToastModule,
-    ProgressSpinnerModule,
-    ReactiveFormsModule,
-  ],
+  imports: [DropdownModule, CommonModule, FormsModule, ButtonModule, InputTextareaModule, InputTextModule, FileUploadModule, ToastModule, ProgressSpinnerModule, ReactiveFormsModule],
   templateUrl: './criar-noticia.component.html',
   styleUrl: './criar-noticia.component.scss',
   providers: [MessageService, AlertService],
@@ -46,12 +35,19 @@ export class CriarNoticiaComponent {
   downloadURL: string | null | undefined = null;
   error: string | null = null;
   loading: boolean = false;
+  novaImagemSelecionada: boolean = false;
 
   noticia: Noticia | undefined;
   statusOptions = [
     { nome: 'ATIVO', value: true },
     { nome: 'INATIVO', value: false },
   ];
+
+  ImagemCarregada: any = {
+    nome: null,
+    url: null,
+    tamanho: null,
+  };
 
   constructor(
     public config: DynamicDialogConfig,
@@ -85,12 +81,19 @@ export class CriarNoticiaComponent {
     if (this.config.data.noticia) {
       this.noticiaForm.patchValue(this.config.data.noticia);
 
-      if (this.noticiaForm.get('imagemContentType')?.value) {
-        this.selectedFile = {
-          name: 'Imagem Carregada',
-          size: null,
-          url: this.noticiaForm.get('imagemContentType')?.value,
-        } as any;
+      this.ImagemCarregada.url = this.noticiaForm.get('imagemContentType')?.value;
+
+      if (this.ImagemCarregada.url) {
+        this.downloadURL = this.ImagemCarregada.url;
+        const metadados = await this.fireBaseStorage.obterMetadadosDaImagem(this.ImagemCarregada.url);
+
+        if (metadados?.nome) {
+          this.ImagemCarregada.nome = metadados?.nome;
+          this.ImagemCarregada.tamanho = metadados?.tamanho;
+        } else {
+          this.ImagemCarregada.nome = 'Imagem Carregada';
+          this.ImagemCarregada.tamanho = metadados?.tamanho;
+        }
       }
     }
 
@@ -114,21 +117,33 @@ export class CriarNoticiaComponent {
     console.log(this.noticiaForm.value);
   }
 
+  sanitizeFilename(filename: string): string {
+    return filename
+      .normalize('NFD') // Remove diacríticos (acentos)
+      .replace(/[\u0300-\u036f]/g, '') // Remove marcas de acentuação
+      .replace(/[^a-zA-Z0-9_.-]/g, '_') // Substitui caracteres inválidos por "_"
+      .replace(/_{2,}/g, '_') // Substitui múltiplos underscores por um único
+      .replace(/^_|_$/g, ''); // Remove underscores do início ou fim
+  }
+
   async onUpload(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (this.selectedFile) {
         this.fireBaseStorage.uploadFile(this.selectedFile).subscribe({
           next: (url: string) => {
             this.downloadURL = url;
+            this.novaImagemSelecionada = true;
             this.uploadProgress = null;
           },
           error: (err) => {
             this.error = `Upload failed: ${err.message}`;
             this.uploadProgress = null;
+            this.novaImagemSelecionada = false;
             reject(err);
           },
           complete: () => {
             console.log('Upload complete');
+            this.novaImagemSelecionada = true;
             this.messageService.add({
               severity: 'info',
               summary: 'File Uploaded',
@@ -144,28 +159,83 @@ export class CriarNoticiaComponent {
     });
   }
 
+  removerImagemAntesDeSalvarOFormulario() {
+    this.selectedFile = null;
+    this.noticiaForm.patchValue({
+      imagemContentType: '',
+    });
+    this.ImagemCarregada.url = null;
+    this.downloadURL = null;
+    this.novaImagemSelecionada = true; // Indica que uma nova imagem será carregada
+  }
+
   selecionarImagem(event: any) {
     this.selectedFile = event.files[0];
+    const sanitizedFilename = this.sanitizeFilename(this.selectedFile.name);
+    this.selectedFile = new File([this.selectedFile], sanitizedFilename, { type: this.selectedFile.type });
+
+    // Resetar a imagem anterior para garantir que apenas a nova seja usada
+    this.ImagemCarregada.url = null;
+    this.downloadURL = null;
+    this.novaImagemSelecionada = true;
   }
 
   cancelar() {
-    this.ref.close(false);
+    // this.ref.close(false);
+    console.log(this.noticiaForm.value);
+    console.log('download url' + this.downloadURL);
+    console.log('selected file' + this.selectedFile);
+    console.log('imagem carregada url' + this.ImagemCarregada.url);
   }
 
   async salvar() {
-    if (!this.selectedFile && this.noticiaForm.valid) {
-      this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
-      return;
-    }
+    if (this.noticiaForm.get('id')?.value) {
+      // Verificar se uma imagem foi removida ou substituída
+      if (!this.ImagemCarregada.url && !this.downloadURL) {
+        if (!this.selectedFile) {
+          this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
+          return;
+        } else {
+          this.loading = true;
+          await this.onUpload();
+          this.noticiaForm.patchValue({
+            imagemContentType: this.downloadURL,
+          });
+          this.loading = false;
+        }
+      } else {
+        // Caso não tenha sido removida, mas a imagem anterior existe
+        if (this.novaImagemSelecionada) {
+          await this.onUpload(); // Fazer upload da nova imagem
+          this.noticiaForm.patchValue({
+            imagemContentType: this.downloadURL,
+          });
+        }
+      }
 
-    if (this.noticiaForm.valid) {
-      this.loading = true;
-      await this.onUpload();
-      this.noticiaForm.patchValue({
-        imagemContentType: this.downloadURL,
-      });
-      this.loading = false;
-      this.ref.close(this.noticiaForm.value);
+      // Validações e fechamento do formulário
+      if (this.noticiaForm.valid) {
+        this.loading = true;
+        this.ref.close(this.noticiaForm.value);
+        this.loading = false;
+      }
+    } else {
+      // Caso seja uma nova notícia
+      if (!this.selectedFile) {
+        this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
+        return;
+      } else {
+        await this.onUpload();
+        this.noticiaForm.patchValue({
+          imagemContentType: this.downloadURL,
+        });
+
+        if (this.noticiaForm.valid) {
+          this.loading = true;
+          this.ref.close(this.noticiaForm.value);
+          this.loading = false;
+        }
+      }
     }
   }
 }

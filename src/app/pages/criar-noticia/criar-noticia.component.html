@@ -1,120 +1,49 @@
-<form
-  [formGroup]="noticiaForm"
-  (ngSubmit)="salvar()"
-  #formDir="ngForm"
->
+<form [formGroup]="noticiaForm" (ngSubmit)="salvar()" #formDir="ngForm">
   <div class="p-fluid p-2 w-full">
     <div class="p-field mb-4">
-      <label>Título: * </label>
-      <input
-        type="text"
-        pInputText
-        formControlName="titulo"
-      />
+      <label>Título: *</label>
+      <input type="text" pInputText formControlName="titulo" />
 
       <div *ngIf="noticiaForm.get('titulo')?.invalid && (noticiaForm.get('titulo')?.touched || formDir.submitted)">
-        <small
-          *ngIf="noticiaForm.get('titulo')?.errors?.['required']"
-          class="p-error"
-        >
-          O campo título é obrigatório
-        </small>
-        <small
-          *ngIf="noticiaForm.get('titulo')?.errors?.['minlength']"
-          class="p-error"
-        >
-          O campo título precisa ter no mínimo 5 caracteres
-        </small>
+        <small *ngIf="noticiaForm.get('titulo')?.errors?.['required']" class="p-error"> O campo título é obrigatório </small>
+        <small *ngIf="noticiaForm.get('titulo')?.errors?.['minlength']" class="p-error"> O campo título precisa ter no mínimo 5 caracteres </small>
       </div>
     </div>
 
     <div class="p-field mb-4">
       <label>Conteúdo: *</label>
-      <textarea
-        rows="5"
-        cols="30"
-        pInputTextarea
-        formControlName="conteudo"
-      ></textarea>
+      <textarea rows="5" cols="30" pInputTextarea formControlName="conteudo"></textarea>
 
       <div *ngIf="noticiaForm.get('conteudo')?.invalid && (noticiaForm.get('conteudo')?.touched || formDir.submitted)">
-        <small
-          *ngIf="noticiaForm.get('conteudo')?.errors?.['required']"
-          class="p-error"
-        >
-          O campo conteúdo é obrigatório
-        </small>
-        <small
-          *ngIf="noticiaForm.get('conteudo')?.errors?.['minlength']"
-          class="p-error"
-        >
-          O campo conteúdo precisa ter no mínimo 10 caracteres
-        </small>
+        <small *ngIf="noticiaForm.get('conteudo')?.errors?.['required']" class="p-error"> O campo conteúdo é obrigatório </small>
+        <small *ngIf="noticiaForm.get('conteudo')?.errors?.['minlength']" class="p-error"> O campo conteúdo precisa ter no mínimo 10 caracteres </small>
       </div>
     </div>
 
     <div class="p-field mb-4">
       <label>Resumo: *</label>
-      <textarea
-        rows="5"
-        cols="30"
-        pInputTextarea
-        formControlName="resumo"
-      ></textarea>
+      <textarea rows="5" cols="30" pInputTextarea formControlName="resumo"></textarea>
 
       <div *ngIf="noticiaForm.get('resumo')?.invalid && (noticiaForm.get('resumo')?.touched || formDir.submitted)">
-        <small
-          *ngIf="noticiaForm.get('resumo')?.errors?.['required']"
-          class="p-error"
-        >
-          O campo resumo é obrigatório
-        </small>
-        <small
-          *ngIf="noticiaForm.get('resumo')?.errors?.['minlength']"
-          class="p-error"
-        >
-          O campo resumo precisa ter no mínimo 10 caracteres
-        </small>
+        <small *ngIf="noticiaForm.get('resumo')?.errors?.['required']" class="p-error"> O campo resumo é obrigatório </small>
+        <small *ngIf="noticiaForm.get('resumo')?.errors?.['minlength']" class="p-error"> O campo resumo precisa ter no mínimo 10 caracteres </small>
       </div>
     </div>
 
     <!-- Status -->
     <div class="p-field mb-4">
       <label>Status: *</label>
-      <p-dropdown
-        [options]="statusOptions"
-        optionLabel="nome"
-        optionValue="value"
-        placeholder="Selecione um status"
-        appendTo="body"
-        formControlName="ativo"
-      ></p-dropdown>
+      <p-dropdown [options]="statusOptions" optionLabel="nome" optionValue="value" placeholder="Selecione um status" appendTo="body" formControlName="ativo"></p-dropdown>
 
-      <small
-        *ngIf="noticiaForm.get('ativo')?.invalid && (noticiaForm.get('ativo')?.touched || formDir.submitted)"
-        class="p-error"
-      >
-        O status precisa ser selecionado
-      </small>
+      <small *ngIf="noticiaForm.get('ativo')?.invalid && (noticiaForm.get('ativo')?.touched || formDir.submitted)" class="p-error"> O status precisa ser selecionado </small>
     </div>
 
     <!-- Categoria -->
     <div class="p-field mb-4">
       <label>Categoria: *</label>
-      <p-dropdown
-        [options]="categorias"
-        optionLabel="nome"
-        placeholder="Selecione uma Categoria"
-        appendTo="body"
-        formControlName="categoria"
-      ></p-dropdown>
+      <p-dropdown [options]="categorias" optionLabel="nome" placeholder="Selecione uma Categoria" appendTo="body" formControlName="categoria"></p-dropdown>
 
-      <small
-        *ngIf="noticiaForm.get('categoria')?.invalid && (noticiaForm.get('categoria')?.touched || formDir.submitted)"
-        class="p-error"
-      >
-        A categoria precisa ser selecionada
-      </small>
+      <small *ngIf="noticiaForm.get('categoria')?.invalid && (noticiaForm.get('categoria')?.touched || formDir.submitted)" class="p-error"> A categoria precisa ser selecionada </small>
     </div>
 
     <div class="card flex justify-content-center"></div>
@@ -123,59 +52,37 @@
       showUploadButton="false"
       name="demo[]"
       url="https://www.primefaces.org/cdn/api/upload.php"
-      cancelLabel="Cancelar"
       chooseLabel="Escolher"
       chooseIcon="pi pi-upload"
-      (onSelect)="selecionarImagem($event)"
       [multiple]="false"
       accept="image/*"
       maxFileSize="1000000"
+      showCancelButton="false"
+      (onSelect)="selecionarImagem($event)"
+      (onRemove)="removerImagemAntesDeSalvarOFormulario()"
     >
       <ng-template pTemplate="content">
-        <ul *ngIf="selectedFile">
-          <li *ngIf="selectedFile.url">
-            <img
-              [src]="selectedFile.url"
-              alt="Imagem carregada"
-              style="max-width: 200px; max-height: 200px"
-            />
-          </li>
-          <li *ngIf="!selectedFile.url">{{ selectedFile.name }} - {{ selectedFile.size }} bytes</li>
-        </ul>
+        <div *ngIf="ImagemCarregada.url && noticiaForm.get('id')?.value">
+          <div class="flex w-full align-items-center" *ngIf="ImagemCarregada">
+            <img [src]="ImagemCarregada.url" alt="Imagem carregada" style="max-width: 200px; max-height: 200px" />
+
+            <p-button icon="pi pi-trash" (click)="removerImagemAntesDeSalvarOFormulario()" styleClass="p-2 ml-4" />
+          </div>
+          <p>{{ ImagemCarregada.nome }} - {{ ImagemCarregada.tamanho }} bytes</p>
+        </div>
       </ng-template>
     </p-fileUpload>
   </div>
 
   <!-- Botões -->
   <div class="flex w-full justify-content-between">
-    <p-button
-      styleClass="w-full mt-4"
-      type="button"
-      label="Cancelar"
-      (click)="cancelar()"
-      icon="pi pi-times"
-      class="p-button-text p-button-danger"
-    />
+    <p-button styleClass="w-full mt-4" type="button" label="Cancelar" (click)="cancelar()" icon="pi pi-times" class="p-button-text p-button-danger" />
 
-    <p-button
-      styleClass="w-full mt-4"
-      type="submit"
-      label="Salvar"
-      icon="pi pi-check"
-      class="p-button-text p-button-success"
-    />
+    <p-button styleClass="w-full mt-4" type="submit" label="Salvar" icon="pi pi-check" class="p-button-text p-button-success" />
 
-    <div
-      *ngIf="loading"
-      class="p-overlay p-overlay-mask"
-    >
+    <div *ngIf="loading" class="p-overlay p-overlay-mask">
       <div class="flex justify-content-center align-items-center w-full h-full absolute">
-        <p-progressSpinner
-          styleClass="w-4rem h-4rem"
-          strokeWidth="5"
-          fill="var(--surface-ground)"
-          animationDuration="10s"
-        />
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="5" fill="var(--surface-ground)" animationDuration="10s" />
       </div>
     </div>
   </div>
