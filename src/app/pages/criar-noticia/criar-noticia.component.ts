@@ -113,8 +113,6 @@ export class CriarNoticiaComponent {
         categoria: categoriaEncontrada,
       });
     }
-
-    console.log(this.noticiaForm.value);
   }
 
   sanitizeFilename(filename: string): string {
@@ -174,18 +172,13 @@ export class CriarNoticiaComponent {
     const sanitizedFilename = this.sanitizeFilename(this.selectedFile.name);
     this.selectedFile = new File([this.selectedFile], sanitizedFilename, { type: this.selectedFile.type });
 
-    // Resetar a imagem anterior para garantir que apenas a nova seja usada
     this.ImagemCarregada.url = null;
     this.downloadURL = null;
     this.novaImagemSelecionada = true;
   }
 
   cancelar() {
-    // this.ref.close(false);
-    console.log(this.noticiaForm.value);
-    console.log('download url' + this.downloadURL);
-    console.log('selected file' + this.selectedFile);
-    console.log('imagem carregada url' + this.ImagemCarregada.url);
+    this.ref.close(false);
   }
 
   async salvar() {
@@ -193,7 +186,7 @@ export class CriarNoticiaComponent {
       // Verificar se uma imagem foi removida ou substituída
       if (!this.ImagemCarregada.url && !this.downloadURL) {
         if (!this.selectedFile) {
-          this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
+          this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.', '50%');
           return;
         } else {
           this.loading = true;
@@ -222,19 +215,19 @@ export class CriarNoticiaComponent {
     } else {
       // Caso seja uma nova notícia
       if (!this.selectedFile) {
-        this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.');
+        this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.', '50%');
         return;
       } else {
+        this.loading = true;
         await this.onUpload();
         this.noticiaForm.patchValue({
           imagemContentType: this.downloadURL,
         });
 
         if (this.noticiaForm.valid) {
-          this.loading = true;
           this.ref.close(this.noticiaForm.value);
-          this.loading = false;
         }
+        this.loading = false;
       }
     }
   }

@@ -76,9 +76,8 @@
 
   <!-- Botões -->
   <div class="flex w-full justify-content-between">
-    <p-button styleClass="w-full mt-4" type="button" label="Cancelar" (click)="cancelar()" icon="pi pi-times" class="p-button-text p-button-danger" />
-
     <p-button styleClass="w-full mt-4" type="submit" label="Salvar" icon="pi pi-check" class="p-button-text p-button-success" />
+    <p-button styleClass="w-full mt-4" type="button" label="Cancelar" (click)="cancelar()" icon="pi pi-times" class="p-button-text p-button-danger" />
 
     <div *ngIf="loading" class="p-overlay p-overlay-mask">
       <div class="flex justify-content-center align-items-center w-full h-full absolute">

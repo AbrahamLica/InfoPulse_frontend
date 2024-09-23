@@ -1,5 +1,7 @@
 <div class="flex flex-column justify-content-center align-items-center">
   <div class="w-full p-3">
+    <p-messages />
+
     <p-toolbar>
       <div class="p-toolbar-group-start">
         <p-button icon="pi pi-plus" class="mr-2" (click)="criarNoticia()" />
@@ -24,9 +26,10 @@
             </div>
 
             <div class="w-full flex flex-column p-2">
-              <p>{{ item.titulo }}</p>
+              <h2>{{ item.titulo }}</h2>
+              <p>{{ item.conteudo }}</p>
               <p>{{ item.resumo }}</p>
-              <p>{{ item.autor }}</p>
+              <p>Por: {{ item.autor }}</p>
               <p>{{ item.dataPublicacao }}</p>
             </div>
 

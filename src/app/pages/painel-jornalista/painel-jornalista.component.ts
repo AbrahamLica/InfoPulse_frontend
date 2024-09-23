@@ -8,22 +8,26 @@ import { ApiService } from 'src/app/services/api.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { CriarNoticiaComponent } from '../criar-noticia/criar-noticia.component';
 import _ from 'lodash';
+import { AlertService } from 'src/app/services/alert.service';
+import { ConfirmModalComponent } from 'src/app/util/confirm-modal/confirm-modal.component';
+import { MessageService } from 'primeng/api';
+import { MessagesModule } from 'primeng/messages';
 
 @Component({
   selector: 'app-painel-jornalista',
   standalone: true,
-  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule],
-  providers: [DialogService],
+  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule, MessagesModule],
+  providers: [DialogService, DynamicDialogRef, AlertService, DynamicDialogConfig, MessageService],
   templateUrl: './painel-jornalista.component.html',
   styleUrl: './painel-jornalista.component.scss',
 })
 export class PainelJornalistaComponent {
   noticias: Noticia[] = [];
 
-  constructor(private apiService: ApiService, private userService: UsuarioService, private dialogService: DialogService) {
+  constructor(private apiService: ApiService, private userService: UsuarioService, private dialogService: DialogService, private alertService: AlertService, private messageService: MessageService) {
     this.init();
   }
 
@@ -33,7 +37,19 @@ export class PainelJornalistaComponent {
   }
 
   excluirNoticia(item: any) {
-    console.log(item);
+    // Abertura do diálogo de confirmação
+    let ref = this.dialogService.open(ConfirmModalComponent, {
+      header: 'Excluir',
+      width: '50%',
+      data: { content: 'Deseja excluir a noticia selecionada?' },
+    });
+
+    ref.onClose.subscribe(async (resposta: boolean) => {
+      if (resposta) {
+        await this.apiService.makeDeleteRequest(`noticias/${item.id}`);
+        this.noticias = this.noticias.filter((value) => value.id != item.id);
+      }
+    });
   }
 
   async criarNoticia(noticia?: Noticia) {
@@ -49,6 +65,7 @@ export class PainelJornalistaComponent {
       if (noticia) {
         // @ts-ignore
         let noticiaSaved: any = noticia.id ? await this.apiService.makePutRequest('noticias/' + noticia.id, noticia) : await this.apiService.makePostRequest('noticias', noticia);
+        this.messageService.add({ severity: 'success', summary: 'Service Message', detail: 'Via MessageService' });
 
         if (!noticiaSaved) {
           this.criarNoticia(noticia);
