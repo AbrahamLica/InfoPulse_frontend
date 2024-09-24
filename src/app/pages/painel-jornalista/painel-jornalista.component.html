@@ -1,6 +1,8 @@
 <div class="flex flex-column justify-content-center align-items-center">
   <div class="w-full p-3">
-    <p-messages />
+    <p-toast position="top-left" key="tl" />
+    <p-toast position="top-center" key="tc" />
+    <p-toast position="top-right" key="tr" />
 
     <p-toolbar>
       <div class="p-toolbar-group-start">
@@ -26,11 +28,12 @@
             </div>
 
             <div class="w-full flex flex-column p-2">
-              <h2>{{ item.titulo }}</h2>
-              <p>{{ item.conteudo }}</p>
-              <p>{{ item.resumo }}</p>
+              <h2>Título: {{ item.titulo }}</h2>
+              <p>Categoria: {{ item.categoria.nome }}</p>
+              <p>Conteúdo: {{ item.conteudo.length > 40 ? (item.conteudo | slice : 0 : 40) + '...' : item.conteudo }}</p>
+              <p>Resumo: {{ item.resumo.length > 40 ? (item.resumo | slice : 0 : 40) + '...' : item.resumo }}</p>
               <p>Por: {{ item.autor }}</p>
-              <p>{{ item.dataPublicacao }}</p>
+              <p>Criação: {{ extractDateOnly(item.dataPublicacao) }}</p>
             </div>
 
             <div class="flex flex-column">
