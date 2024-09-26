@@ -1,76 +1,42 @@
 <p-toolbar styleClass="shadow-2 w-full bg-orange-400 p-4">
   <ng-template pTemplate="start">
     <!-- Ícone de menu que abre o sidebar -->
-    <p-image
-      src="assets/menu.png"
-      alt="Menu"
-      width="40px"
-      styleClass="cursor-pointer"
-      (click)="visibleSidebar = true"
-    ></p-image>
+    <p-image src="assets/menu.png" alt="Menu" width="40px" styleClass="cursor-pointer" (click)="visibleSidebar = true"></p-image>
   </ng-template>
 
   <ng-template pTemplate="center">
-    <p-image
-      src="assets/logo.png"
-      alt="Logo"
-      width="250px"
-      styleClass="cursor-pointer"
-      (click)="goHome()"
-    ></p-image>
+    <p-image src="assets/logo.png" alt="Logo" width="250px" styleClass="cursor-pointer" (click)="goHome()"></p-image>
   </ng-template>
 
   <ng-template pTemplate="end">
     <div class="flex flex-wrap align-items-center gap-3">
-      <button
-        class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200"
-        (click)="goHome()"
-      >
+      <button class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200" (click)="goHome()">
         <i class="pi pi-home text-2xl"></i>
       </button>
-      <button
-        class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200"
-      >
+      <button class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200">
         <i class="pi pi-user text-2xl"></i>
       </button>
-      <button
-        class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200"
-      >
-        <i class="pi pi-search text-2xl"></i>
-      </button>
+
+      <button class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200"></button>
     </div>
   </ng-template>
 </p-toolbar>
 
 <!-- Sidebar -->
-<p-sidebar
-  [(visible)]="visibleSidebar"
-  position="left"
-  styleClass="p-sidebar-sm"
->
+<p-sidebar [(visible)]="visibleSidebar" position="left" styleClass="p-sidebar-sm">
   <h2 class="text-black-alpha-90">Menu</h2>
 
   <div class="flex flex-column">
-    <a
-      class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center"
-      href="#"
-      (click)="goHome()"
-    >
+    <a class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center" href="#" (click)="goHome()">
       Home
       <i class="pi pi-home text-2xl"></i>
     </a>
 
-    <a
-      class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center cursor-pointer"
-      (click)="irParaPainelJornalista()"
-    >
+    <a class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center cursor-pointer" (click)="irParaPainelJornalista()">
       Painel do Jornalista
       <i class="pi pi-objects-column text-2xl"></i>
     </a>
-    <a
-      class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center"
-      href="#"
-    >
+    <a class="mb-3 no-underline text-black-alpha-90 flex justify-content-between align-items-center" href="#">
       Configurações
       <i class="pi pi-cog text-2xl"></i>
     </a>

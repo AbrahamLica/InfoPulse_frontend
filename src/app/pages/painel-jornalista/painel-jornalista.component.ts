@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DataViewModule } from 'primeng/dataview';
 import { DataViewComponent } from '../../util/data-view/data-view.component';
 import { ImageModule } from 'primeng/image';
@@ -25,7 +25,12 @@ import { ToastModule } from 'primeng/toast';
   styleUrl: './painel-jornalista.component.scss',
 })
 export class PainelJornalistaComponent {
+  @ViewChild('dv') dv!: DataView;
+
   noticias: Noticia[] = [];
+  filteredNoticias: Noticia[] = [];
+
+  teste: any;
 
   constructor(private apiService: ApiService, private userService: UsuarioService, private dialogService: DialogService, private alertService: AlertService, private messageService: MessageService) {
     this.init();
@@ -34,6 +39,24 @@ export class PainelJornalistaComponent {
   async init() {
     //@ts-ignore
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
+    this.filteredNoticias = this.noticias;
+
+    console.log(this.filteredNoticias);
+  }
+
+  onFilter(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value.toLowerCase() || '';
+
+    // Filtrar as notícias localmente pelo título, por exemplo
+    this.filteredNoticias = this.noticias.filter((noticia) =>
+      //@ts-ignore
+      noticia.titulo.toLowerCase().includes(value)
+    );
+
+    console.log(value);
+    console.log(this.noticias);
+    console.log(this.filteredNoticias);
   }
 
   excluirNoticia(item: any) {

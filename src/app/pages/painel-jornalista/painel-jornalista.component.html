@@ -10,19 +10,19 @@
       </div>
 
       <div class="p-toolbar-group-center">
-        <span class="p-input-icon-left">
+        <span class="p-input-icon-left p-ml-auto">
           <i class="pi pi-search"></i>
-          <input pInputText placeholder="Search" />
+          <input pInputText type="search" (input)="onFilter($event)" placeholder="Pesquisar" />
         </span>
       </div>
     </p-toolbar>
   </div>
 
   <div class="w-10 p-4 mt-5">
-    <p-dataView #dv [value]="noticias">
+    <p-dataView #dv [value]="filteredNoticias" [rows]="5" [paginator]="true" filterBy="titulo">
       <ng-template pTemplate="list" let-products>
         <div class="border-bottom-1 pb-3 m-3" *ngFor="let item of products; let first = first">
-          <div class="flex justify-content-between w-full">
+          <div class="flex justify-content-between w-full p-2" [ngClass]="item.ativo ? ' opacity-100' : 'opacity-60'">
             <div class="w-5 mr-3">
               <p-image src="{{ item.imagemContentType }}" previewImageSrc="{{ item.imagemContentType }}" alt="Image" width="230px" height="250px" [style]="{ 'object-fit': 'cover' }" [preview]="true"></p-image>
             </div>
@@ -34,6 +34,7 @@
               <p>Resumo: {{ item.resumo.length > 40 ? (item.resumo | slice : 0 : 40) + '...' : item.resumo }}</p>
               <p>Por: {{ item.autor }}</p>
               <p>Criação: {{ extractDateOnly(item.dataPublicacao) }}</p>
+              <p>Status: {{ item.ativo ? 'ATIVO' : 'INATIVO' }}</p>
             </div>
 
             <div class="flex flex-column">
