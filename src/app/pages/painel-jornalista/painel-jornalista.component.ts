@@ -15,11 +15,15 @@ import { AlertService } from 'src/app/services/alert.service';
 import { ConfirmModalComponent } from 'src/app/util/confirm-modal/confirm-modal.component';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputIconModule } from 'primeng/inputicon';
+import { TopBarComponent } from 'src/app/util/top-bar/top-bar.component';
 
 @Component({
   selector: 'app-painel-jornalista',
   standalone: true,
-  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule, ToastModule],
+  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule, ToastModule, IconFieldModule, InputTextModule, InputIconModule, TopBarComponent],
   providers: [DialogService, DynamicDialogRef, AlertService, DynamicDialogConfig, MessageService],
   templateUrl: './painel-jornalista.component.html',
   styleUrl: './painel-jornalista.component.scss',
@@ -29,6 +33,7 @@ export class PainelJornalistaComponent {
 
   noticias: Noticia[] = [];
   filteredNoticias: Noticia[] = [];
+  campoPesquisa: string = '';
 
   teste: any;
 
@@ -48,15 +53,13 @@ export class PainelJornalistaComponent {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value.toLowerCase() || '';
 
+    this.campoPesquisa = value;
+
     // Filtrar as notícias localmente pelo título, por exemplo
     this.filteredNoticias = this.noticias.filter((noticia) =>
       //@ts-ignore
       noticia.titulo.toLowerCase().includes(value)
     );
-
-    console.log(value);
-    console.log(this.noticias);
-    console.log(this.filteredNoticias);
   }
 
   excluirNoticia(item: any) {
@@ -85,22 +88,49 @@ export class PainelJornalistaComponent {
       },
     });
 
-    caixaDeDialogo.onClose.subscribe(async (noticia: Noticia) => {
-      if (noticia) {
-        // @ts-ignore
-        let noticiaSaved: any = noticia.id ? await this.apiService.makePutRequest('noticias/' + noticia.id, noticia) : await this.apiService.makePostRequest('noticias', noticia);
+    caixaDeDialogo.onClose.subscribe(async (noticiaEditada: Noticia) => {
+      if (noticiaEditada) {
+        let noticiaSaved: any;
 
-        if (!noticiaSaved) {
-          this.criarNoticia(noticia);
-        } else {
-          if (noticia.id) {
-            this.noticias = this.noticias.map((value: Noticia) => {
-              return value.id == noticia.id ? noticia : value;
+        // Verifica se é uma edição (noticia.id) ou uma criação de nova notícia
+        if (noticiaEditada.id) {
+          // Se for edição, realiza a requisição PUT
+          noticiaSaved = await this.apiService.makePutRequest('noticias/' + noticiaEditada.id, noticiaEditada);
+
+          // Se a notícia foi editada com sucesso
+          if (noticiaSaved) {
+            // Atualiza o array de notícias local substituindo a notícia editada
+            this.noticias = this.noticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
+
+            // Atualiza também o array de notícias filtradas, para manter consistência após pesquisa
+            this.filteredNoticias = this.filteredNoticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Notícia editada com sucesso!',
+              detail: 'InfoPulse',
+              icon: 'pi-check',
+              key: 'tl',
+              life: 3000,
             });
-            this.messageService.add({ severity: 'success', summary: 'Notícia editada com sucesso!', detail: 'InfoPulse', icon: 'pi-check', key: 'tl', life: 3000 });
-          } else {
+          }
+        } else {
+          // Se for uma nova notícia, realiza a requisição POST
+          noticiaSaved = await this.apiService.makePostRequest('noticias', noticiaEditada);
+
+          if (noticiaSaved) {
+            // Adiciona a nova notícia ao array local
             this.noticias = [...this.noticias, noticiaSaved];
-            this.messageService.add({ severity: 'success', summary: 'Notícia criada com sucesso!', detail: 'InfoPulse', icon: 'pi-check', key: 'tl', life: 3000 });
+            this.filteredNoticias = [...this.filteredNoticias, noticiaSaved];
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Notícia criada com sucesso!',
+              detail: 'InfoPulse',
+              icon: 'pi-check',
+              key: 'tl',
+              life: 3000,
+            });
           }
         }
       }

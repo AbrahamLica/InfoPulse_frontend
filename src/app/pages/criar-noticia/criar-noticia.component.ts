@@ -75,6 +75,7 @@ export class CriarNoticiaComponent {
       categoria: new FormControl(null, Validators.required),
       autor: new FormControl(`${primeiroNome} ${ultimoNome}`, Validators.required),
       dataPublicacao: new FormControl(new Date(), Validators.required),
+      dataUltimaModificacao: new FormControl(new Date(), Validators.required),
       imagemContentType: new FormControl(),
     });
 
@@ -182,6 +183,11 @@ export class CriarNoticiaComponent {
   }
 
   async salvar() {
+    // Atualizar dataUltimaModificacao com a data atual
+    this.noticiaForm.patchValue({
+      dataUltimaModificacao: new Date(), // Atualiza sempre com a data e hora atuais
+    });
+
     if (this.noticiaForm.get('id')?.value) {
       // Verificar se uma imagem foi removida ou substituída
       if (!this.ImagemCarregada.url && !this.downloadURL) {

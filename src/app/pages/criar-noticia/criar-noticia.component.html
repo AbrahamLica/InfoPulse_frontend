@@ -2,8 +2,12 @@
   <div class="p-fluid p-2 w-full">
     <div class="p-field mb-4">
       <label>Título: *</label>
-      <input type="text" pInputText formControlName="titulo" />
-
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon">
+          <i class="fa-solid fa-font"></i>
+        </span>
+        <input type="text" pInputText autocomplete="anystring" formControlName="titulo" />
+      </div>
       <div *ngIf="noticiaForm.get('titulo')?.invalid && (noticiaForm.get('titulo')?.touched || formDir.submitted)">
         <small *ngIf="noticiaForm.get('titulo')?.errors?.['required']" class="p-error"> O campo título é obrigatório </small>
         <small *ngIf="noticiaForm.get('titulo')?.errors?.['minlength']" class="p-error"> O campo título precisa ter no mínimo 5 caracteres </small>
@@ -12,7 +16,12 @@
 
     <div class="p-field mb-4">
       <label>Conteúdo: *</label>
-      <textarea rows="5" cols="30" pInputTextarea formControlName="conteudo"></textarea>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon">
+          <i class="fa-solid fa-square-pen"></i>
+        </span>
+        <textarea rows="5" cols="30" pInputTextarea formControlName="conteudo"></textarea>
+      </div>
 
       <div *ngIf="noticiaForm.get('conteudo')?.invalid && (noticiaForm.get('conteudo')?.touched || formDir.submitted)">
         <small *ngIf="noticiaForm.get('conteudo')?.errors?.['required']" class="p-error"> O campo conteúdo é obrigatório </small>
@@ -22,7 +31,12 @@
 
     <div class="p-field mb-4">
       <label>Resumo: *</label>
-      <textarea rows="5" cols="30" pInputTextarea formControlName="resumo"></textarea>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon">
+          <i class="fa-solid fa-highlighter"></i>
+        </span>
+        <textarea rows="5" cols="30" pInputTextarea formControlName="resumo"></textarea>
+      </div>
 
       <div *ngIf="noticiaForm.get('resumo')?.invalid && (noticiaForm.get('resumo')?.touched || formDir.submitted)">
         <small *ngIf="noticiaForm.get('resumo')?.errors?.['required']" class="p-error"> O campo resumo é obrigatório </small>
@@ -33,7 +47,12 @@
     <!-- Status -->
     <div class="p-field mb-4">
       <label>Status: *</label>
-      <p-dropdown [options]="statusOptions" optionLabel="nome" optionValue="value" placeholder="Selecione um status" appendTo="body" formControlName="ativo"></p-dropdown>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon">
+          <i class="fa-solid fa-toggle-off"></i>
+        </span>
+        <p-dropdown styleClass="w-full" [options]="statusOptions" optionLabel="nome" optionValue="value" placeholder="Selecione um status" appendTo="body" formControlName="ativo"></p-dropdown>
+      </div>
 
       <small *ngIf="noticiaForm.get('ativo')?.invalid && (noticiaForm.get('ativo')?.touched || formDir.submitted)" class="p-error"> O status precisa ser selecionado </small>
     </div>
@@ -41,7 +60,12 @@
     <!-- Categoria -->
     <div class="p-field mb-4">
       <label>Categoria: *</label>
-      <p-dropdown [options]="categorias" optionLabel="nome" placeholder="Selecione uma Categoria" appendTo="body" formControlName="categoria"></p-dropdown>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon">
+          <i class="fa-solid fa-list"></i>
+        </span>
+        <p-dropdown styleClass="w-full" [options]="categorias" optionLabel="nome" placeholder="Selecione uma Categoria" appendTo="body" formControlName="categoria"></p-dropdown>
+      </div>
 
       <small *ngIf="noticiaForm.get('categoria')?.invalid && (noticiaForm.get('categoria')?.touched || formDir.submitted)" class="p-error"> A categoria precisa ser selecionada </small>
     </div>
