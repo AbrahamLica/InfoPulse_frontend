@@ -19,11 +19,13 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputIconModule } from 'primeng/inputicon';
 import { TopBarComponent } from 'src/app/util/top-bar/top-bar.component';
+import { CalendarModule } from 'primeng/calendar';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-painel-jornalista',
   standalone: true,
-  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule, ToastModule, IconFieldModule, InputTextModule, InputIconModule, TopBarComponent],
+  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule, ToastModule, IconFieldModule, InputTextModule, InputIconModule, TopBarComponent, CalendarModule, FormsModule],
   providers: [DialogService, DynamicDialogRef, AlertService, DynamicDialogConfig, MessageService],
   templateUrl: './painel-jornalista.component.html',
   styleUrl: './painel-jornalista.component.scss',
@@ -34,6 +36,10 @@ export class PainelJornalistaComponent {
   noticias: Noticia[] = [];
   filteredNoticias: Noticia[] = [];
   campoPesquisa: string = '';
+  hoje: Date = new Date();
+  today: Date = new Date();
+  dataInicial: Date | undefined;
+  dataFinal: Date | undefined;
 
   teste: any;
 
@@ -45,8 +51,6 @@ export class PainelJornalistaComponent {
     //@ts-ignore
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
     this.filteredNoticias = this.noticias;
-
-    console.log(this.filteredNoticias);
   }
 
   onFilter(event: Event) {
@@ -176,4 +180,11 @@ export class PainelJornalistaComponent {
     const [year, month, day] = datePart.split('-');
     return `${day}/${month}/${year}`;
   }
+
+  extractTimeOnly(dataISO: string): string {
+    const horario = dataISO.split('T')[1].split('.')[0];
+    return horario;
+  }
+
+  filtrar() {}
 }

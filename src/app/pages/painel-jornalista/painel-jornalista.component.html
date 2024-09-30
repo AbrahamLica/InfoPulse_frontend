@@ -12,6 +12,23 @@
       <p-button icon="pi pi-plus" (click)="criarNoticia()" />
     </div>
 
+    <div class="p-toolbar-group-center">
+      <div class="p-field">
+        <label style="color: white">Data Inicial</label>
+        <p-calendar dateFormat="dd/mm/yy" [maxDate]="hoje" appendTo="body" [(ngModel)]="dataInicial" placeholder="Data Inicial Filtro"></p-calendar>
+      </div>
+
+      <div class="p-field">
+        <label style="color: white">Data Final</label>
+        <p-calendar dateFormat="dd/mm/yy" [maxDate]="hoje" appendTo="body" [(ngModel)]="dataFinal" placeholder="Data Final Filtro"></p-calendar>
+      </div>
+    </div>
+
+    <div class="p-field">
+      <label style="color: transparent">Filtrar</label>
+      <button label="Filtrar" pButton (click)="filtrar()"></button>
+    </div>
+
     <div class="p-toolbar-group-end">
       <p-iconField iconPosition="left" class="flex align-items-center">
         <p-inputIcon>
@@ -26,8 +43,8 @@
     <h2 *ngIf="campoPesquisa != null && campoPesquisa != ''">{{ filteredNoticias.length }} Resultados encontrados</h2>
 
     <p-dataView #dv [value]="filteredNoticias" [rows]="5" [paginator]="true" filterBy="titulo">
-      <ng-template pTemplate="list" let-products>
-        <div class="border-bottom-1 pb-3 m-3" *ngFor="let item of products; let first = first">
+      <ng-template pTemplate="list" let-noticias>
+        <div class="border-bottom-1 pb-3 m-3" *ngFor="let item of noticias; let first = first">
           <div class="flex justify-content-between w-full p-2" [ngClass]="item.ativo ? ' opacity-100' : 'opacity-60'">
             <div class="w-5 mr-3">
               <p-image src="{{ item.imagemContentType }}" previewImageSrc="{{ item.imagemContentType }}" alt="Image" width="230px" height="250px" [style]="{ 'object-fit': 'cover' }" [preview]="true"></p-image>
@@ -40,6 +57,7 @@
               <p>Resumo: {{ item.resumo.length > 40 ? (item.resumo | slice : 0 : 40) + '...' : item.resumo }}</p>
               <p>Por: {{ item.autor }}</p>
               <p>Criação: {{ extractDateOnly(item.dataPublicacao) }}</p>
+              <p>Última modificação: {{ extractDateOnly(item.dataUltimaModificacao) }} as {{ extractTimeOnly(item.dataUltimaModificacao) }}</p>
               <div class="flex align-items-center">
                 <p class="mr-2">Status:</p>
                 <p [ngClass]="item.ativo ? 'text-green-500' : 'text-red-500'" class="font-bold">{{ item.ativo ? 'ATIVO' : 'INATIVO' }}</p>

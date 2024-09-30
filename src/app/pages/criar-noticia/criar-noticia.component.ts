@@ -66,6 +66,12 @@ export class CriarNoticiaComponent {
     let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
     let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
 
+    const now = new Date();
+    const timeZoneOffset = -3; // Fuso horário de Brasília e Belém do Pará (GMT-3)
+
+    const dataPublicacao = new Date(now.getTime() + timeZoneOffset * 60 * 60 * 1000);
+    const dataUltimaModificacao = new Date(now.getTime() + timeZoneOffset * 60 * 60 * 1000);
+
     this.noticiaForm = new FormGroup({
       id: new FormControl(null),
       titulo: new FormControl('', [Validators.required, Validators.minLength(5)]),
@@ -74,8 +80,8 @@ export class CriarNoticiaComponent {
       ativo: new FormControl('', Validators.required),
       categoria: new FormControl(null, Validators.required),
       autor: new FormControl(`${primeiroNome} ${ultimoNome}`, Validators.required),
-      dataPublicacao: new FormControl(new Date(), Validators.required),
-      dataUltimaModificacao: new FormControl(new Date(), Validators.required),
+      dataPublicacao: new FormControl(dataPublicacao, Validators.required),
+      dataUltimaModificacao: new FormControl(dataUltimaModificacao, Validators.required),
       imagemContentType: new FormControl(),
     });
 
@@ -183,9 +189,11 @@ export class CriarNoticiaComponent {
   }
 
   async salvar() {
-    // Atualizar dataUltimaModificacao com a data atual
+    const now = new Date();
+    const timeZoneOffset = -3;
+
     this.noticiaForm.patchValue({
-      dataUltimaModificacao: new Date(), // Atualiza sempre com a data e hora atuais
+      dataUltimaModificacao: new Date(now.getTime() + timeZoneOffset * 60 * 60 * 1000),
     });
 
     if (this.noticiaForm.get('id')?.value) {
