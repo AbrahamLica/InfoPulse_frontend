@@ -7,29 +7,26 @@
   <p-toast position="top-center" key="tc" />
   <p-toast position="top-right" key="tr" />
 
-  <p-toolbar class="w-full">
-    <div class="p-toolbar-group-start">
-      <p-button icon="pi pi-plus" (click)="criarNoticia()" />
+  <div class="w-full flex align-items-center justify-content-around p-3 border-bottom-1 border-gray-200">
+    <div>
+      <p-button icon="pi pi-plus" label="Nova notícia" styleClass="w-10rem" (click)="criarNoticia()"></p-button>
     </div>
 
-    <div class="p-toolbar-group-center">
-      <div class="p-field">
-        <label style="color: white">Data Inicial</label>
+    <div class="flex align-items-center mx-3 p-2 border-1 border-round border-gray-300">
+      <div class="p-field mr-4">
         <p-calendar dateFormat="dd/mm/yy" [maxDate]="hoje" appendTo="body" [(ngModel)]="dataInicial" placeholder="Data Inicial Filtro"></p-calendar>
       </div>
 
-      <div class="p-field">
-        <label style="color: white">Data Final</label>
+      <div class="p-field mr-3">
         <p-calendar dateFormat="dd/mm/yy" [maxDate]="hoje" appendTo="body" [(ngModel)]="dataFinal" placeholder="Data Final Filtro"></p-calendar>
+      </div>
+
+      <div class="p-field">
+        <p-button icon="pi pi-filter" label="Filtrar" styleClass="px-3 py-1" (click)="filtrar()"></p-button>
       </div>
     </div>
 
-    <div class="p-field">
-      <label style="color: transparent">Filtrar</label>
-      <button label="Filtrar" pButton (click)="filtrar()"></button>
-    </div>
-
-    <div class="p-toolbar-group-end">
+    <div>
       <p-iconField iconPosition="left" class="flex align-items-center">
         <p-inputIcon>
           <i class="pi pi-search"></i>
@@ -37,7 +34,7 @@
         <input pInputText type="text" (input)="onFilter($event)" placeholder="Pesquisar pelo título" />
       </p-iconField>
     </div>
-  </p-toolbar>
+  </div>
 
   <div class="w-10 p-4 mt-5">
     <h2 *ngIf="campoPesquisa != null && campoPesquisa != ''">{{ filteredNoticias.length }} Resultados encontrados</h2>

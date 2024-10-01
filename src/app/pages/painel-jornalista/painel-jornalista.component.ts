@@ -186,5 +186,22 @@ export class PainelJornalistaComponent {
     return horario;
   }
 
-  filtrar() {}
+  filtrar() {
+    console.log(this.dataInicial);
+
+    console.log(this.dataFinal);
+
+    if (this.dataInicial && this.dataFinal) {
+      const dataInicial = new Date(this.dataInicial).toISOString().split('T')[0];
+      const dataFinal = new Date(this.dataFinal).toISOString().split('T')[0];
+
+      this.filteredNoticias = this.filteredNoticias.filter((noticia) => {
+        const dataMovimentacao: any = noticia.dataPublicacao;
+        return dataMovimentacao >= dataInicial && dataMovimentacao <= dataFinal;
+      });
+      console.log(this.filteredNoticias);
+    } else {
+      this.filteredNoticias = this.noticias;
+    }
+  }
 }
