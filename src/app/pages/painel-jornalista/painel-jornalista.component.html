@@ -18,7 +18,7 @@
       </div>
 
       <div class="p-field mr-3">
-        <p-calendar dateFormat="dd/mm/yy" [maxDate]="hoje" appendTo="body" [(ngModel)]="dataFinal" placeholder="Data Final Filtro"></p-calendar>
+        <p-calendar dateFormat="dd/mm/yy" [minDate]="dataInicial" [maxDate]="hoje" appendTo="body" [(ngModel)]="dataFinal" placeholder="Data Final Filtro"></p-calendar>
       </div>
 
       <div class="p-field">

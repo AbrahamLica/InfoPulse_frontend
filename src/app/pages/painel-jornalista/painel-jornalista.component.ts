@@ -187,18 +187,17 @@ export class PainelJornalistaComponent {
   }
 
   filtrar() {
-    console.log(this.dataInicial);
-
-    console.log(this.dataFinal);
-
     if (this.dataInicial && this.dataFinal) {
-      const dataInicial = new Date(this.dataInicial).toISOString().split('T')[0];
-      const dataFinal = new Date(this.dataFinal).toISOString().split('T')[0];
+      const dataInicialISO = new Date(this.dataInicial).toISOString().split('T')[0]; // Apenas a parte da data (yyyy-mm-dd)
+      const dataFinalISO = new Date(this.dataFinal).toISOString().split('T')[0]; // Apenas a parte da data (yyyy-mm-dd)
 
-      this.filteredNoticias = this.filteredNoticias.filter((noticia) => {
-        const dataMovimentacao: any = noticia.dataPublicacao;
-        return dataMovimentacao >= dataInicial && dataMovimentacao <= dataFinal;
+      this.filteredNoticias = this.noticias.filter((noticia) => {
+        const dataPublicacaoISO = new Date(noticia.dataPublicacao).toISOString().split('T')[0]; // Parte da data da publicação
+
+        // Compara se a data de publicação está entre a data inicial e final (inclusivas)
+        return dataPublicacaoISO >= dataInicialISO && dataPublicacaoISO <= dataFinalISO;
       });
+
       console.log(this.filteredNoticias);
     } else {
       this.filteredNoticias = this.noticias;

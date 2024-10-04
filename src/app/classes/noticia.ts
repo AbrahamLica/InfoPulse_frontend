@@ -3,7 +3,7 @@ export default class Noticia {
   titulo?: string;
   conteudo?: string;
   resumo?: string;
-  dataPublicacao?: Date;
+  dataPublicacao?: any;
   dataUltimaModificacao?: Date;
   autor?: string;
   ativo?: boolean;
