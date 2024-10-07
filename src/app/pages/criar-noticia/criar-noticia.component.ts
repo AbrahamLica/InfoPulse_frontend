@@ -189,6 +189,13 @@ export class CriarNoticiaComponent {
   }
 
   async salvar() {
+    // Primeiro, verificamos se o formulário é válido antes de continuar
+    if (this.noticiaForm.invalid) {
+      // Se o formulário for inválido, exibe a mensagem de erro e não prossegue com o salvamento
+      this.alertService.exibirErroOuAlerta('Erro', 'Preencha todos os campos obrigatórios antes de continuar.', '50%');
+      return; // Retorna e não executa mais nada
+    }
+
     const now = new Date();
     const timeZoneOffset = -3;
 
@@ -196,6 +203,7 @@ export class CriarNoticiaComponent {
       dataUltimaModificacao: new Date(now.getTime() + timeZoneOffset * 60 * 60 * 1000),
     });
 
+    // Se o formulário passou na validação, continuamos
     if (this.noticiaForm.get('id')?.value) {
       // Verificar se uma imagem foi removida ou substituída
       if (!this.ImagemCarregada.url && !this.downloadURL) {
@@ -220,9 +228,9 @@ export class CriarNoticiaComponent {
         }
       }
 
-      // Validações e fechamento do formulário
+      // Se o formulário ainda é válido após as operações, fecha e salva
       if (this.noticiaForm.valid) {
-        this.loading = true;
+        this.loading = true; // Exibe o spinner apenas aqui, após a validação
         this.ref.close(this.noticiaForm.value);
         this.loading = false;
       }

@@ -21,6 +21,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { TopBarComponent } from 'src/app/util/top-bar/top-bar.component';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
+import { ListarCategoriasComponent } from '../listar-categorias/listar-categorias.component';
 
 @Component({
   selector: 'app-painel-jornalista',
@@ -40,8 +41,6 @@ export class PainelJornalistaComponent {
   today: Date = new Date();
   dataInicial: Date | undefined;
   dataFinal: Date | undefined;
-
-  teste: any;
 
   constructor(private apiService: ApiService, private userService: UsuarioService, private dialogService: DialogService, private alertService: AlertService, private messageService: MessageService) {
     this.init();
@@ -141,6 +140,12 @@ export class PainelJornalistaComponent {
     });
   }
 
+  listarCategorias() {
+    this.dialogService.open(ListarCategoriasComponent, {
+      width: '70%',
+    });
+  }
+
   toLocalDate(data: any) {
     if (data instanceof Date) {
       data.setUTCHours(3);
@@ -188,19 +193,22 @@ export class PainelJornalistaComponent {
 
   filtrar() {
     if (this.dataInicial && this.dataFinal) {
-      const dataInicialISO = new Date(this.dataInicial).toISOString().split('T')[0]; // Apenas a parte da data (yyyy-mm-dd)
-      const dataFinalISO = new Date(this.dataFinal).toISOString().split('T')[0]; // Apenas a parte da data (yyyy-mm-dd)
+      const dataInicialISO = new Date(this.dataInicial).toISOString().split('T')[0];
+      const dataFinalISO = new Date(this.dataFinal).toISOString().split('T')[0];
 
       this.filteredNoticias = this.noticias.filter((noticia) => {
-        const dataPublicacaoISO = new Date(noticia.dataPublicacao).toISOString().split('T')[0]; // Parte da data da publicação
-
-        // Compara se a data de publicação está entre a data inicial e final (inclusivas)
+        const dataPublicacaoISO = new Date(noticia.dataPublicacao).toISOString().split('T')[0];
         return dataPublicacaoISO >= dataInicialISO && dataPublicacaoISO <= dataFinalISO;
       });
-
-      console.log(this.filteredNoticias);
     } else {
       this.filteredNoticias = this.noticias;
     }
+  }
+
+  limparFiltros() {
+    this.dataFinal = undefined;
+    this.dataInicial = undefined;
+    this.campoPesquisa = '';
+    this.filteredNoticias = this.noticias;
   }
 }
