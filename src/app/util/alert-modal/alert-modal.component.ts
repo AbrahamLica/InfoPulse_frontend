@@ -16,10 +16,7 @@ export class AlertModalComponent implements OnInit {
   content: string = '';
   visible: boolean = false;
 
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig
-  ) {}
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
 
   ngOnInit(): void {
     this.content = this.config.data.content;

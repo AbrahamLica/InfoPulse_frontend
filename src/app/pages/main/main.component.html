@@ -1,35 +1,26 @@
 <div class="flex flex-column justify-content-center align-items-center">
-  
   <div class="w-full">
     <app-top-bar></app-top-bar>
   </div>
 
   <div class="mt-5 w-10 p-3">
-
     <p-dataView #dv [value]="noticias">
       <ng-template pTemplate="list" let-products>
-        <div
-          class="border-bottom-1 pb-3 m-3"
-          *ngFor="let item of products; let first = first"
-        >
+        <div class="border-bottom-1 pb-3 m-3" *ngFor="let item of products; let first = first">
           <div class="flex justify-content-between w-full">
-            <div class="w-5 mr-3">
-              <p-image
-                src="{{ item.imagemContentType }}"
-                previewImageSrc="{{ item.imagemContentType }}"
-                alt="Image"
-                width="230px"
-                height="250px"
-                [style]="{ 'object-fit': 'cover' }"
-                [preview]="true"
-              ></p-image>
-            </div>
+            <div class="mr-3">
 
+
+              <p-image src="{{ item.imagemContentType }}" previewImageSrc="{{ item.imagemContentType }}" alt="Imagea"
+                width="250" height="250" [imageStyle]="{'object-fit': 'cover'}" [preview]="true">
+              </p-image>
+
+            </div>
             <div class="w-full flex flex-column p-2">
-              <p>{{ item.titulo }}</p>
+              <p>{{ item.autor }} &bull; {{ extractDateOnly(item.dataPublicacao) }}</p>
+              <p class="font-bold text-4xl m-0">{{ item.titulo }}</p>
               <p>{{ item.resumo }}</p>
-              <p>{{ item.autor }}</p>
-              <p>{{ item.dataPublicacao }}</p>
+              <p>{{item.categoria.nome}} &bull; {{item.tempoDeLeitura}}</p>
             </div>
           </div>
         </div>

@@ -19,50 +19,26 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    ButtonModule,
-    InputTextModule,
-    PanelModule,
-    PasswordModule,
-    AlertModalComponent,
-    FloatLabelModule,
-  ],
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, InputTextModule, PanelModule, PasswordModule, AlertModalComponent, FloatLabelModule],
   providers: [DialogService],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  credentials: { username?: string; password?: string; rememberMe?: boolean } =
-    {
-      rememberMe: true,
-    };
+  credentials: { username?: string; password?: string; rememberMe?: boolean } = {
+    rememberMe: true,
+  };
 
   showPassword = false;
   value: string = '';
 
-  constructor(
-    private usuarioService: UsuarioService,
-    private apiService: ApiService,
-    private http: HttpClient,
-    private router: Router,
-    private dialogService: DialogService
-  ) {}
+  constructor(private usuarioService: UsuarioService, private apiService: ApiService, private http: HttpClient, private router: Router, private dialogService: DialogService) {}
 
   async login() {
     if (this.credentials) {
       try {
-        const result = await this.http
-          .post<{ id_token: string; user: Usuario }>(
-            `${environment.urlBackend}authenticate`,
-            this.credentials
-          )
-          .toPromise();
+        const result = await this.http.post<{ id_token: string; user: Usuario }>(`${environment.urlBackend}authenticate`, this.credentials).toPromise();
         if (result) {
-          console.log(result);
-          
           this.usuarioService.setarDadosUsuario(result);
           this.router.navigateByUrl('/home');
         }

@@ -10,4 +10,5 @@ export default class Noticia {
   imagem?: any;
   imagemContentType?: string | null | undefined;
   categoria?: any;
+  tempoDeLeitura?: any;
 }

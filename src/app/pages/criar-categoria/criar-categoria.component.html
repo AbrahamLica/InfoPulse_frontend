@@ -1,1 +1,42 @@
-<p>criar-categoria works!</p>
+<form [formGroup]="categoriaForm" (ngSubmit)="salvar()" #formDir="ngForm">
+  <div class="p-fluid p-2 w-full">
+    <div class="p-field mb-4">
+      <label>Nome: *</label>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon">
+          <i class="fa-solid fa-font"></i>
+        </span>
+        <input type="text" pInputText autocomplete="anystring" formControlName="nome" />
+      </div>
+      <div *ngIf="categoriaForm.get('nome')?.invalid && (categoriaForm.get('nome')?.touched || formDir.submitted)">
+        <small *ngIf="categoriaForm.get('nome')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
+        <small *ngIf="categoriaForm.get('nome')?.errors?.['minlength']" class="p-error"> O campo Nome precisa ter no mínimo 5 caracteres </small>
+      </div>
+    </div>
+
+    <div class="p-field">
+      <label>Descrição: *</label>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon">
+          <i class="fa-solid fa-square-pen"></i>
+        </span>
+        <input type="text" pInputText autocomplete="anystring" formControlName="descricao" />
+      </div>
+      <div *ngIf="categoriaForm.get('descricao')?.invalid && (categoriaForm.get('descricao')?.touched || formDir.submitted)">
+        <small *ngIf="categoriaForm.get('descricao')?.errors?.['required']" class="p-error"> O campo Descrição é obrigatório </small>
+        <small *ngIf="categoriaForm.get('descricao')?.errors?.['minlength']" class="p-error"> O campo Descrição precisa ter no mínimo 5 caracteres </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex w-full justify-content-between">
+    <p-button styleClass="w-full mt-4" type="submit" label="Salvar" icon="pi pi-check" class="p-button-text p-button-success" />
+    <p-button styleClass="w-full mt-4" type="button" label="Cancelar" (click)="cancelar()" icon="pi pi-times" class="p-button-text p-button-danger" />
+
+    <div *ngIf="loading" class="p-overlay p-overlay-mask">
+      <div class="flex justify-content-center align-items-center w-full h-full absolute">
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="5" fill="var(--surface-ground)" animationDuration="10s" />
+      </div>
+    </div>
+  </div>
+</form>

@@ -65,6 +65,15 @@ export class CriarNoticiaComponent {
   async init() {
     let primeiroNome: any = this.usuarioService?.dadosUsuario?.user?.firstName;
     let ultimoNome: any = this.usuarioService?.dadosUsuario?.user?.lastName;
+    let nomeFinal;
+
+    if (primeiroNome == ultimoNome) {
+      nomeFinal = primeiroNome;
+      console.log('nomes iguais');
+    } else {
+      console.log('nomes dif');
+      nomeFinal = `${primeiroNome} ${ultimoNome}`;
+    }
 
     const now = new Date();
     const timeZoneOffset = -3; // Fuso horário de Brasília e Belém do Pará (GMT-3)
@@ -79,7 +88,7 @@ export class CriarNoticiaComponent {
       resumo: new FormControl('', [Validators.required, Validators.minLength(10)]),
       ativo: new FormControl('', Validators.required),
       categoria: new FormControl(null, Validators.required),
-      autor: new FormControl(`${primeiroNome} ${ultimoNome}`, Validators.required),
+      autor: new FormControl(nomeFinal, Validators.required),
       dataPublicacao: new FormControl(dataPublicacao, Validators.required),
       dataUltimaModificacao: new FormControl(dataUltimaModificacao, Validators.required),
       imagemContentType: new FormControl(),

@@ -17,6 +17,7 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { PainelJornalistaComponent } from './app/pages/painel-jornalista/painel-jornalista.component';
 import { IMAGE_CONFIG } from '@angular/common';
+import { DialogService } from 'primeng/dynamicdialog';
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -57,6 +58,7 @@ const routes: Routes = [
 // Bootstrap da aplicação
 bootstrapApplication(AppComponent, {
   providers: [
+    DialogService,
     importProvidersFrom(FormsModule, BrowserAnimationsModule, BrowserModule, ButtonModule, RippleModule, RouterModule.forRoot(routes)),
     provideHttpClient(withInterceptorsFromDi()),
     AuthGuardService,

@@ -1,64 +1,69 @@
 <div class="flex flex-column justify-content-center align-items-center">
-  <p-table
-    #dt
-    [autoLayout]="true"
-    [loading]="loadingData"
-    [paginator]="true"
-    [rowHover]="true"
-    [rows]="10"
-    [showCurrentPageReport]="false"
-    [resizableColumns]="true"
-    [value]="filteredCategorias"
-    currentPageReportTemplate="Total de {totalRecords} entradas"
-    dataKey="id"
-    sortField="nome"
-    [sortOrder]="1"
-    [globalFilterFields]="['id', 'nome', 'descricao']"
-    styleClass="p-datatable-customers p-datatable-sm"
-  >
-    <ng-template pTemplate="caption">
-      <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
-        <h5 class="p-m-0">Categorias</h5>
-        <span class="p-input-icon-left p-ml-auto">
-          <i class="pi pi-search"></i>
-          <input pInputText type="text" (input)="onFilter($event)" placeholder="Pesquisar pelo título" [(ngModel)]="campoPesquisa" />
-        </span>
+  <p-toast position="top-left" key="tl" />
+  <p-toast position="top-center" key="tc" />
+  <p-toast position="top-right" key="tr" />
+
+  <div class="w-full">
+    <div class="w-full flex align-items-center p-3 border-bottom-1 border-gray-200">
+      <div>
+        <p-button icon="pi pi-plus" label="Nova Categoria" styleClass="w-12rem" (click)="criarCategoria()"></p-button>
       </div>
-    </ng-template>
+    </div>
 
-    <ng-template pTemplate="header">
-      <tr>
-        <th pSortableColumn="id">
-          <p-sortIcon field="id"></p-sortIcon>
-          ID
-          <p-columnFilter placeholder="id" [showAddButton]="false" [showClearButton]="false" [showMatchModes]="false" [showOperator]="false" display="menu" field="id" matchMode="contains" type="text"></p-columnFilter>
-        </th>
+    <p-table
+      #dt
+      [autoLayout]="true"
+      [loading]="loadingData"
+      [paginator]="true"
+      [rowHover]="true"
+      [rows]="10"
+      [showCurrentPageReport]="false"
+      [resizableColumns]="true"
+      [value]="filteredCategorias"
+      currentPageReportTemplate="Total de {totalRecords} entradas"
+      dataKey="id"
+      sortField="nome"
+      [sortOrder]="1"
+      [globalFilterFields]="['id', 'nome', 'descricao']"
+      styleClass="p-datatable-customers p-datatable-sm"
+    >
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+          <h3 class="p-m-0">Categorias</h3>
+          <span class="p-input-icon-left p-ml-auto">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="onFilter($event)" placeholder="Pesquisar pelo nome" [(ngModel)]="campoPesquisa" />
+          </span>
+        </div>
+      </ng-template>
 
-        <th pSortableColumn="nome">
-          <p-sortIcon field="nome"></p-sortIcon>
-          Nome
-          <p-columnFilter placeholder="Nome" [showAddButton]="false" [showClearButton]="false" [showMatchModes]="false" [showOperator]="false" display="menu" field="nome" matchMode="contains" type="text"></p-columnFilter>
-        </th>
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="nome">
+            <p-sortIcon field="nome"></p-sortIcon>
+            Nome
+            <p-columnFilter placeholder="Nome" [showAddButton]="false" [showClearButton]="false" [showMatchModes]="false" [showOperator]="false" display="menu" field="nome" matchMode="contains" type="text"></p-columnFilter>
+          </th>
 
-        <th pSortableColumn="descricao">
-          <p-sortIcon field="descricao"></p-sortIcon>
-          Descrição
-          <p-columnFilter placeholder="Descrição" [showAddButton]="false" [showClearButton]="false" [showMatchModes]="false" [showOperator]="false" display="menu" field="descricao" matchMode="contains" type="text"></p-columnFilter>
-        </th>
-        <th></th>
-      </tr>
-    </ng-template>
+          <th pSortableColumn="descricao">
+            <p-sortIcon field="descricao"></p-sortIcon>
+            Descrição
+            <p-columnFilter placeholder="Descrição" [showAddButton]="false" [showClearButton]="false" [showMatchModes]="false" [showOperator]="false" display="menu" field="descricao" matchMode="contains" type="text"></p-columnFilter>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
 
-    <ng-template let-row pTemplate="body">
-      <tr [pSelectableRow]="row">
-        <td>{{ row.id }}</td>
-        <td>{{ toUpper(row.nome) }}</td>
-        <td>{{ toUpper(row.descricao) }}</td>
-        <td>
-          <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" severity="success" (onClick)="criarCategoria(row)" />
-          <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (onClick)="excluirItem(row)" />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+      <ng-template let-row pTemplate="body">
+        <tr [pSelectableRow]="row">
+          <td>{{ toUpper(row.nome) }}</td>
+          <td>{{ toUpper(row.descricao) }}</td>
+          <td>
+            <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" severity="success" (onClick)="criarCategoria(row)" />
+            <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (onClick)="excluirItem(row)" />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>

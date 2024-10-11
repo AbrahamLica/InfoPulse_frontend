@@ -66,7 +66,6 @@ export class PainelJornalistaComponent {
   }
 
   excluirNoticia(item: any) {
-    // Abertura do diálogo de confirmação
     let ref = this.dialogService.open(ConfirmModalComponent, {
       header: 'Excluir',
       width: '50%',
@@ -76,6 +75,7 @@ export class PainelJornalistaComponent {
     ref.onClose.subscribe(async (resposta: boolean) => {
       if (resposta) {
         await this.apiService.makeDeleteRequest(`noticias/${item.id}`);
+        this.filteredNoticias = this.filteredNoticias.filter((value) => value.id != item.id);
         this.noticias = this.noticias.filter((value) => value.id != item.id);
         this.messageService.add({ severity: 'success', summary: 'Notícia excluída com sucesso!', detail: 'InfoPulse', icon: 'pi-check', key: 'tc', life: 3000 });
       }
