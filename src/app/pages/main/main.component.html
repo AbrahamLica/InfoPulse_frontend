@@ -2,11 +2,21 @@
   <div class="w-full">
     <app-top-bar></app-top-bar>
   </div>
+  <div class="mt-5 w-10">
 
-  <div class="mt-5 w-10 p-3">
+    <div class="w-full border-round-sm bg-gray-300 p-2 flex align-items-center justify-content-center flex-column">
+      <p class="text-4xl" style="letter-spacing: 3px;">Bem-vindo ao InfoPulse
+      </p>
+      <p class="text-xl">Fique por dentro das <span class="text-purple-500 font-bold">notícias</span> mais
+        <span>quentes</span> e
+        atualizadas do Brasil e do mundo, com análises rápidas e objetivas
+      </p>
+    </div>
+
+
     <p-dataView #dv [value]="noticias">
       <ng-template pTemplate="list" let-products>
-        <div class="border-bottom-1 pb-3 m-3" *ngFor="let item of products; let first = first">
+        <div class="border-bottom-1 pb-3 my-3" *ngFor="let item of products; let first = first">
           <div class="flex justify-content-between w-full">
             <div class="mr-3">
 
@@ -18,7 +28,7 @@
             </div>
             <div class="w-full flex flex-column p-2">
               <p>{{ item.autor }} &bull; {{ extractDateOnly(item.dataPublicacao) }}</p>
-              <p class="font-bold text-4xl m-0">{{ item.titulo }}</p>
+              <p class="font-bold text-4xl m-0" (click)="irParaNoticiaCompleta(item)">{{ item.titulo }}</p>
               <p>{{ item.resumo }}</p>
               <p>{{item.categoria.nome}} &bull; {{item.tempoDeLeitura}}</p>
             </div>

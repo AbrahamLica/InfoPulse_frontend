@@ -52,6 +52,12 @@ export class MainComponent {
     })
   }
 
+
+  irParaNoticiaCompleta(item:any) {
+
+  }
+
+
   logout() {
     this.userService.deslogar();
   }

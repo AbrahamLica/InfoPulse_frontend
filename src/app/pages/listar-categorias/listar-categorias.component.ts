@@ -12,7 +12,6 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import { CriarCategoriaComponent } from '../criar-categoria/criar-categoria.component';
 import { ConfirmModalComponent } from 'src/app/util/confirm-modal/confirm-modal.component';
 import { ToastModule } from 'primeng/toast';
-import { AlertModalComponent } from 'src/app/util/alert-modal/alert-modal.component';
 
 @Component({
   selector: 'app-listar-categorias',
