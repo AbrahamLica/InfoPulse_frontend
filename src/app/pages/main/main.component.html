@@ -3,34 +3,23 @@
     <app-top-bar></app-top-bar>
   </div>
   <div class="mt-5 w-10">
-
-    <div class="w-full border-round-sm bg-gray-300 p-2 flex align-items-center justify-content-center flex-column">
-      <p class="text-4xl" style="letter-spacing: 3px;">Bem-vindo ao InfoPulse
-      </p>
-      <p class="text-xl">Fique por dentro das <span class="text-purple-500 font-bold">notícias</span> mais
-        <span>quentes</span> e
-        atualizadas do Brasil e do mundo, com análises rápidas e objetivas
-      </p>
+    <div class="w-full border-round-sm bg-orange-400 p-4 flex align-items-center justify-content-center flex-column">
+      <p class="text-4xl m-0" style="letter-spacing: 3px">Bem-vindo ao InfoPulse</p>
+      <p class="text-2xl text-center">Fique por dentro das <span class="font-bold">notícias</span> mais <span class="font-bold">quentes 🔥</span> e atualizadas do Brasil e do mundo 🌎, com análises rápidas e objetivas.💡</p>
     </div>
-
 
     <p-dataView #dv [value]="noticias">
       <ng-template pTemplate="list" let-products>
         <div class="border-bottom-1 pb-3 my-3" *ngFor="let item of products; let first = first">
           <div class="flex justify-content-between w-full">
             <div class="mr-3">
-
-
-              <p-image src="{{ item.imagemContentType }}" previewImageSrc="{{ item.imagemContentType }}" alt="Imagea"
-                width="250" height="250" [imageStyle]="{'object-fit': 'cover'}" [preview]="true">
-              </p-image>
-
+              <p-image src="{{ item.imagemContentType }}" previewImageSrc="{{ item.imagemContentType }}" alt="Imagea" width="250" height="250" [imageStyle]="{ 'object-fit': 'cover' }" [preview]="true"> </p-image>
             </div>
             <div class="w-full flex flex-column p-2">
               <p>{{ item.autor }} &bull; {{ extractDateOnly(item.dataPublicacao) }}</p>
-              <p class="font-bold text-4xl m-0" (click)="irParaNoticiaCompleta(item)">{{ item.titulo }}</p>
+              <p class="font-bold text-4xl m-0 hover:text-orange-400 transition-duration-400 cursor-pointer" (click)="irParaNoticiaCompleta(item)">{{ item.titulo }}</p>
               <p>{{ item.resumo }}</p>
-              <p>{{item.categoria.nome}} &bull; {{item.tempoDeLeitura}}</p>
+              <p>{{ item.categoria.nome }} &bull; {{ item.tempoDeLeitura }}</p>
             </div>
           </div>
         </div>

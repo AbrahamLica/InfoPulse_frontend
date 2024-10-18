@@ -11,34 +11,21 @@ import { DataViewComponent } from '../../util/data-view/data-view.component';
 import { TagModule } from 'primeng/tag';
 import Noticia from 'src/app/classes/noticia';
 import { ImageModule } from 'primeng/image';
-import { readingTime } from 'reading-time-estimator'
+import { readingTime } from 'reading-time-estimator';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    ButtonModule,
-    TopBarComponent,
-    DataViewModule,
-    DataViewComponent,
-    TagModule,
-    ImageModule
-  ],
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, TopBarComponent, DataViewModule, DataViewComponent, TagModule, ImageModule],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
 })
 export class MainComponent {
-
   noticias: Noticia[] = [];
-  tempoDeLeitura: any
+  tempoDeLeitura: any;
 
-  constructor(
-    private apiService: ApiService,
-    private userService: UsuarioService,
-  ) {
+  constructor(private apiService: ApiService, private userService: UsuarioService, private router: Router) {
     this.init();
   }
 
@@ -46,23 +33,19 @@ export class MainComponent {
     //@ts-ignore
     this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
 
-    this.noticias.forEach(noticia => {
+    this.noticias.forEach((noticia) => {
       //@ts-ignore
-      noticia.tempoDeLeitura = readingTime(noticia.conteudo, 10, 'pt-br').text
-    })
+      noticia.tempoDeLeitura = readingTime(noticia.conteudo, 10, 'pt-br').text;
+    });
   }
 
-
-  irParaNoticiaCompleta(item:any) {
-
+  irParaNoticiaCompleta(item: any) {
+    this.router.navigate(['/noticia', item.id]);
   }
-
 
   logout() {
     this.userService.deslogar();
   }
-
-
 
   extractDateOnly(dateTime: any): string {
     if (!dateTime) {
@@ -100,10 +83,7 @@ export class MainComponent {
     }
 
     // Se a diferença for maior que 30 dias, retorna a data no formato Brasileiro
-    const monthNames = [
-      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-    ];
+    const monthNames = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
     const day = date.getDate();
     const month = monthNames[date.getMonth()];
@@ -111,6 +91,4 @@ export class MainComponent {
 
     return `${day} de ${month} de ${year}`;
   }
-
-
 }

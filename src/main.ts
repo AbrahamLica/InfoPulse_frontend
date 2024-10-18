@@ -18,6 +18,7 @@ import { RippleModule } from 'primeng/ripple';
 import { PainelJornalistaComponent } from './app/pages/painel-jornalista/painel-jornalista.component';
 import { IMAGE_CONFIG } from '@angular/common';
 import { DialogService } from 'primeng/dynamicdialog';
+import { ListarNoticiaComponent } from './app/pages/listar-noticia/listar-noticia.component';
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -45,6 +46,12 @@ const routes: Routes = [
     component: PainelJornalistaComponent,
     canActivate: [AuthGuardService], // Protege a rota do painel do jornalista
   },
+  {
+    path: 'noticia/:id',
+    component: ListarNoticiaComponent,
+    canActivate: [AuthGuardService], // Protege a rota do painel do jornalista
+  },
+
   {
     path: 'login',
     component: LoginComponent, // Rota de login não precisa de proteção

@@ -4,7 +4,7 @@ export default class Noticia {
   conteudo?: string;
   resumo?: string;
   dataPublicacao?: any;
-  dataUltimaModificacao?: Date;
+  dataUltimaModificacao?: any;
   autor?: string;
   ativo?: boolean;
   imagem?: any;
