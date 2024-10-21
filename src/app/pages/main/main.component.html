@@ -8,12 +8,12 @@
       <p class="text-2xl text-center">Fique por dentro das <span class="font-bold">notícias</span> mais <span class="font-bold">quentes 🔥</span> e atualizadas do Brasil e do mundo 🌎, com análises rápidas e objetivas.💡</p>
     </div>
 
-    <p-dataView #dv [value]="noticias">
+    <p-dataView #dv [value]="noticiasFinal">
       <ng-template pTemplate="list" let-products>
         <div class="border-bottom-1 pb-3 my-3" *ngFor="let item of products; let first = first">
           <div class="flex justify-content-between w-full">
             <div class="mr-3">
-              <p-image src="{{ item.imagemContentType }}" previewImageSrc="{{ item.imagemContentType }}" alt="Imagea" width="250" height="250" [imageStyle]="{ 'object-fit': 'cover' }" [preview]="true"> </p-image>
+              <p-image src="{{ item.imagemContentType == null ? 'assets/default-news.jpeg' : item.imagemContentType }}" previewImageSrc="{{ item.imagemContentType }}" alt="Imagea" width="250" height="250" [imageStyle]="{ 'object-fit': 'cover' }" [preview]="true"> </p-image>
             </div>
             <div class="w-full flex flex-column p-2">
               <p>{{ item.autor }} &bull; {{ extractDateOnly(item.dataPublicacao) }}</p>

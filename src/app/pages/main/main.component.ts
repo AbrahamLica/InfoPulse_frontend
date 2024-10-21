@@ -13,6 +13,7 @@ import Noticia from 'src/app/classes/noticia';
 import { ImageModule } from 'primeng/image';
 import { readingTime } from 'reading-time-estimator';
 import { Router } from '@angular/router';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -22,21 +23,58 @@ import { Router } from '@angular/router';
   styleUrls: ['./main.component.scss'],
 })
 export class MainComponent {
-  noticias: Noticia[] = [];
+  noticiasBackend: Noticia[] = [];
+  noticiasExternas: Noticia[] = [];
+  noticiasFinal: Noticia[] = [];
   tempoDeLeitura: any;
 
   constructor(private apiService: ApiService, private userService: UsuarioService, private router: Router) {
     this.init();
   }
 
-  async init() {
-    //@ts-ignore
-    this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
+  init() {
+    let urlApi = 'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=2d3505ce59684209a8f722d1ba0856ea';
 
-    this.noticias.forEach((noticia) => {
-      //@ts-ignore
-      noticia.tempoDeLeitura = readingTime(noticia.conteudo, 10, 'pt-br').text;
+    // Fazer as duas requisições em paralelo
+    forkJoin({
+      noticiasExternas: this.apiService.makeGetRequestApi(urlApi),
+      noticiasBackend: this.apiService.makeGetRequest('noticias?size=99999'),
+    }).subscribe({
+      next: (response: any) => {
+        // Transformando as notícias externas para o formato de `Noticia`
+        this.noticiasExternas = response.noticiasExternas.articles.map((article: any) => {
+          const noticiaExterna: Noticia = {
+            titulo: article.title,
+            conteudo: article.content,
+            resumo: article.description,
+            dataPublicacao: article.publishedAt,
+            autor: article.author,
+            imagemContentType: article.urlToImage,
+            categoria: article.source?.name,
+            tempoDeLeitura: readingTime(article.content ?? '', 10, 'pt-br').text,
+          };
+          return noticiaExterna;
+        });
+
+        // Pegando as notícias do backend e calculando tempo de leitura
+        this.noticiasBackend = response.noticiasBackend.map((noticia: Noticia) => {
+          noticia.tempoDeLeitura = readingTime(noticia.conteudo ?? '', 10, 'pt-br').text;
+          return noticia;
+        });
+
+        // Unindo as duas listas de notícias
+        this.noticiasFinal = [...this.noticiasBackend, ...this.noticiasExternas];
+      },
+      error: (error) => {
+        console.error('Erro ao buscar notícias:', error);
+      },
+      complete: () => {
+        console.info('Requisição de notícias completada.');
+        console.log(this.noticiasFinal);
+      },
     });
+
+    console.log(this.noticiasFinal);
   }
 
   irParaNoticiaCompleta(item: any) {
@@ -52,7 +90,6 @@ export class MainComponent {
       return '';
     }
 
-    // Converte o input para objeto Date se não for um Date já
     let date;
     if (dateTime instanceof Date) {
       date = dateTime;
@@ -60,29 +97,25 @@ export class MainComponent {
       date = new Date(dateTime);
     }
 
-    // Se a data for inválida, retorne vazio
     if (isNaN(date.getTime())) {
       return '';
     }
 
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
-    const diffInHours = diffInMs / (1000 * 60 * 60); // Diferença em horas
-    const diffInDays = diffInMs / (1000 * 60 * 60 * 24); // Diferença em dias
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-    // Se a diferença for menor que 24 horas, retorna em horas
     if (diffInHours < 24) {
       const hours = Math.floor(diffInHours);
       return `${hours} Horas atrás`;
     }
 
-    // Se a diferença for menor que 30 dias, retorna em dias
     if (diffInDays <= 30) {
       const days = Math.floor(diffInDays);
       return `${days} dias atrás`;
     }
 
-    // Se a diferença for maior que 30 dias, retorna a data no formato Brasileiro
     const monthNames = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
     const day = date.getDate();
