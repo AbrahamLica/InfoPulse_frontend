@@ -92,12 +92,19 @@ export class ApiService {
 
   // Método para tratar erros HTTP
   private handleHttpError(e: any) {
+    console.log(e);
+
     if (e.status === 401) {
       this.router.navigateByUrl('/login');
-      return of(null); // Retorna um observable nulo se o usuário não estiver autenticado
+      return of(null);
     }
 
-    let errorReturns = e.error?.title || 'Erro desconhecido';
+    let errorReturns = e.error?.title;
+
+    if (e.error.code == 402) {
+      errorReturns = 'Não foi possível fazer a comunicação com a API externa de notícias. O sistema irá exibir apenas as notícias cadastradas no sistema local.';
+    }
+
     if (e.status === 400 && e.error?.errors) {
       errorReturns = this.mapErrorsMessages(e.error.errors);
     } else if (e.status === 409 || e.status === 500) {

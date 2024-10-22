@@ -13,12 +13,13 @@ import Noticia from 'src/app/classes/noticia';
 import { ImageModule } from 'primeng/image';
 import { readingTime } from 'reading-time-estimator';
 import { Router } from '@angular/router';
-import { forkJoin, map } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, TopBarComponent, DataViewModule, DataViewComponent, TagModule, ImageModule],
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, TopBarComponent, DataViewModule, DataViewComponent, TagModule, ImageModule, ProgressSpinnerModule],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
 })
@@ -27,58 +28,78 @@ export class MainComponent {
   noticiasExternas: Noticia[] = [];
   noticiasFinal: Noticia[] = [];
   tempoDeLeitura: any;
+  loading: boolean = true;
 
   constructor(private apiService: ApiService, private userService: UsuarioService, private router: Router) {
     this.init();
   }
 
-  init() {
-    let urlApi = 'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=2d3505ce59684209a8f722d1ba0856ea';
+  decodeHtml(html: string): string {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
+  }
 
-    // Fazer as duas requisições em paralelo
+  onImageError(event: any) {
+    // Defina a URL da imagem padrão que será exibida em caso de erro
+    event.target.src = 'assets/default-news.jpeg';
+  }
+
+  init() {
+    let urlApi = 'https://api.worldnewsapi.com/top-news?source-country=us&language=en&api-key=52347244a1aa47c1bb7627b5d2a82660';
+
     forkJoin({
-      noticiasExternas: this.apiService.makeGetRequestApi(urlApi),
-      noticiasBackend: this.apiService.makeGetRequest('noticias?size=99999'),
+      noticiasExternas: this.apiService.makeGetRequestApi(urlApi).pipe(
+        catchError((error) => {
+          console.error('Erro ao buscar notícias externas:', error);
+          return of([]);
+        })
+      ),
+      noticiasBackend: this.apiService.makeGetRequest('noticias?size=99999').pipe(
+        catchError((error) => {
+          console.error('Erro ao buscar notícias do backend:', error);
+          return of([]);
+        })
+      ),
     }).subscribe({
       next: (response: any) => {
-        // Transformando as notícias externas para o formato de `Noticia`
-        this.noticiasExternas = response.noticiasExternas.articles.map((article: any) => {
-          const noticiaExterna: Noticia = {
-            titulo: article.title,
-            conteudo: article.content,
-            resumo: article.description,
-            dataPublicacao: article.publishedAt,
-            autor: article.author,
-            imagemContentType: article.urlToImage,
-            categoria: article.source?.name,
-            tempoDeLeitura: readingTime(article.content ?? '', 10, 'pt-br').text,
-          };
-          return noticiaExterna;
-        });
+        this.noticiasExternas =
+          response.noticiasExternas.top_news?.map((article: any) => {
+            const noticiaExterna: Noticia = {
+              titulo: article.news[0].title,
+              conteudo: this.decodeHtml(article.news[0].text),
+              resumo: this.decodeHtml(article.news[0].summary),
+              dataPublicacao: article.news[0].publish_date,
+              autor: article.news[0].author,
+              imagemContentType: article.news[0].image,
+              categoria: article.news[0].source_country,
+              tempoDeLeitura: readingTime(article.news[0].text ?? '', 10, 'pt-br').text,
+            };
+            return noticiaExterna;
+          }) || [];
 
-        // Pegando as notícias do backend e calculando tempo de leitura
         this.noticiasBackend = response.noticiasBackend.map((noticia: Noticia) => {
           noticia.tempoDeLeitura = readingTime(noticia.conteudo ?? '', 10, 'pt-br').text;
           return noticia;
         });
-
-        // Unindo as duas listas de notícias
-        this.noticiasFinal = [...this.noticiasBackend, ...this.noticiasExternas];
       },
       error: (error) => {
         console.error('Erro ao buscar notícias:', error);
       },
       complete: () => {
-        console.info('Requisição de notícias completada.');
-        console.log(this.noticiasFinal);
+        this.noticiasFinal = [...this.noticiasBackend, ...this.noticiasExternas];
+        this.loading = false;
       },
     });
-
-    console.log(this.noticiasFinal);
   }
 
-  irParaNoticiaCompleta(item: any) {
-    this.router.navigate(['/noticia', item.id]);
+  irParaNoticiaCompleta(item: Noticia) {
+    console.log('Navegando para notícia', item);
+    if (item.id) {
+      this.router.navigate(['/noticia', item.id]);
+    } else {
+      this.router.navigate(['/noticia'], { state: { noticia: item } });
+    }
   }
 
   logout() {
@@ -94,12 +115,17 @@ export class MainComponent {
     if (dateTime instanceof Date) {
       date = dateTime;
     } else {
+      // Criar um objeto de data ajustando o fuso horário para UTC-3 (horário de Brasília)
       date = new Date(dateTime);
     }
 
     if (isNaN(date.getTime())) {
       return '';
     }
+
+    // Ajustar o horário para o fuso de Brasília (UTC-3)
+    const brazilTimezoneOffset = -3; // UTC-3
+    date.setHours(date.getHours() + brazilTimezoneOffset);
 
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();

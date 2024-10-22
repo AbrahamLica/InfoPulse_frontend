@@ -19,6 +19,7 @@ import { PainelJornalistaComponent } from './app/pages/painel-jornalista/painel-
 import { IMAGE_CONFIG } from '@angular/common';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ListarNoticiaComponent } from './app/pages/listar-noticia/listar-noticia.component';
+import { NotfoundComponent } from './app/pages/notfound/notfound.component';
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -39,26 +40,34 @@ const routes: Routes = [
   {
     path: 'home',
     component: MainComponent,
-    canActivate: [AuthGuardService], // Protege a rota home
+    canActivate: [AuthGuardService],
   },
   {
     path: 'painel-jornalista',
     component: PainelJornalistaComponent,
-    canActivate: [AuthGuardService], // Protege a rota do painel do jornalista
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'noticia',
+    component: ListarNoticiaComponent,
+    canActivate: [AuthGuardService], // Verifique se a rota está protegida
   },
   {
     path: 'noticia/:id',
     component: ListarNoticiaComponent,
-    canActivate: [AuthGuardService], // Protege a rota do painel do jornalista
+    canActivate: [AuthGuardService],
   },
-
   {
     path: 'login',
-    component: LoginComponent, // Rota de login não precisa de proteção
+    component: LoginComponent,
   },
   {
-    path: '**',
-    redirectTo: '/notfound', // Rota padrão para URLs não encontradas
+    path: 'notfound',
+    component: NotfoundComponent,
+  },
+  {
+    path: '**', // Rota coringa
+    redirectTo: '/notfound',
   },
 ];
 

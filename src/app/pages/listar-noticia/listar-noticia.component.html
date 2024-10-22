@@ -7,8 +7,8 @@
     <div class="mb-4">
       <h1 class="text-center">{{ noticia.titulo }}</h1>
       <p class="text-xl">{{ noticia.resumo }}</p>
-      <p>Por {{ noticia.autor }}, InfoPulse</p>
-      <p>{{ extractDateOnly(noticia.dataPublicacao) }} - {{ extractTimeOnly(noticia.dataPublicacao) }} - Atualizado em {{ extractDateOnly(noticia.dataUltimaModificacao) }}</p>
+      <p>Por {{ noticia.autor }}</p>
+      <p>{{ !noticiaExterna ? extractDateOnly(noticia.dataPublicacao) + ' - ' + extractTimeOnly(noticia.dataPublicacao) + ' - Atualizado em ' + extractDateOnly(noticia.dataUltimaModificacao) : '' }}</p>
     </div>
     <div class="flex align-items-center justify-content-center mb-5">
       <p-image src="{{ noticia.imagemContentType }}" previewImageSrc="{{ noticia.imagemContentType }}" alt="Imagea" [imageStyle]="{ 'object-fit': 'cover', width: '50vw' }" [preview]="true"> </p-image>

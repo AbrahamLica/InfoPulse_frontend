@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import Noticia from 'src/app/classes/noticia';
 import { ApiService } from 'src/app/services/api.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TopBarComponent } from '../../util/top-bar/top-bar.component';
 import { ImageModule } from 'primeng/image';
 
@@ -17,19 +17,38 @@ import { ImageModule } from 'primeng/image';
 })
 export class ListarNoticiaComponent {
   noticia: Noticia = {};
+  noticiaExterna: boolean = false;
 
-  constructor(private http: HttpClient, private apiService: ApiService, private route: ActivatedRoute) {
+  constructor(private http: HttpClient, private apiService: ApiService, private route: ActivatedRoute, private router: Router) {
     this.init();
   }
 
   async init() {
-    this.route.paramMap.subscribe(async (params) => {
-      const noticiaId = params.get('id'); // Captura o ID da rota
-      if (noticiaId) {
-        //@ts-ignore
-        this.noticia = await this.apiService.makeGetRequest(`noticias/${noticiaId}`);
-      }
-    });
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state;
+
+    if (state && state['noticia']) {
+      this.noticia = state['noticia'];
+      this.noticiaExterna = true;
+    } else {
+      this.route.paramMap.subscribe((params) => {
+        const noticiaId = params.get('id');
+        if (noticiaId) {
+          this.apiService.makeGetRequest(`noticias/${noticiaId}`).subscribe({
+            next: (response: any) => {
+              this.noticia = response;
+              this.noticiaExterna = false;
+            },
+            error: (error) => {
+              console.error('Erro ao buscar notícia:', error);
+              this.router.navigate(['/notfound']);
+            },
+          });
+        } else {
+          this.router.navigate(['/notfound']);
+        }
+      });
+    }
   }
 
   extractDateOnly(dateTime: any): string {
@@ -63,9 +82,13 @@ export class ListarNoticiaComponent {
   }
 
   extractTimeOnly(dataISO: string): any {
-    if (dataISO) {
-      const horario = dataISO.split('T')[1].split('.')[0];
-      return horario;
+    if (this.noticiaExterna) {
+      console.log('n');
+    } else {
+      if (dataISO) {
+        const horario = dataISO.split('T')[1].split('.')[0];
+        return horario;
+      }
     }
   }
 }
