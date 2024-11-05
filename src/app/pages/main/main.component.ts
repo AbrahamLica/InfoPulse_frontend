@@ -15,11 +15,13 @@ import { readingTime } from 'reading-time-estimator';
 import { Router } from '@angular/router';
 import { catchError, forkJoin, map, of } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, TopBarComponent, DataViewModule, DataViewComponent, TagModule, ImageModule, ProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, RouterModule, ButtonModule, TopBarComponent, DataViewModule, DataViewComponent, TagModule, ImageModule, ProgressSpinnerModule, FooterComponent],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
 })
@@ -29,8 +31,11 @@ export class MainComponent {
   noticiasFinal: Noticia[] = [];
   tempoDeLeitura: any;
   loading: boolean = true;
+  palavrasChaveMap: Map<number, any[]> = new Map();
+  latitude: any;
+  longitude: any;
 
-  constructor(private apiService: ApiService, private userService: UsuarioService, private router: Router) {
+  constructor(private sanitizer: DomSanitizer, private apiService: ApiService, private userService: UsuarioService, private router: Router) {
     this.init();
   }
 
@@ -40,18 +45,12 @@ export class MainComponent {
     return txt.value;
   }
 
-  onImageError(event: any) {
-    // Defina a URL da imagem padrão que será exibida em caso de erro
-    event.target.src = 'assets/default-news.jpeg';
-  }
-
   init() {
-    let urlApi = 'https://api.worldnewsapi.com/top-news?source-country=us&language=en&api-key=52347244a1aa47c1bb7627b5d2a82660';
+    let urlApi = 'https://api.worldnewsapi.com/top-news?source-countryy=us&language=en&api-key=52347244a1aa47c1bb7627b5d2a82660';
 
     forkJoin({
       noticiasExternas: this.apiService.makeGetRequestApi(urlApi).pipe(
         catchError((error) => {
-          console.error('Erro ao buscar notícias externas:', error);
           return of([]);
         })
       ),
@@ -78,23 +77,90 @@ export class MainComponent {
             return noticiaExterna;
           }) || [];
 
-        this.noticiasBackend = response.noticiasBackend.map((noticia: Noticia) => {
-          noticia.tempoDeLeitura = readingTime(noticia.conteudo ?? '', 10, 'pt-br').text;
-          return noticia;
+        this.noticiasBackend = response.noticiasBackend
+          .filter((noticia: Noticia) => noticia.ativo !== false)
+          .map((noticia: Noticia) => {
+            noticia.tempoDeLeitura = readingTime(noticia.conteudo ?? '', 10, 'pt-br').text;
+            return noticia;
+          });
+
+        this.noticiasBackend.forEach((noticia: Noticia) => {
+          if (noticia.id) {
+            this.carregarPalavrasChave(noticia.id);
+          }
         });
-      },
-      error: (error) => {
-        console.error('Erro ao buscar notícias:', error);
       },
       complete: () => {
         this.noticiasFinal = [...this.noticiasBackend, ...this.noticiasExternas];
         this.loading = false;
       },
     });
+
+    this.obterClimaAtual();
+  }
+
+  obterClimaAtual() {
+    let latitude;
+    let longitude;
+    let endpointApi = 'http://api.weatherapi.com/v1/current.json?key=';
+    let tokenAPi = '476acf1b07f24b0c8fb180939243010';
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          latitude = position.coords.latitude;
+          longitude = position.coords.longitude;
+          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+          this.apiService.makeGetRequestApi(`${endpointApi}${tokenAPi}&q=${latitude},${longitude}&aqi=no`).subscribe({
+            next: (response) => {
+              console.log(response);
+            },
+            error: (err) => {
+              console.log(err);
+            },
+          });
+        },
+        (error) => {
+          console.error('Erro ao obter localização:', error.message);
+        }
+      );
+    } else {
+      console.error('Geolocalização não é suportada neste navegador.');
+    }
+  }
+
+  carregarPalavrasChave(noticiaId: number) {
+    if (!this.palavrasChaveMap.has(noticiaId)) {
+      this.apiService.makeGetRequest(`palavras-chaves?size=99999&noticiaId.equals=${noticiaId}`).subscribe({
+        next: (response) => {
+          //@ts-ignore
+          this.palavrasChaveMap.set(noticiaId, response);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar palavras-chave:', error);
+        },
+      });
+    }
+  }
+
+  getTextoComDestaque(item: Noticia): SafeHtml {
+    //@ts-ignore
+    const palavrasChave = this.palavrasChaveMap.get(item.id) || [];
+    //@ts-ignore
+    const resumo = item.resumo.length > 150 ? item.resumo.slice(0, 150) + '...' : item.resumo;
+    let textoComDestaque = resumo;
+
+    palavrasChave.forEach((palavra) => {
+      const regex = new RegExp(`\\b(${palavra.palavra})\\b`, 'gi'); // Garante que a palavra completa seja destacada
+      //@ts-ignore
+      textoComDestaque = textoComDestaque.replace(regex, `<span class="text-primary font-bold">$1</span>`);
+    });
+    //@ts-ignore
+    return this.sanitizer.bypassSecurityTrustHtml(textoComDestaque);
   }
 
   irParaNoticiaCompleta(item: Noticia) {
-    console.log('Navegando para notícia', item);
     if (item.id) {
       this.router.navigate(['/noticia', item.id]);
     } else {

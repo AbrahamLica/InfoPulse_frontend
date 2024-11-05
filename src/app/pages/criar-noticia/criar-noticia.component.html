@@ -44,7 +44,29 @@
       </div>
     </div>
 
-    <!-- Status -->
+    <div class="w-full mb-4">
+      <p-pickList
+        [source]="palavras"
+        [target]="palavrasChave"
+        sourceHeader="Escolher palavras de destaque"
+        targetHeader="Palavras selecionadas"
+        [dragdrop]="true"
+        showSourceControls="false"
+        showTargetControls="false"
+        showSourceFilter="false"
+        showTargetFilter="false"
+        [targetStyle]="{ height: '25rem' }"
+        [sourceStyle]="{ height: '20rem' }"
+        breakpoint="1400px"
+      >
+        <ng-template let-item pTemplate="item">
+          <div class="flex flex-wrap p-2 align-items-center gap-3">
+            <p>{{ item.palavra }}</p>
+          </div>
+        </ng-template>
+      </p-pickList>
+    </div>
+
     <div class="p-field mb-4">
       <label>Status: *</label>
       <div class="p-inputgroup">

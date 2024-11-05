@@ -1,9 +1,9 @@
-<div class="flex flex-column justify-content-center align-items-center">
+<div class="flex flex-column align-items-center min-h-full bg-green-300" style="margin: 0 !important; padding: 0">
   <div class="w-full">
     <app-top-bar></app-top-bar>
   </div>
   <div class="mt-5 w-10 flex flex-column align-items-center justify-content-center">
-    <div class="w-full border-round-sm bg-orange-400 p-4 flex align-items-center justify-content-center flex-column">
+    <div class="w-full border-round-sm bg-primary p-4 flex align-items-center justify-content-center flex-column">
       <p class="text-4xl m-0" style="letter-spacing: 3px">Bem-vindo ao InfoPulse</p>
       <p class="text-2xl text-center">
         Fique por dentro das <span class="font-bold">notícias</span> mais <span class="font-bold">quentes 🔥</span> e atualizadas do Brasil e do mundo 🌎, com análises rápidas e objetivas.💡
@@ -12,22 +12,36 @@
 
     <p-progressSpinner *ngIf="loading" styleClass="w-13rem h-13rem" strokeWidth="3" fill="var(--surface-ground)" animationDuration=".5s" />
 
-    <p-dataView *ngIf="!loading" #dv [value]="noticiasFinal">
-      <ng-template pTemplate="list" let-products>
-        <div class="border-bottom-1 pb-3 my-3" *ngFor="let item of products; let first = first">
-          <div class="flex justify-content-between w-full">
-            <div class="mr-3" style="min-width: 250px; min-height: 250px">
-              <img src="{{ item.imagemContentType == null ? 'assets/default-news.jpeg' : item.imagemContentType }}" alt="" width="250" height="250" style="object-fit: cover" />
-            </div>
-            <div class="w-full flex flex-column p-2">
-              <p>{{ item.autor }} &bull; {{ extractDateOnly(item.dataPublicacao) }}</p>
-              <p class="font-bold text-4xl m-0 hover:text-orange-400 transition-duration-400 cursor-pointer" (click)="irParaNoticiaCompleta(item)">{{ item.titulo }}</p>
-              <p>{{ item.resumo }}</p>
-              <p>{{ item.categoria.nome }} &bull; {{ item.tempoDeLeitura }}</p>
-            </div>
-          </div>
+    <div *ngIf="!loading">
+      <ng-container *ngIf="noticiasFinal.length === 0; else showDataView">
+        <div class="text-center mt-4">
+          <p class="text-xl">Não existem notícias cadastradas no sistema.</p>
         </div>
+      </ng-container>
+
+      <ng-template #showDataView>
+        <p-dataView #dv [value]="noticiasFinal">
+          <ng-template pTemplate="list" let-products>
+            <div class="border-bottom-1 p-6 my-3" *ngFor="let item of products; let first = first">
+              <div class="flex justify-content-between w-full">
+                <div class="mr-3" style="min-width: 250px; min-height: 250px">
+                  <img src="{{ item.imagemContentType == null ? 'assets/default-news.jpeg' : item.imagemContentType }}" alt="" width="250" height="250" style="object-fit: cover" />
+                </div>
+                <div class="w-full flex flex-column p-2">
+                  <p>{{ item.autor }} &bull; {{ extractDateOnly(item.dataPublicacao) }}</p>
+                  <p class="font-bold text-4xl m-0 hover:text-primary transition-duration-400 cursor-pointer" (click)="irParaNoticiaCompleta(item)">{{ item.titulo }}</p>
+                  <p [innerHTML]="getTextoComDestaque(item)"></p>
+                  <p>{{ item.categoria.nome }} &bull; {{ item.tempoDeLeitura }}</p>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-dataView>
       </ng-template>
-    </p-dataView>
+    </div>
+  </div>
+
+  <div class="w-full">
+    <app-footer></app-footer>
   </div>
 </div>

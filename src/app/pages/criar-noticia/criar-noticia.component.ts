@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import Noticia from 'src/app/classes/noticia';
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ApiService } from 'src/app/services/api.service';
 import { FormGroup, FormsModule, Validators } from '@angular/forms';
 import { FirebaseStorageService } from 'src/app/services/firebase-storage.service';
@@ -18,17 +18,34 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@angular/forms';
+import { CheckboxModule } from 'primeng/checkbox';
+import PalavraChave from 'src/app/classes/palavraChave';
+import { PickListModule } from 'primeng/picklist';
 
 @Component({
   selector: 'app-criar-noticia',
   standalone: true,
-  imports: [DropdownModule, CommonModule, FormsModule, ButtonModule, InputTextareaModule, InputTextModule, FileUploadModule, ToastModule, ProgressSpinnerModule, ReactiveFormsModule],
+  imports: [
+    DropdownModule,
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    InputTextareaModule,
+    InputTextModule,
+    FileUploadModule,
+    ToastModule,
+    ProgressSpinnerModule,
+    ReactiveFormsModule,
+    CheckboxModule,
+    PickListModule,
+  ],
   templateUrl: './criar-noticia.component.html',
   styleUrl: './criar-noticia.component.scss',
   providers: [MessageService, AlertService],
 })
 export class CriarNoticiaComponent {
   noticiaForm!: FormGroup;
+  palavrasForm!: FormGroup;
   selectedFile: File | any = null;
   categorias: Categoria[] = [];
   uploadProgress: number | null = null;
@@ -36,6 +53,9 @@ export class CriarNoticiaComponent {
   error: string | null = null;
   loading: boolean = false;
   novaImagemSelecionada: boolean = false;
+  palavras: any[] = [];
+  palavrasChave: PalavraChave[] = [];
+  palavrasChaveAntes: PalavraChave[] = [];
 
   noticia: Noticia | undefined;
   statusOptions = [
@@ -52,7 +72,6 @@ export class CriarNoticiaComponent {
   constructor(
     public config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
-    private dialogService: DialogService,
     private apiService: ApiService,
     private fireBaseStorage: FirebaseStorageService,
     private messageService: MessageService,
@@ -69,14 +88,12 @@ export class CriarNoticiaComponent {
 
     if (primeiroNome == ultimoNome) {
       nomeFinal = primeiroNome;
-      console.log('nomes iguais');
     } else {
-      console.log('nomes dif');
       nomeFinal = `${primeiroNome} ${ultimoNome}`;
     }
 
     const now = new Date();
-    const timeZoneOffset = -3; // Fuso horário de Brasília e Belém do Pará (GMT-3)
+    const timeZoneOffset = -3;
 
     const dataPublicacao = new Date(now.getTime() + timeZoneOffset * 60 * 60 * 1000);
     const dataUltimaModificacao = new Date(now.getTime() + timeZoneOffset * 60 * 60 * 1000);
@@ -94,8 +111,24 @@ export class CriarNoticiaComponent {
       imagemContentType: new FormControl(),
     });
 
+    this.noticiaForm.get('resumo')?.valueChanges.subscribe((resumo) => {
+      this.palavras = this.extrairPalavras(resumo);
+    });
+
     if (this.config.data.noticia) {
       this.noticiaForm.patchValue(this.config.data.noticia);
+
+      this.apiService.makeGetRequest<PalavraChave[]>(`palavras-chaves?size=99999&noticiaId.equals=${this.noticiaForm.get('id')?.value}`).subscribe({
+        next: (response: PalavraChave[]) => {
+          this.palavrasChave = response;
+          this.palavras = this.palavras.filter((palavra) => {
+            return !this.palavrasChave.some((palavraChave) => palavraChave.palavra === palavra.palavra);
+          });
+          if (this.palavrasChaveAntes.length === 0) {
+            this.palavrasChaveAntes = [...this.palavrasChave];
+          }
+        },
+      });
 
       this.ImagemCarregada.url = this.noticiaForm.get('imagemContentType')?.value;
 
@@ -113,31 +146,46 @@ export class CriarNoticiaComponent {
       }
     }
 
-    //@ts-ignore
-    this.categorias = await this.apiService.makeGetRequest('categorias?size=99999');
+    this.apiService.makeGetRequest('categorias?size=99999').subscribe({
+      next: (response: any) => {
+        this.categorias = response;
+      },
+      complete: () => {
+        if (this.noticiaForm.get('id')?.value) {
+          let categoria = this.noticiaForm.get('categoria')?.value;
 
-    //carregar manualmente a categoria do objeto salvo anteriormente
-    if (this.noticiaForm.get('id')?.value) {
-      let categoria = this.noticiaForm.get('categoria')?.value;
+          let categoriaEncontrada = this.categorias.find((val) => {
+            return val.id == categoria.id;
+          });
 
-      let categoriaEncontrada = this.categorias.find((val) => {
-        //@ts-ignore
-        return val.id == categoria.id;
-      });
+          this.noticiaForm.patchValue({
+            categoria: categoriaEncontrada,
+          });
+        }
+      },
+    });
+  }
 
-      this.noticiaForm.patchValue({
-        categoria: categoriaEncontrada,
-      });
-    }
+  extrairPalavras(resumo: string): PalavraChave[] {
+    return Array.from(
+      new Set(
+        resumo
+          .split(' ')
+          .map((palavra) => palavra.trim().replace(/[.,;!?:]+/g, ''))
+          .filter((palavra) => palavra.length > 0)
+      )
+    ).map((palavra) => {
+      return { palavra } as PalavraChave;
+    });
   }
 
   sanitizeFilename(filename: string): string {
     return filename
-      .normalize('NFD') // Remove diacríticos (acentos)
-      .replace(/[\u0300-\u036f]/g, '') // Remove marcas de acentuação
-      .replace(/[^a-zA-Z0-9_.-]/g, '_') // Substitui caracteres inválidos por "_"
-      .replace(/_{2,}/g, '_') // Substitui múltiplos underscores por um único
-      .replace(/^_|_$/g, ''); // Remove underscores do início ou fim
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_.-]/g, '_')
+      .replace(/_{2,}/g, '_')
+      .replace(/^_|_$/g, '');
   }
 
   async onUpload(): Promise<void> {
@@ -156,7 +204,6 @@ export class CriarNoticiaComponent {
             reject(err);
           },
           complete: () => {
-            console.log('Upload complete');
             this.novaImagemSelecionada = true;
             this.messageService.add({
               severity: 'info',
@@ -180,7 +227,7 @@ export class CriarNoticiaComponent {
     });
     this.ImagemCarregada.url = null;
     this.downloadURL = null;
-    this.novaImagemSelecionada = true; // Indica que uma nova imagem será carregada
+    this.novaImagemSelecionada = true;
   }
 
   selecionarImagem(event: any) {
@@ -197,12 +244,18 @@ export class CriarNoticiaComponent {
     this.ref.close(false);
   }
 
+  arraysTemPalavrasIguais(arr1: any[], arr2: any[]) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    const palavrasSet = new Set(arr2.map((obj) => obj.palavra));
+    return arr1.every((obj) => palavrasSet.has(obj.palavra));
+  }
+
   async salvar() {
-    // Primeiro, verificamos se o formulário é válido antes de continuar
     if (this.noticiaForm.invalid) {
-      // Se o formulário for inválido, exibe a mensagem de erro e não prossegue com o salvamento
       this.alertService.exibirErroOuAlerta('Erro', 'Preencha todos os campos obrigatórios antes de continuar.', '50%');
-      return; // Retorna e não executa mais nada
+      return;
     }
 
     const now = new Date();
@@ -212,39 +265,42 @@ export class CriarNoticiaComponent {
       dataUltimaModificacao: new Date(now.getTime() + timeZoneOffset * 60 * 60 * 1000),
     });
 
-    // Se o formulário passou na validação, continuamos
+    const palavrasChaveUnicas = Array.from(new Set(this.palavrasChave.map((p) => p.palavra))).map((palavra) => ({ palavra }));
+
     if (this.noticiaForm.get('id')?.value) {
-      // Verificar se uma imagem foi removida ou substituída
-      if (!this.ImagemCarregada.url && !this.downloadURL) {
-        if (!this.selectedFile) {
-          this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.', '50%');
-          return;
-        } else {
-          this.loading = true;
-          await this.onUpload();
-          this.noticiaForm.patchValue({
-            imagemContentType: this.downloadURL,
-          });
-          this.loading = false;
-        }
-      } else {
-        // Caso não tenha sido removida, mas a imagem anterior existe
-        if (this.novaImagemSelecionada) {
-          await this.onUpload(); // Fazer upload da nova imagem
-          this.noticiaForm.patchValue({
-            imagemContentType: this.downloadURL,
-          });
-        }
+      if (!this.ImagemCarregada.url && !this.downloadURL && !this.selectedFile) {
+        this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.', '50%');
+        return;
       }
 
-      // Se o formulário ainda é válido após as operações, fecha e salva
+      if (this.novaImagemSelecionada) {
+        this.loading = true;
+        await this.onUpload();
+        this.noticiaForm.patchValue({
+          imagemContentType: this.downloadURL,
+        });
+        this.loading = false;
+      }
+
       if (this.noticiaForm.valid) {
-        this.loading = true; // Exibe o spinner apenas aqui, após a validação
+        this.loading = true;
+        await Promise.all(this.palavrasChaveAntes.map((item) => this.apiService.makeDeleteRequest(`palavras-chaves/${item.id}`).toPromise()));
+        for (let palavraChave of palavrasChaveUnicas) {
+          const palavraChaveObj: PalavraChave = {
+            palavra: palavraChave.palavra,
+            noticia: {
+              id: this.noticiaForm.get('id')?.value,
+              titulo: this.noticiaForm.get('titulo')?.value,
+            },
+          };
+
+          await this.apiService.makePostRequest('palavras-chaves', palavraChaveObj).toPromise();
+        }
+
         this.ref.close(this.noticiaForm.value);
         this.loading = false;
       }
     } else {
-      // Caso seja uma nova notícia
       if (!this.selectedFile) {
         this.alertService.exibirErroOuAlerta('Erro', 'Você deve selecionar uma imagem para a notícia antes de continuar.', '50%');
         return;
@@ -257,6 +313,18 @@ export class CriarNoticiaComponent {
 
         if (this.noticiaForm.valid) {
           this.ref.close(this.noticiaForm.value);
+          await Promise.all(this.palavrasChaveAntes.map((item) => this.apiService.makeDeleteRequest(`palavras-chaves/${item.id}`).toPromise()));
+          for (let palavraChave of palavrasChaveUnicas) {
+            const palavraChaveObj: PalavraChave = {
+              palavra: palavraChave.palavra,
+              noticia: {
+                id: this.noticiaForm.get('id')?.value,
+                titulo: this.noticiaForm.get('titulo')?.value,
+              },
+            };
+
+            await this.apiService.makePostRequest('palavras-chaves', palavraChaveObj).toPromise();
+          }
         }
         this.loading = false;
       }

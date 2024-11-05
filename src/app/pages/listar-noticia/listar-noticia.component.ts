@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import Noticia from 'src/app/classes/noticia';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TopBarComponent } from '../../util/top-bar/top-bar.component';
 import { ImageModule } from 'primeng/image';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-listar-noticia',
@@ -18,8 +17,9 @@ import { ImageModule } from 'primeng/image';
 export class ListarNoticiaComponent {
   noticia: Noticia = {};
   noticiaExterna: boolean = false;
+  palavrasChave: any[] = [];
 
-  constructor(private http: HttpClient, private apiService: ApiService, private route: ActivatedRoute, private router: Router) {
+  constructor(private sanitizer: DomSanitizer, private http: HttpClient, private apiService: ApiService, private route: ActivatedRoute, private router: Router) {
     this.init();
   }
 
@@ -32,12 +32,15 @@ export class ListarNoticiaComponent {
       this.noticiaExterna = true;
     } else {
       this.route.paramMap.subscribe((params) => {
-        const noticiaId = params.get('id');
+        const noticiaIdString = params.get('id');
+        const noticiaId = noticiaIdString ? parseInt(noticiaIdString, 10) : null;
+
         if (noticiaId) {
           this.apiService.makeGetRequest(`noticias/${noticiaId}`).subscribe({
             next: (response: any) => {
               this.noticia = response;
               this.noticiaExterna = false;
+              this.carregarPalavrasChave(noticiaId);
             },
             error: (error) => {
               console.error('Erro ao buscar notícia:', error);
@@ -49,6 +52,42 @@ export class ListarNoticiaComponent {
         }
       });
     }
+  }
+
+  getConteudoFormatado(): SafeHtml {
+    //@ts-ignore
+    const paragrafos = this.noticia.conteudo
+      .split(/\n\n+/) // Divide por linha em branco
+      .map((paragrafo) => `<p>${paragrafo.trim()}</p>`)
+      .join('');
+    return this.sanitizer.bypassSecurityTrustHtml(paragrafos);
+  }
+
+  carregarPalavrasChave(noticiaId: number) {
+    this.apiService.makeGetRequest(`palavras-chaves?size=99999&noticiaId.equals=${noticiaId}`).subscribe({
+      next: (response) => {
+        let teste: any = response;
+        teste.forEach((item: any) => {
+          this.palavrasChave.push(item.palavra);
+        });
+      },
+      error: (error) => {
+        console.error('Erro ao carregar palavras-chave:', error);
+      },
+    });
+  }
+
+  getTextoComDestaque(item: Noticia): SafeHtml {
+    const resumo = item.resumo;
+    let textoComDestaque = resumo || '';
+
+    this.palavrasChave.forEach((palavra) => {
+      const regex = new RegExp(`\\b${palavra}\\b`, 'gi');
+      const novoTextoComDestaque = textoComDestaque.replace(regex, `<span style="color: #fa8e42; font-weight: bold;">${palavra}</span>`);
+      textoComDestaque = novoTextoComDestaque;
+    });
+
+    return this.sanitizer.bypassSecurityTrustHtml(textoComDestaque);
   }
 
   extractDateOnly(dateTime: any): string {

@@ -22,11 +22,26 @@ import { TopBarComponent } from 'src/app/util/top-bar/top-bar.component';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { ListarCategoriasComponent } from '../listar-categorias/listar-categorias.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-painel-jornalista',
   standalone: true,
-  imports: [DataViewModule, DataViewComponent, ImageModule, CommonModule, ToolbarModule, ButtonModule, ToastModule, IconFieldModule, InputTextModule, InputIconModule, TopBarComponent, CalendarModule, FormsModule],
+  imports: [
+    DataViewModule,
+    DataViewComponent,
+    ImageModule,
+    CommonModule,
+    ToolbarModule,
+    ButtonModule,
+    ToastModule,
+    IconFieldModule,
+    InputTextModule,
+    InputIconModule,
+    TopBarComponent,
+    CalendarModule,
+    FormsModule,
+  ],
   providers: [DialogService, DynamicDialogRef, AlertService, DynamicDialogConfig, MessageService],
   templateUrl: './painel-jornalista.component.html',
   styleUrl: './painel-jornalista.component.scss',
@@ -41,15 +56,82 @@ export class PainelJornalistaComponent {
   today: Date = new Date();
   dataInicial: Date | undefined;
   dataFinal: Date | undefined;
+  palavrasChaveMap: Map<number, any[]> = new Map();
 
-  constructor(private apiService: ApiService, private userService: UsuarioService, private dialogService: DialogService, private alertService: AlertService, private messageService: MessageService) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private apiService: ApiService,
+    private userService: UsuarioService,
+    private dialogService: DialogService,
+    private alertService: AlertService,
+    private messageService: MessageService
+  ) {
     this.init();
   }
 
   async init() {
+    this.apiService.makeGetRequest<Noticia[]>('noticias?size=999999').subscribe({
+      next: (response: Noticia[]) => {
+        this.noticias = response;
+        this.noticias.forEach((noticia: Noticia) => {
+          if (noticia.id) {
+            this.carregarPalavrasChave(noticia.id);
+          }
+        });
+      },
+      error: (error) => {
+        console.log(error);
+      },
+      complete: () => {
+        this.filteredNoticias = this.noticias;
+      },
+    });
+  }
+
+  carregarPalavrasChave(noticiaId: number) {
+    if (!this.palavrasChaveMap.has(noticiaId)) {
+      this.apiService.makeGetRequest(`palavras-chaves?size=99999&noticiaId.equals=${noticiaId}`).subscribe({
+        next: (response: any) => {
+          this.palavrasChaveMap.set(noticiaId, response);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar palavras-chave:', error);
+        },
+      });
+    } else {
+      this.apiService.makeGetRequest(`palavras-chaves?size=99999&noticiaId.equals=${noticiaId}`).subscribe({
+        next: (response: any) => {
+          this.palavrasChaveMap.set(noticiaId, response);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar palavras-chave:', error);
+        },
+      });
+    }
+  }
+
+  getTextoComDestaque(item: Noticia): SafeHtml {
+    let palavrasChave: any;
+    let resumo;
+
+    if (item.id) {
+      palavrasChave = this.palavrasChaveMap.get(item.id) || [];
+    }
+
+    if (item.resumo) {
+      resumo = item.resumo.length > 150 ? item.resumo.slice(0, 150) + '...' : item.resumo;
+    }
+
+    let textoComDestaque = resumo;
+
+    palavrasChave.forEach((palavra: any) => {
+      const regex = new RegExp(`\\b(${palavra.palavra})\\b`, 'gi');
+      if (textoComDestaque) {
+        textoComDestaque = textoComDestaque.replace(regex, `<span style="color: #fa8e42; font-weight: bold;">$1</span>`);
+      }
+    });
     //@ts-ignore
-    this.noticias = await this.apiService.makeGetRequest(`noticias?size=99999`);
-    this.filteredNoticias = this.noticias;
+    return this.sanitizer.bypassSecurityTrustHtml(textoComDestaque);
   }
 
   onFilter(event: Event) {
@@ -57,12 +139,9 @@ export class PainelJornalistaComponent {
     const value = inputElement.value.toLowerCase() || '';
 
     this.campoPesquisa = value;
-
-    // Filtrar as notícias localmente pelo título, por exemplo
-    this.filteredNoticias = this.noticias.filter((noticia) =>
-      //@ts-ignore
-      noticia.titulo.toLowerCase().includes(value)
-    );
+    this.filteredNoticias = this.noticias.filter((noticia) => {
+      return noticia?.titulo?.toLowerCase().includes(value);
+    });
   }
 
   excluirNoticia(item: any) {
@@ -74,10 +153,23 @@ export class PainelJornalistaComponent {
 
     ref.onClose.subscribe(async (resposta: boolean) => {
       if (resposta) {
-        await this.apiService.makeDeleteRequest(`noticias/${item.id}`);
-        this.filteredNoticias = this.filteredNoticias.filter((value) => value.id != item.id);
-        this.noticias = this.noticias.filter((value) => value.id != item.id);
-        this.messageService.add({ severity: 'success', summary: 'Notícia excluída com sucesso!', detail: 'InfoPulse', icon: 'pi-check', key: 'tc', life: 3000 });
+        this.apiService.makeDeleteRequest(`noticias/${item.id}`).subscribe({
+          next: () => {
+            this.noticias = this.noticias.filter((value) => value.id !== item.id);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Notícia excluída com sucesso!',
+              detail: 'InfoPulse',
+              icon: 'pi-check',
+              key: 'tc',
+              life: 3000,
+            });
+          },
+          error: (error) => {
+            console.error('Erro ao excluir a notícia:', error);
+          },
+          complete: () => (this.filteredNoticias = this.filteredNoticias.filter((value) => value.id !== item.id)),
+        });
       }
     });
   }
@@ -95,46 +187,58 @@ export class PainelJornalistaComponent {
       if (noticiaEditada) {
         let noticiaSaved: any;
 
-        // Verifica se é uma edição (noticia.id) ou uma criação de nova notícia
         if (noticiaEditada.id) {
-          // Se for edição, realiza a requisição PUT
-          noticiaSaved = await this.apiService.makePutRequest('noticias/' + noticiaEditada.id, noticiaEditada);
+          this.apiService.makePutRequest('noticias/' + noticiaEditada.id, noticiaEditada).subscribe({
+            next: (response: any) => {
+              noticiaSaved = response;
+              this.carregarPalavrasChave(noticiaSaved.id);
+              console.log(this.palavrasChaveMap);
+            },
+            error: (error) => {
+              console.log(error);
+            },
+            complete: () => {
+              if (noticiaSaved) {
+                this.noticias = this.noticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
+                this.filteredNoticias = this.filteredNoticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
 
-          // Se a notícia foi editada com sucesso
-          if (noticiaSaved) {
-            // Atualiza o array de notícias local substituindo a notícia editada
-            this.noticias = this.noticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
-
-            // Atualiza também o array de notícias filtradas, para manter consistência após pesquisa
-            this.filteredNoticias = this.filteredNoticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Notícia editada com sucesso!',
-              detail: 'InfoPulse',
-              icon: 'pi-check',
-              key: 'tl',
-              life: 3000,
-            });
-          }
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Notícia editada com sucesso!',
+                  detail: 'InfoPulse',
+                  icon: 'pi-check',
+                  key: 'tl',
+                  life: 3000,
+                });
+              }
+            },
+          });
         } else {
-          // Se for uma nova notícia, realiza a requisição POST
-          noticiaSaved = await this.apiService.makePostRequest('noticias', noticiaEditada);
+          this.apiService.makePostRequest('noticias', noticiaEditada).subscribe({
+            next: (response: any) => {
+              noticiaSaved = response;
+              this.carregarPalavrasChave(noticiaSaved.id);
+              console.log(this.palavrasChaveMap);
+            },
+            error: (error) => {
+              console.log(error);
+            },
+            complete: () => {
+              if (noticiaSaved) {
+                this.noticias = [...this.noticias, noticiaSaved];
+                this.filteredNoticias = [...this.filteredNoticias, noticiaSaved];
 
-          if (noticiaSaved) {
-            // Adiciona a nova notícia ao array local
-            this.noticias = [...this.noticias, noticiaSaved];
-            this.filteredNoticias = [...this.filteredNoticias, noticiaSaved];
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Notícia criada com sucesso!',
-              detail: 'InfoPulse',
-              icon: 'pi-check',
-              key: 'tl',
-              life: 3000,
-            });
-          }
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Notícia criada com sucesso!',
+                  detail: 'InfoPulse',
+                  icon: 'pi-check',
+                  key: 'tl',
+                  life: 3000,
+                });
+              }
+            },
+          });
         }
       }
     });
@@ -160,18 +264,12 @@ export class PainelJornalistaComponent {
     if (!dateTime) {
       return '';
     }
-
-    // Se for um objeto Date, converte para string ISO
     if (dateTime instanceof Date) {
       dateTime = dateTime.toISOString().split('T')[0];
     }
-
-    // Se ainda não for string, converte para string
     if (typeof dateTime !== 'string') {
       dateTime = String(dateTime);
     }
-
-    // Verifica se é uma string no formato ISO e extrai a data
     let datePart = '';
     if (dateTime.includes('T')) {
       datePart = dateTime.split('T')[0];
@@ -180,15 +278,17 @@ export class PainelJornalistaComponent {
     } else {
       datePart = dateTime;
     }
-
-    // Converte de yyyy-mm-dd para dd/mm/yyyy
     const [year, month, day] = datePart.split('-');
     return `${day}/${month}/${year}`;
   }
 
   extractTimeOnly(dataISO: string): string {
-    const horario = dataISO.split('T')[1].split('.')[0];
-    return horario;
+    if (!dataISO || !dataISO.includes('T')) {
+      console.error('Data inválida:', dataISO);
+      return '';
+    }
+    const horario = dataISO.split('T')[1]?.split('.')[0];
+    return horario || '';
   }
 
   filtrar() {

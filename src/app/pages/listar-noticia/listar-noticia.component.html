@@ -3,19 +3,23 @@
     <app-top-bar></app-top-bar>
   </div>
 
-  <div class="w-10 p-3 flex flex-column mt-5">
+  <div class="w-6 p-3 flex flex-column mt-5">
     <div class="mb-4">
       <h1 class="text-center">{{ noticia.titulo }}</h1>
-      <p class="text-xl">{{ noticia.resumo }}</p>
+      <p class="text-xl" [innerHTML]="getTextoComDestaque(noticia)"></p>
       <p>Por {{ noticia.autor }}</p>
-      <p>{{ !noticiaExterna ? extractDateOnly(noticia.dataPublicacao) + ' - ' + extractTimeOnly(noticia.dataPublicacao) + ' - Atualizado em ' + extractDateOnly(noticia.dataUltimaModificacao) : '' }}</p>
+      <p>
+        {{ !noticiaExterna ? extractDateOnly(noticia.dataPublicacao) + ' - ' + extractTimeOnly(noticia.dataPublicacao) + ' - Atualizado em ' + extractDateOnly(noticia.dataUltimaModificacao) : '' }}
+      </p>
     </div>
     <div class="flex align-items-center justify-content-center mb-5">
       <p-image src="{{ noticia.imagemContentType }}" previewImageSrc="{{ noticia.imagemContentType }}" alt="Imagea" [imageStyle]="{ 'object-fit': 'cover', width: '50vw' }" [preview]="true"> </p-image>
     </div>
 
     <div>
-      <p>{{ noticia.conteudo }}</p>
+      <p [innerHTML]="getConteudoFormatado()"></p>
+      <!-- <p>{{ noticia.conteudo }}</p> -->
+      <!-- <p>{{ conteudoFormatado(noticia.conteudo) }}</p> -->
     </div>
   </div>
 </div>

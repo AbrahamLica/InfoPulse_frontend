@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UsuarioService } from './usuario.service';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AlertModalComponent } from '../util/alert-modal/alert-modal.component';
@@ -34,15 +34,15 @@ export class ApiService {
   }
 
   // Método GET com Observable
-  makeGetRequest(rest: string, anonimo?: boolean) {
+  makeGetRequest<T>(rest: string, anonimo?: boolean): Observable<T> {
     let headers = new HttpHeaders();
 
     if (!anonimo && this.usuarioService?.dadosUsuario?.id_token) {
       headers = headers.set('Authorization', `Bearer ${this.usuarioService.dadosUsuario.id_token}`);
     }
 
-    return this.http.get(`${this.environment.urlBackend}/${rest}`, { headers }).pipe(
-      catchError((e) => this.handleHttpError(e)) // Tratamento de erro com catchError
+    return this.http.get<T>(`${this.environment.urlBackend}/${rest}`, { headers }).pipe(
+      catchError((e) => this.handleHttpError<T>(e)) // Passa o tipo correto para tratar o erro
     );
   }
 
@@ -90,19 +90,18 @@ export class ApiService {
     return this.http.delete(`${this.environment.urlBackend}/${rest}`, { headers }).pipe(catchError((e) => this.handleHttpError(e)));
   }
 
-  // Método para tratar erros HTTP
-  private handleHttpError(e: any) {
+  private handleHttpError<T>(e: any): Observable<T> {
     console.log(e);
 
     if (e.status === 401) {
       this.router.navigateByUrl('/login');
-      return of(null);
+      return throwError(() => new Error('Usuário não autenticado'));
     }
 
-    let errorReturns = e.error?.title;
+    let errorReturns = e.error?.title || 'Erro desconhecido';
 
-    if (e.error.code == 402) {
-      errorReturns = 'Não foi possível fazer a comunicação com a API externa de notícias. O sistema irá exibir apenas as notícias cadastradas no sistema local.';
+    if (e.error?.code === 402) {
+      errorReturns = 'Erro de comunicação com a API externa. Exibindo apenas dados locais.';
     }
 
     if (e.status === 400 && e.error?.errors) {
@@ -117,10 +116,9 @@ export class ApiService {
       data: { content: errorReturns },
     });
 
-    return throwError({ error: true, code: e.status, message: errorReturns });
+    return throwError(() => new Error(errorReturns));
   }
 
-  // Mapeamento de mensagens de erro
   private mapErrorsMessages(errors: { field: string; code: string; defaultMessage: string }[]) {
     return errors
       .map((error) => {
