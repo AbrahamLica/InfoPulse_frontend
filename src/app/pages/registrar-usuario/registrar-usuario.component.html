@@ -1,0 +1,91 @@
+<div class="flex align-items-center justify-content-center flex-column w-screen h-screen">
+  <img src="assets/logo.png" alt="" class="mb-3" />
+
+  <div class="p-4 w-26rem border-round-3xl shadow-6">
+    <p-toast position="top-left" key="tl" />
+    <form [formGroup]="usuarioForm" (ngSubmit)="salvar()" #formDir="ngForm" usuarioForm autocomplete="off">
+      <div class="p-fluid p-2 w-full">
+        <div class="p-field mb-4">
+          <label>Nome Completo: *</label>
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+              <i class="fa-solid fa-font"></i>
+            </span>
+            <input type="text" pInputText formControlName="firstName" autocomplete="doNotAutoComplete" />
+          </div>
+          <div *ngIf="usuarioForm.get('firstName')?.invalid && (usuarioForm.get('firstName')?.touched || formDir.submitted)">
+            <small *ngIf="usuarioForm.get('firstName')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
+            <small *ngIf="usuarioForm.get('firstName')?.errors?.['minlength']" class="p-error"> O campo Nome precisa ter no mínimo 5 caracteres </small>
+          </div>
+        </div>
+
+        <div class="p-field mb-4">
+          <label>Login: *</label>
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+              <i class="fa-solid fa-user"></i>
+            </span>
+            <input type="text" pInputText formControlName="login" usuarioForm autocomplete="doNotAutoComplete" name="new-login" />
+          </div>
+
+          <div *ngIf="usuarioForm.get('login')?.invalid && (usuarioForm.get('login')?.touched || formDir.submitted)">
+            <small *ngIf="usuarioForm.get('login')?.errors?.['required']" class="p-error"> O campo Login é obrigatório </small>
+            <small *ngIf="usuarioForm.get('login')?.errors?.['minlength']" class="p-error"> O campo Login precisa ter no mínimo 10 caracteres </small>
+          </div>
+        </div>
+
+        <div class="p-field mb-4">
+          <label>Email: *</label>
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+              <i class="fa-solid fa-at"></i>
+            </span>
+            <input type="text" pInputText formControlName="email" usuarioForm autocomplete="doNotAutoComplete" />
+          </div>
+
+          <div *ngIf="usuarioForm.get('email')?.invalid && (usuarioForm.get('email')?.touched || formDir.submitted)">
+            <small *ngIf="usuarioForm.get('email')?.errors?.['required']" class="p-error"> O campo Email é obrigatório </small>
+            <small *ngIf="usuarioForm.get('email')?.errors?.['minlength']" class="p-error"> O campo Email precisa ter no mínimo 10 caracteres </small>
+          </div>
+        </div>
+
+        <div class="p-field mb-4">
+          <label>password: *</label>
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" pInputText formControlName="password" usuarioForm autocomplete="doNotAutoComplete" />
+          </div>
+
+          <div *ngIf="usuarioForm.get('password')?.invalid && (usuarioForm.get('password')?.touched || formDir.submitted)">
+            <small *ngIf="usuarioForm.get('password')?.errors?.['required']" class="p-error"> O campo password é obrigatório </small>
+            <small *ngIf="usuarioForm.get('password')?.errors?.['minlength']" class="p-error"> O campo password precisa ter no mínimo 10 caracteres </small>
+          </div>
+        </div>
+
+        <div class="p-field mb-4">
+          <label>Confirme a password: *</label>
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" pInputText formControlName="passwordConfirm" usuarioForm autocomplete="off" />
+          </div>
+
+          <div *ngIf="usuarioForm.get('passwordConfirm')?.touched || formDir.submitted">
+            <small *ngIf="haspasswordMismatch()" class="p-error"> As senhas não são iguais </small>
+          </div>
+        </div>
+
+        <p-toast />
+      </div>
+
+      <!-- Botões -->
+      <div class="flex w-full justify-content-between">
+        <p-button styleClass="w-full mt-4 p-button-success" type="submit" label="Cadastrar" icon="pi pi-check" />
+        <p-button styleClass="w-full mt-4 p-button-danger" type="button" label="Cancelar" (click)="cancelar()" icon="pi pi-times" />
+      </div>
+    </form>
+  </div>
+</div>

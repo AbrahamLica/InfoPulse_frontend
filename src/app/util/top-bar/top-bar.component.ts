@@ -10,17 +10,24 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
+import { UsuarioService } from 'src/app/services/usuario.service';
+import { DialogService } from 'primeng/dynamicdialog';
+import { PainelUsuarioComponent } from 'src/app/pages/painel-usuario/painel-usuario.component';
 
 @Component({
   selector: 'app-top-bar',
   standalone: true,
-  imports: [ToolbarModule, AvatarModule, ImageModule, RouterModule, SidebarModule, ButtonModule, RippleModule, StyleClassModule, InputSwitchModule, FormsModule],
+  imports: [ToolbarModule, MenuModule, AvatarModule, ImageModule, RouterModule, SidebarModule, ButtonModule, RippleModule, StyleClassModule, InputSwitchModule, FormsModule, CommonModule],
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.scss',
 })
 export class TopBarComponent {
   #document = inject(DOCUMENT);
   @ViewChild('sidebarRef') sidebarRef!: Sidebar;
+  items: MenuItem[] | undefined;
 
   closeCallback(e: any): void {
     this.sidebarRef.close(e);
@@ -29,7 +36,37 @@ export class TopBarComponent {
   sidebarVisible: boolean = false;
   isDarkMode = false;
 
-  constructor(private router: Router) {}
+  constructor(private dialogService: DialogService, private router: Router, private usuarioService: UsuarioService) {
+    let usuario = this.usuarioService.getDadosUsuario();
+
+    this.items = [
+      {
+        label: usuario?.user?.login,
+        items: [
+          {
+            label: 'Painel do usuário',
+            icon: 'pi pi-user',
+            command: () => {
+              this.irParaPainelUsuario();
+            },
+          },
+          {
+            label: 'Deslogar',
+            icon: 'pi pi-sign-out',
+            command: () => {
+              this.usuarioService.deslogar();
+            },
+          },
+        ],
+      },
+    ];
+  }
+
+  irParaPainelUsuario() {
+    this.dialogService.open(PainelUsuarioComponent, {
+      width: '50%',
+    });
+  }
 
   goHome() {
     this.router.navigateByUrl('/home');

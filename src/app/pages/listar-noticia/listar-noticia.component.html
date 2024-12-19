@@ -6,8 +6,9 @@
   <div class="w-6 p-3 flex flex-column mt-5">
     <div class="mb-4">
       <h1 class="text-center">{{ noticia.titulo }}</h1>
-      <p class="text-xl" [innerHTML]="getTextoComDestaque(noticia)"></p>
-      <p>Por {{ noticia.autor }}</p>
+      <p *ngIf="!noticiaExterna" class="text-xl" [innerHTML]="getTextoComDestaque(noticia)"></p>
+      <p *ngIf="noticia.autor != null || noticia.autor != undefined">Por {{ noticia.autor }}</p>
+
       <p>
         {{ !noticiaExterna ? extractDateOnly(noticia.dataPublicacao) + ' - ' + extractTimeOnly(noticia.dataPublicacao) + ' - Atualizado em ' + extractDateOnly(noticia.dataUltimaModificacao) : '' }}
       </p>
@@ -18,8 +19,8 @@
 
     <div>
       <p [innerHTML]="getConteudoFormatado()"></p>
-      <!-- <p>{{ noticia.conteudo }}</p> -->
-      <!-- <p>{{ conteudoFormatado(noticia.conteudo) }}</p> -->
     </div>
+
+    <a [href]="noticiaExterna ? noticia.url : '#'" target="_blank">{{ noticiaExterna ? noticia.url : '' }}</a>
   </div>
 </div>

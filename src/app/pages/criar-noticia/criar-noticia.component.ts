@@ -115,20 +115,22 @@ export class CriarNoticiaComponent {
       this.palavras = this.extrairPalavras(resumo);
     });
 
-    if (this.config.data.noticia) {
-      this.noticiaForm.patchValue(this.config.data.noticia);
+    if (this.config.data.noticiaForm) {
+      this.noticiaForm.patchValue(this.config.data.noticiaForm);
 
-      this.apiService.makeGetRequest<PalavraChave[]>(`palavras-chaves?size=99999&noticiaId.equals=${this.noticiaForm.get('id')?.value}`).subscribe({
-        next: (response: PalavraChave[]) => {
-          this.palavrasChave = response;
-          this.palavras = this.palavras.filter((palavra) => {
-            return !this.palavrasChave.some((palavraChave) => palavraChave.palavra === palavra.palavra);
-          });
-          if (this.palavrasChaveAntes.length === 0) {
-            this.palavrasChaveAntes = [...this.palavrasChave];
-          }
-        },
-      });
+      if (this.noticiaForm.get('id')?.value !== null) {
+        this.apiService.makeGetRequest<PalavraChave[]>(`palavras-chaves?size=99999&noticiaId.equals=${this.noticiaForm.get('id')?.value}`).subscribe({
+          next: (response: PalavraChave[]) => {
+            this.palavrasChave = response;
+            this.palavras = this.palavras.filter((palavra) => {
+              return !this.palavrasChave.some((palavraChave) => palavraChave.palavra === palavra.palavra);
+            });
+            if (this.palavrasChaveAntes.length === 0) {
+              this.palavrasChaveAntes = [...this.palavrasChave];
+            }
+          },
+        });
+      }
 
       this.ImagemCarregada.url = this.noticiaForm.get('imagemContentType')?.value;
 
@@ -284,20 +286,9 @@ export class CriarNoticiaComponent {
 
       if (this.noticiaForm.valid) {
         this.loading = true;
-        await Promise.all(this.palavrasChaveAntes.map((item) => this.apiService.makeDeleteRequest(`palavras-chaves/${item.id}`).toPromise()));
-        for (let palavraChave of palavrasChaveUnicas) {
-          const palavraChaveObj: PalavraChave = {
-            palavra: palavraChave.palavra,
-            noticia: {
-              id: this.noticiaForm.get('id')?.value,
-              titulo: this.noticiaForm.get('titulo')?.value,
-            },
-          };
 
-          await this.apiService.makePostRequest('palavras-chaves', palavraChaveObj).toPromise();
-        }
+        this.ref.close({ noticiaForm: this.noticiaForm.value, palavrasChavesUnicas: palavrasChaveUnicas, palavrasChaveAntes: this.palavrasChaveAntes });
 
-        this.ref.close(this.noticiaForm.value);
         this.loading = false;
       }
     } else {
@@ -312,19 +303,7 @@ export class CriarNoticiaComponent {
         });
 
         if (this.noticiaForm.valid) {
-          this.ref.close(this.noticiaForm.value);
-          await Promise.all(this.palavrasChaveAntes.map((item) => this.apiService.makeDeleteRequest(`palavras-chaves/${item.id}`).toPromise()));
-          for (let palavraChave of palavrasChaveUnicas) {
-            const palavraChaveObj: PalavraChave = {
-              palavra: palavraChave.palavra,
-              noticia: {
-                id: this.noticiaForm.get('id')?.value,
-                titulo: this.noticiaForm.get('titulo')?.value,
-              },
-            };
-
-            await this.apiService.makePostRequest('palavras-chaves', palavraChaveObj).toPromise();
-          }
+          this.ref.close({ noticiaForm: this.noticiaForm.value, palavrasChavesUnicas: palavrasChaveUnicas, palavrasChaveAntes: this.palavrasChaveAntes });
         }
         this.loading = false;
       }

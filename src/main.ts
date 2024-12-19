@@ -20,6 +20,8 @@ import { IMAGE_CONFIG } from '@angular/common';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ListarNoticiaComponent } from './app/pages/listar-noticia/listar-noticia.component';
 import { NotfoundComponent } from './app/pages/notfound/notfound.component';
+import { PainelUsuarioComponent } from './app/pages/painel-usuario/painel-usuario.component';
+import { RegistrarUsuarioComponent } from './app/pages/registrar-usuario/registrar-usuario.component';
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -45,6 +47,16 @@ const routes: Routes = [
   {
     path: 'painel-jornalista',
     component: PainelJornalistaComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'painel-usuario',
+    component: PainelUsuarioComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'registrar-usuario',
+    component: RegistrarUsuarioComponent,
     canActivate: [AuthGuardService],
   },
   {

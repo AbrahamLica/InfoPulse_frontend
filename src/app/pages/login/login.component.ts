@@ -57,4 +57,8 @@ export class LoginComponent {
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
+
+  registrarUsuario() {
+    this.router.navigateByUrl('/registrar-usuario');
+  }
 }

@@ -1,5 +1,8 @@
 <div class="shadow-2 w-full bg-primary p-4 border-noround flex align-items-center justify-content-between">
-  <p-image src="assets/menu.png" alt="Menu" width="40px" styleClass="cursor-pointer" (click)="sidebarVisible = true"></p-image>
+  <button class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200">
+    <i class="fa-solid fa-bars fa-2xl" [ngStyle]="{ color: isDarkMode ? 'white' : 'black' }" (click)="sidebarVisible = true"></i>
+  </button>
+
   <p-image src="assets/logo.png" alt="Logo" width="250px" styleClass="cursor-pointer" (click)="goHome()"></p-image>
 
   <div class="flex flex-wrap align-items-center gap-3">
@@ -7,11 +10,18 @@
       class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200"
       (click)="goHome()"
     >
-      <i class="pi pi-home text-2xl"></i>
+      <i class="fa-solid fa-house fa-2xl" [ngStyle]="{ color: isDarkMode ? 'white' : 'black' }"></i>
     </button>
-    <button class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200">
-      <i class="pi pi-user text-2xl"></i>
+
+    <button
+      class="p-link inline-flex justify-content-center align-items-center text-white h-3rem w-3rem border-circle hover:bg-white-alpha-10 transition-all transition-duration-200"
+      (click)="menu.toggle($event)"
+    >
+      <i class="fa-solid fa-user fa-2xl" [ngStyle]="{ color: isDarkMode ? 'white' : 'black' }"></i>
     </button>
+
+    <!-- Menu conectado ao botão -->
+    <p-menu #menu [model]="items" [popup]="true"></p-menu>
   </div>
 </div>
 
@@ -61,7 +71,7 @@
                   </a>
                   <ul class="list-none py-0 pl-3 pr-0 m-0 hidden overflow-y-hidden transition-all transition-duration-400 transition-ease-in-out">
                     <li>
-                      <div class="text-xl mb-3">@if (isDarkMode) { Dark 🌚 } @else { Light 🌞 }</div>
+                      <div class="text-xl mb-3">@if (isDarkMode) { Escuro 🌚 } @else { Claro 🌞 }</div>
                       <p-inputSwitch [ngModel]="isDarkMode" (ngModelChange)="toggleLightDark()" />
                     </li>
                   </ul>
@@ -69,13 +79,6 @@
               </ul>
             </li>
           </ul>
-        </div>
-        <div class="mt-auto">
-          <hr class="mb-3 mx-3 border-top-1 border-none surface-border" />
-          <a pRipple class="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple">
-            <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
-            <span class="font-bold">Amy Elsner</span>
-          </a>
         </div>
       </div>
     </ng-template>

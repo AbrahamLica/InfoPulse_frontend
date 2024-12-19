@@ -17,6 +17,7 @@ import { catchError, forkJoin, map, of } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FooterComponent } from '../footer/footer.component';
+import { NoticiaService } from 'src/app/services/noticia.service';
 
 @Component({
   selector: 'app-main',
@@ -35,7 +36,7 @@ export class MainComponent {
   latitude: any;
   longitude: any;
 
-  constructor(private sanitizer: DomSanitizer, private apiService: ApiService, private userService: UsuarioService, private router: Router) {
+  constructor(private sanitizer: DomSanitizer, private apiService: ApiService, private userService: UsuarioService, private router: Router, private noticiaService: NoticiaService) {
     this.init();
   }
 
@@ -46,17 +47,26 @@ export class MainComponent {
   }
 
   init() {
-    let urlApi = 'https://api.worldnewsapi.com/top-news?source-countryy=us&language=en&api-key=52347244a1aa47c1bb7627b5d2a82660';
+    if (this.noticiaService.getNoticiasExternas().length > 0 && this.noticiaService.getNoticiasInternas().length > 0) {
+      this.loading = true;
+      this.noticiasExternas = this.noticiaService.getNoticiasExternas();
+      this.noticiasBackend = this.noticiaService.getNoticiasInternas();
+      this.noticiasFinal = [...this.noticiasBackend, ...this.noticiasExternas];
+      this.loading = false;
+      return;
+    }
 
+    // Caso contrário, carregue as notícias
     forkJoin({
-      noticiasExternas: this.apiService.makeGetRequestApi(urlApi).pipe(
+      noticiasExternas: this.apiService.makeGetRequestApi('https://api.worldnewsapi.com/top-news?source-country=us&language=en&api-key=52347244a1aa47c1bb7627b5d2a82660').pipe(
         catchError((error) => {
+          console.error('Erro ao carregar notícias externas:', error);
           return of([]);
         })
       ),
       noticiasBackend: this.apiService.makeGetRequest('noticias?size=99999').pipe(
         catchError((error) => {
-          console.error('Erro ao buscar notícias do backend:', error);
+          console.error('Erro ao carregar notícias do backend:', error);
           return of([]);
         })
       ),
@@ -73,6 +83,7 @@ export class MainComponent {
               imagemContentType: article.news[0].image,
               categoria: article.news[0].source_country,
               tempoDeLeitura: readingTime(article.news[0].text ?? '', 10, 'pt-br').text,
+              url: article.news[0].url,
             };
             return noticiaExterna;
           }) || [];
@@ -84,19 +95,15 @@ export class MainComponent {
             return noticia;
           });
 
-        this.noticiasBackend.forEach((noticia: Noticia) => {
-          if (noticia.id) {
-            this.carregarPalavrasChave(noticia.id);
-          }
-        });
+        // Armazene os dados no serviço
+        this.noticiaService.setNoticiasExternas(this.noticiasExternas);
+        this.noticiaService.setNoticiasInternas(this.noticiasBackend);
       },
       complete: () => {
         this.noticiasFinal = [...this.noticiasBackend, ...this.noticiasExternas];
         this.loading = false;
       },
     });
-
-    this.obterClimaAtual();
   }
 
   obterClimaAtual() {
@@ -110,16 +117,6 @@ export class MainComponent {
         (position) => {
           latitude = position.coords.latitude;
           longitude = position.coords.longitude;
-          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-
-          this.apiService.makeGetRequestApi(`${endpointApi}${tokenAPi}&q=${latitude},${longitude}&aqi=no`).subscribe({
-            next: (response) => {
-              console.log(response);
-            },
-            error: (err) => {
-              console.log(err);
-            },
-          });
         },
         (error) => {
           console.error('Erro ao obter localização:', error.message);

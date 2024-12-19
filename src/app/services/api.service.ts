@@ -2,8 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UsuarioService } from './usuario.service';
 import { Router } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AlertModalComponent } from '../util/alert-modal/alert-modal.component';
 import _ from 'lodash';
@@ -20,116 +20,67 @@ export class ApiService {
 
   constructor(private http: HttpClient, private usuarioService: UsuarioService, private router: Router, private dialogService: DialogService) {}
 
-  // Método GET com Observable
-  makeGetRequestApi(rest: string, anonimo?: boolean) {
+  private createHeaders(anonimo?: boolean): HttpHeaders {
     let headers = new HttpHeaders();
 
     if (!anonimo && this.usuarioService?.dadosUsuario?.id_token) {
       headers = headers.set('Authorization', `Bearer ${this.usuarioService.dadosUsuario.id_token}`);
     }
 
-    return this.http.get(`${rest}`, { headers }).pipe(
-      catchError((e) => this.handleHttpError(e)) // Tratamento de erro com catchError
-    );
+    return headers;
   }
 
-  // Método GET com Observable
-  makeGetRequest<T>(rest: string, anonimo?: boolean): Observable<T> {
-    let headers = new HttpHeaders();
-
-    if (!anonimo && this.usuarioService?.dadosUsuario?.id_token) {
-      headers = headers.set('Authorization', `Bearer ${this.usuarioService.dadosUsuario.id_token}`);
-    }
-
-    return this.http.get<T>(`${this.environment.urlBackend}/${rest}`, { headers }).pipe(
-      catchError((e) => this.handleHttpError<T>(e)) // Passa o tipo correto para tratar o erro
-    );
-  }
-
-  // Método POST com Observable
-  makePostRequest(rest: string, body: any) {
-    let headers = new HttpHeaders();
-
-    if (this.usuarioService?.dadosUsuario?.id_token) {
-      headers = headers.set('Authorization', `Bearer ${this.usuarioService.dadosUsuario.id_token}`);
-    }
-
-    return this.http.post(`${this.environment.urlBackend}/${rest}`, body, { headers }).pipe(catchError((e) => this.handleHttpError(e)));
-  }
-
-  // Método PUT com Observable
-  makePutRequest(rest: string, body: any) {
-    let headers = new HttpHeaders();
-
-    if (this.usuarioService?.dadosUsuario?.id_token) {
-      headers = headers.set('Authorization', `Bearer ${this.usuarioService.dadosUsuario.id_token}`);
-    }
-
-    return this.http.put(`${this.environment.urlBackend}/${rest}`, body, { headers }).pipe(catchError((e) => this.handleHttpError(e)));
-  }
-
-  // Método PATCH com Observable
-  makePatchRequest(rest: string, body: any) {
-    let headers = new HttpHeaders();
-
-    if (this.usuarioService?.dadosUsuario?.id_token) {
-      headers = headers.set('Authorization', `Bearer ${this.usuarioService.dadosUsuario.id_token}`);
-    }
-
-    return this.http.patch(`${this.environment.urlBackend}/${rest}`, body, { headers }).pipe(catchError((e) => this.handleHttpError(e)));
-  }
-
-  // Método DELETE com Observable
-  makeDeleteRequest(rest: string) {
-    let headers = new HttpHeaders();
-
-    if (this.usuarioService?.dadosUsuario?.id_token) {
-      headers = headers.set('Authorization', `Bearer ${this.usuarioService.dadosUsuario.id_token}`);
-    }
-
-    return this.http.delete(`${this.environment.urlBackend}/${rest}`, { headers }).pipe(catchError((e) => this.handleHttpError(e)));
-  }
-
-  private handleHttpError<T>(e: any): Observable<T> {
-    console.log(e);
-
+  private handleError(e: any) {
     if (e.status === 401) {
       this.router.navigateByUrl('/login');
-      return throwError(() => new Error('Usuário não autenticado'));
+      return throwError(() => e);
     }
 
-    let errorReturns = e.error?.title || 'Erro desconhecido';
-
-    if (e.error?.code === 402) {
-      errorReturns = 'Erro de comunicação com a API externa. Exibindo apenas dados locais.';
-    }
-
-    if (e.status === 400 && e.error?.errors) {
-      errorReturns = this.mapErrorsMessages(e.error.errors);
-    } else if (e.status === 409 || e.status === 500) {
-      errorReturns = this.mapErrorsMessages([e.error]);
-    }
+    const errorTitle = e.error?.title || 'Erro desconhecido';
+    const errorDetails = e.error?.detail || 'Erro desconhecido';
 
     this.dialogService.open(AlertModalComponent, {
       header: 'Erro',
       width: '50%',
-      data: { content: errorReturns },
+      data: { content: errorDetails },
     });
 
-    return throwError(() => new Error(errorReturns));
+    return throwError(() => e);
   }
 
-  private mapErrorsMessages(errors: { field: string; code: string; defaultMessage: string }[]) {
-    return errors
-      .map((error) => {
-        error.defaultMessage = error?.defaultMessage?.includes('deve corresponder') ? `Formato do campo ${error?.field} incorreto.` : error?.defaultMessage;
-        error.defaultMessage = error?.defaultMessage?.replace('não deve ser nulo', 'não deve ser vazio');
-        if (error?.code?.includes('uniqueConstraintFail')) {
-          error.defaultMessage = `Campo ${error.field} já tem seu valor definido para outro registro, tente outro valor.`;
-        }
+  makeGetRequestApi(rest: string, anonimo?: boolean) {
+    const headers = this.createHeaders(anonimo);
 
-        return _.upperFirst(error.defaultMessage);
-      })
-      .join('<br>');
+    return this.http.get(`${rest}`, { headers }).pipe(catchError((e) => this.handleError(e)));
+  }
+
+  makeGetRequest<T>(rest: string, anonimo?: boolean): Observable<T> {
+    const headers = this.createHeaders(anonimo);
+
+    return this.http.get<T>(`${this.environment.urlBackend}/${rest}`, { headers }).pipe(catchError((e) => this.handleError(e)));
+  }
+
+  makePostRequest(rest: string, body: any) {
+    const headers = this.createHeaders();
+
+    return this.http.post(`${this.environment.urlBackend}/${rest}`, body, { headers }).pipe(catchError((e) => this.handleError(e)));
+  }
+
+  makePutRequest(rest: string, body: any) {
+    const headers = this.createHeaders();
+
+    return this.http.put(`${this.environment.urlBackend}/${rest}`, body, { headers }).pipe(catchError((e) => this.handleError(e)));
+  }
+
+  makePatchRequest(rest: string, body: any) {
+    const headers = this.createHeaders();
+
+    return this.http.patch(`${this.environment.urlBackend}/${rest}`, body, { headers }).pipe(catchError((e) => this.handleError(e)));
+  }
+
+  makeDeleteRequest(rest: string) {
+    const headers = this.createHeaders();
+
+    return this.http.delete(`${this.environment.urlBackend}/${rest}`, { headers }).pipe(catchError((e) => this.handleError(e)));
   }
 }

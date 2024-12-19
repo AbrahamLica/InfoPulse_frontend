@@ -23,6 +23,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { ListarCategoriasComponent } from '../listar-categorias/listar-categorias.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import PalavraChave from 'src/app/classes/palavraChave';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-painel-jornalista',
@@ -88,14 +90,14 @@ export class PainelJornalistaComponent {
     });
   }
 
-  carregarPalavrasChave(noticiaId: number) {
+  async carregarPalavrasChave(noticiaId: number) {
     if (!this.palavrasChaveMap.has(noticiaId)) {
       this.apiService.makeGetRequest(`palavras-chaves?size=99999&noticiaId.equals=${noticiaId}`).subscribe({
         next: (response: any) => {
           this.palavrasChaveMap.set(noticiaId, response);
         },
         error: (error) => {
-          console.error('Erro ao carregar palavras-chave:', error);
+          console.error(error);
         },
       });
     } else {
@@ -127,7 +129,7 @@ export class PainelJornalistaComponent {
     palavrasChave.forEach((palavra: any) => {
       const regex = new RegExp(`\\b(${palavra.palavra})\\b`, 'gi');
       if (textoComDestaque) {
-        textoComDestaque = textoComDestaque.replace(regex, `<span style="color: #fa8e42; font-weight: bold;">$1</span>`);
+        textoComDestaque = textoComDestaque.replace(regex, `<span class="text-primary font-bold">$1</span>`);
       }
     });
     //@ts-ignore
@@ -153,51 +155,79 @@ export class PainelJornalistaComponent {
 
     ref.onClose.subscribe(async (resposta: boolean) => {
       if (resposta) {
-        this.apiService.makeDeleteRequest(`noticias/${item.id}`).subscribe({
-          next: () => {
-            this.noticias = this.noticias.filter((value) => value.id !== item.id);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Notícia excluída com sucesso!',
-              detail: 'InfoPulse',
-              icon: 'pi-check',
-              key: 'tc',
-              life: 3000,
+        this.apiService.makeGetRequest(`palavras-chaves?size=99999&noticiaId.equals=${item.id}`).subscribe({
+          next: async (palavrasChaves: any) => {
+            // Agora que temos todas as palavras-chave associadas, podemos excluir uma por uma.
+            for (let palavraChave of palavrasChaves) {
+              await lastValueFrom(this.apiService.makeDeleteRequest(`palavras-chaves/${palavraChave.id}`));
+            }
+
+            // Excluindo a notícia.
+            this.apiService.makeDeleteRequest(`noticias/${item.id}`).subscribe({
+              next: () => {
+                // Atualizando o estado das notícias.
+                this.noticias = this.noticias.filter((value) => value.id !== item.id);
+                this.filteredNoticias = this.filteredNoticias.filter((value) => value.id !== item.id);
+
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Notícia excluída com sucesso!',
+                  icon: 'pi-check',
+                  key: 'tc',
+                  life: 3000,
+                });
+              },
+              error: (error) => {
+                console.error(error);
+              },
             });
           },
           error: (error) => {
-            console.error('Erro ao excluir a notícia:', error);
+            console.error(error);
           },
-          complete: () => (this.filteredNoticias = this.filteredNoticias.filter((value) => value.id !== item.id)),
         });
       }
     });
   }
 
-  async criarNoticia(noticia?: Noticia) {
+  async criarNoticia(noticiaForm?: Noticia, palavrasChavesUnicas?: any, palavrasChaveAntes?: any) {
     let caixaDeDialogo = this.dialogService.open(CriarNoticiaComponent, {
-      header: noticia ? (noticia.id ? 'Editar' : 'Cadastrar') : 'Cadastrar',
+      header: noticiaForm ? (noticiaForm.id ? 'Editar' : 'Cadastrar') : 'Cadastrar',
       width: '70%',
       data: {
-        noticia: noticia || new Noticia(),
+        noticiaForm: noticiaForm || new Noticia(),
+        palavrasChavesUnicas: palavrasChavesUnicas,
+        palavrasChaveAntes: palavrasChaveAntes,
       },
     });
 
-    caixaDeDialogo.onClose.subscribe(async (noticiaEditada: Noticia) => {
-      if (noticiaEditada) {
+    caixaDeDialogo.onClose.subscribe(async (data) => {
+      if (data) {
+        const noticia = data.noticiaForm;
+        const palavrasChavesUnicas = data.palavrasChavesUnicas || [];
+        const palavrasChaveAntes = data.palavrasChaveAntes || [];
         let noticiaSaved: any;
 
-        if (noticiaEditada.id) {
-          this.apiService.makePutRequest('noticias/' + noticiaEditada.id, noticiaEditada).subscribe({
-            next: (response: any) => {
+        if (noticia?.id) {
+          this.apiService.makePutRequest(`noticias/${noticia.id}`, noticia).subscribe({
+            next: async (response: any) => {
               noticiaSaved = response;
-              this.carregarPalavrasChave(noticiaSaved.id);
-              console.log(this.palavrasChaveMap);
+              await Promise.all(palavrasChaveAntes.map((item: any) => lastValueFrom(this.apiService.makeDeleteRequest(`palavras-chaves/${item.id}`))));
+
+              for (let palavraChave of palavrasChavesUnicas) {
+                const palavraChaveObj: PalavraChave = {
+                  palavra: palavraChave.palavra,
+                  noticia: { id: noticiaSaved.id },
+                };
+                await this.apiService.makePostRequest('palavras-chaves', palavraChaveObj).toPromise();
+              }
+
+              setTimeout(async () => {
+                await this.carregarPalavrasChave(noticiaSaved.id);
+              }, 200);
             },
-            error: (error) => {
-              console.log(error);
-            },
-            complete: () => {
+            error: (error) => console.log(error),
+            complete: async () => {
               if (noticiaSaved) {
                 this.noticias = this.noticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
                 this.filteredNoticias = this.filteredNoticias.map((noticia) => (noticia.id === noticiaSaved.id ? noticiaSaved : noticia));
@@ -205,7 +235,6 @@ export class PainelJornalistaComponent {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Notícia editada com sucesso!',
-                  detail: 'InfoPulse',
                   icon: 'pi-check',
                   key: 'tl',
                   life: 3000,
@@ -214,24 +243,29 @@ export class PainelJornalistaComponent {
             },
           });
         } else {
-          this.apiService.makePostRequest('noticias', noticiaEditada).subscribe({
-            next: (response: any) => {
+          this.apiService.makePostRequest('noticias', noticia).subscribe({
+            next: async (response: any) => {
               noticiaSaved = response;
-              this.carregarPalavrasChave(noticiaSaved.id);
-              console.log(this.palavrasChaveMap);
+              for (let palavraChave of palavrasChavesUnicas) {
+                const palavraChaveObj: PalavraChave = {
+                  palavra: palavraChave.palavra,
+                  noticia: { id: noticiaSaved.id },
+                };
+                await this.apiService.makePostRequest('palavras-chaves', palavraChaveObj).toPromise();
+              }
             },
-            error: (error) => {
-              console.log(error);
-            },
+            error: (error) => console.log(error),
             complete: () => {
               if (noticiaSaved) {
                 this.noticias = [...this.noticias, noticiaSaved];
                 this.filteredNoticias = [...this.filteredNoticias, noticiaSaved];
+                setTimeout(async () => {
+                  await this.carregarPalavrasChave(noticiaSaved.id);
+                }, 200);
 
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Notícia criada com sucesso!',
-                  detail: 'InfoPulse',
                   icon: 'pi-check',
                   key: 'tl',
                   life: 3000,

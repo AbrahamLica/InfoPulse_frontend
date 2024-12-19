@@ -1,16 +1,19 @@
-<div class="flex flex-column align-items-center min-h-full bg-green-300" style="margin: 0 !important; padding: 0">
+<div class="flex flex-column align-items-center min-h-screen" style="margin: 0; padding: 0">
   <div class="w-full">
     <app-top-bar></app-top-bar>
   </div>
-  <div class="mt-5 w-10 flex flex-column align-items-center justify-content-center">
-    <div class="w-full border-round-sm bg-primary p-4 flex align-items-center justify-content-center flex-column">
+
+  <div class="mt-5 w-10 flex flex-column flex-grow-1">
+    <div class="w-full border-round-3xl bg-primary p-4 flex align-items-center justify-content-center flex-column">
       <p class="text-4xl m-0" style="letter-spacing: 3px">Bem-vindo ao InfoPulse</p>
       <p class="text-2xl text-center">
         Fique por dentro das <span class="font-bold">notícias</span> mais <span class="font-bold">quentes 🔥</span> e atualizadas do Brasil e do mundo 🌎, com análises rápidas e objetivas.💡
       </p>
     </div>
 
-    <p-progressSpinner *ngIf="loading" styleClass="w-13rem h-13rem" strokeWidth="3" fill="var(--surface-ground)" animationDuration=".5s" />
+    <div class="flex align-content-center justify-content-center">
+      <p-progressSpinner *ngIf="loading" styleClass="w-13rem h-13rem" strokeWidth="3" fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+    </div>
 
     <div *ngIf="!loading">
       <ng-container *ngIf="noticiasFinal.length === 0; else showDataView">

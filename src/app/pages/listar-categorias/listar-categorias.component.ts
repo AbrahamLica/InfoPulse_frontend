@@ -32,17 +32,24 @@ export class ListarCategoriasComponent {
   }
 
   async init() {
-    const response = await this.apiService.makeGetRequest(`categorias?size=99999`);
-    this.categorias = Array.isArray(response) ? response : [];
-    this.filteredCategorias = this.categorias;
+    this.apiService.makeGetRequest<Categoria[]>(`categorias?size=99999`).subscribe({
+      next: (response: Categoria[]) => {
+        this.categorias = response;
+        this.filteredCategorias = this.categorias;
+      },
+      error: (e) => {
+        console.log(e);
+      },
+      complete() {},
+    });
   }
 
   toUpper(texto: string) {
     return texto?.toUpperCase();
   }
 
-  async criarCategoria(categoria?: Categoria) {
-    let caixaDeDialogo = this.dialogService.open(CriarCategoriaComponent, {
+  criarCategoria(categoria?: Categoria) {
+    const caixaDeDialogo = this.dialogService.open(CriarCategoriaComponent, {
       header: categoria ? (categoria.id ? 'Editar' : 'Cadastrar') : 'Cadastrar',
       width: '40%',
       data: {
@@ -50,46 +57,60 @@ export class ListarCategoriasComponent {
       },
     });
 
-    caixaDeDialogo.onClose.subscribe(async (categoriaEditada: Categoria) => {
+    caixaDeDialogo.onClose.subscribe((categoriaEditada: Categoria) => {
       if (categoriaEditada) {
-        let categoriaSaved: any;
-
-        // Verifica se é uma edição (noticia.id) ou uma criação de nova notícia
         if (categoriaEditada.id) {
-          // Se for edição, realiza a requisição PUT
-          categoriaSaved = await this.apiService.makePutRequest('categorias/' + categoriaEditada.id, categoriaEditada);
+          this.apiService.makePutRequest('categorias/' + categoriaEditada.id, categoriaEditada).subscribe({
+            next: (categoriaSaved: Categoria) => {
+              this.categorias = this.categorias.map((categoria) => (categoria.id === categoriaSaved.id ? categoriaSaved : categoria));
+              this.filteredCategorias = this.filteredCategorias.map((categoria) => (categoria.id === categoriaSaved.id ? categoriaSaved : categoria));
 
-          // Se a notícia foi editada com sucesso
-          if (categoriaSaved) {
-            // Atualiza o array de notícias local substituindo a notícia editada
-            this.categorias = this.categorias.map((categoria) => (categoria.id === categoriaSaved.id ? categoriaSaved : categoria));
-
-            // Atualiza também o array de notícias filtradas, para manter consistência após pesquisa
-            this.filteredCategorias = this.filteredCategorias.map((categoria) => (categoria.id === categoriaSaved.id ? categoriaSaved : categoria));
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Notícia editada com sucesso!',
-              icon: 'pi-check',
-              key: 'tl',
-              life: 3000,
-            });
-          }
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Categoria editada com sucesso!',
+                icon: 'pi-check',
+                key: 'tl',
+                life: 3000,
+              });
+            },
+            error: (err) => {
+              console.error('Erro ao editar categoria:', err);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro ao editar categoria',
+                detail: 'Ocorreu um erro ao tentar editar a categoria.',
+                icon: 'pi-times',
+                key: 'tl',
+                life: 3000,
+              });
+            },
+          });
         } else {
-          categoriaSaved = await this.apiService.makePostRequest('categorias', categoriaEditada);
+          this.apiService.makePostRequest('categorias', categoriaEditada).subscribe({
+            next: (categoriaSaved: Categoria) => {
+              this.categorias = [...this.categorias, categoriaSaved];
+              this.filteredCategorias = [...this.filteredCategorias, categoriaSaved];
 
-          if (categoriaSaved) {
-            this.categorias = [...this.categorias, categoriaSaved];
-            this.filteredCategorias = [...this.filteredCategorias, categoriaSaved];
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Notícia criada com sucesso!',
-              icon: 'pi-check',
-              key: 'tl',
-              life: 3000,
-            });
-          }
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Categoria criada com sucesso!',
+                icon: 'pi-check',
+                key: 'tl',
+                life: 3000,
+              });
+            },
+            error: (err) => {
+              console.error('Erro ao criar categoria:', err);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro ao criar categoria',
+                detail: 'Ocorreu um erro ao tentar criar a categoria.',
+                icon: 'pi-times',
+                key: 'tl',
+                life: 3000,
+              });
+            },
+          });
         }
       }
     });
@@ -99,15 +120,18 @@ export class ListarCategoriasComponent {
     let ref = this.dialogService.open(ConfirmModalComponent, {
       header: 'Excluir',
       width: '50%',
-      data: { content: 'Deseja excluir a noticia selecionada?' },
+      data: { content: 'Deseja excluir a categoria selecionada?' },
     });
 
     ref.onClose.subscribe(async (resposta: boolean) => {
       if (resposta) {
-        await this.apiService.makeDeleteRequest(`categorias/${item.id}`);
-        this.categorias = this.categorias.filter((value) => value.id != item.id);
-        this.filteredCategorias = this.filteredCategorias.filter((value) => value.id != item.id);
-        this.messageService.add({ severity: 'success', summary: 'Notícia excluída com sucesso!', icon: 'pi-check', key: 'tc', life: 3000 });
+        this.apiService.makeDeleteRequest(`categorias/${item.id}`).subscribe({
+          next: () => {
+            this.categorias = this.categorias.filter((value) => value.id != item.id);
+            this.filteredCategorias = this.filteredCategorias.filter((value) => value.id != item.id);
+            this.messageService.add({ severity: 'success', summary: 'Categoria excluída com sucesso!', icon: 'pi-check', key: 'tc', life: 3000 });
+          },
+        });
       }
     });
   }

@@ -2,15 +2,17 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import Noticia from 'src/app/classes/noticia';
 import { ApiService } from 'src/app/services/api.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TopBarComponent } from '../../util/top-bar/top-bar.component';
 import { ImageModule } from 'primeng/image';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { NoticiaService } from 'src/app/services/noticia.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-listar-noticia',
   standalone: true,
-  imports: [TopBarComponent, ImageModule],
+  imports: [TopBarComponent, ImageModule, CommonModule],
   templateUrl: './listar-noticia.component.html',
   styleUrl: './listar-noticia.component.scss',
 })
@@ -19,11 +21,20 @@ export class ListarNoticiaComponent {
   noticiaExterna: boolean = false;
   palavrasChave: any[] = [];
 
-  constructor(private sanitizer: DomSanitizer, private http: HttpClient, private apiService: ApiService, private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private http: HttpClient,
+    private apiService: ApiService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private noticiaService: NoticiaService
+  ) {
     this.init();
   }
 
   async init() {
+    window.scrollTo(0, 0);
+
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state;
 
@@ -55,11 +66,15 @@ export class ListarNoticiaComponent {
   }
 
   getConteudoFormatado(): SafeHtml {
-    //@ts-ignore
+    if (!this.noticia || !this.noticia.conteudo) {
+      return '';
+    }
+
     const paragrafos = this.noticia.conteudo
-      .split(/\n\n+/) // Divide por linha em branco
+      .split(/\n\n+/)
       .map((paragrafo) => `<p>${paragrafo.trim()}</p>`)
       .join('');
+
     return this.sanitizer.bypassSecurityTrustHtml(paragrafos);
   }
 
@@ -83,7 +98,7 @@ export class ListarNoticiaComponent {
 
     this.palavrasChave.forEach((palavra) => {
       const regex = new RegExp(`\\b${palavra}\\b`, 'gi');
-      const novoTextoComDestaque = textoComDestaque.replace(regex, `<span style="color: #fa8e42; font-weight: bold;">${palavra}</span>`);
+      const novoTextoComDestaque = textoComDestaque.replace(regex, `<span class="text-primary font-bold">${palavra}</span>`);
       textoComDestaque = novoTextoComDestaque;
     });
 
