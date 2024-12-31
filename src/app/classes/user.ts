@@ -1,14 +1,11 @@
 import GrupoUsuario from "./grupoUsuario";
-import User from "./user";
 
-export default class Usuario {
+export default class User {
     id?: number;
     login?: string
-    nome?: string;
+    firstName?: string;
     email?: string;
-    imageUrl?: string;
+    activated?: boolean
     password?: string;
-    ativo?: boolean
-    user?: User;
     grupoUsuario?: GrupoUsuario;
 }

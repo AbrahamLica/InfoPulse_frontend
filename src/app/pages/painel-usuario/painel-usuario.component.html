@@ -1,20 +1,26 @@
 <form [formGroup]="dadosForm" (ngSubmit)="salvar()" #formDir="ngForm" autocomplete="off">
+
+  <p-toast position="top-left" key="tl" />
+  
   <div class="p-fluid p-2 w-full">
-    <div class="p-field mb-4">
+
+    
+
+    <div *ngIf="!alterarSenha" class="p-field mb-4">
       <label>Nome Completo:</label>
       <div class="p-inputgroup">
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-font"></i>
         </span>
-        <input type="text" pInputText autocomplete="anystring" formControlName="firstName" />
+        <input type="text" class="rounded-md p-2" style="border: 1px solid black;" pInputText autocomplete="anystring" formControlName="nome" />
       </div>
-      <div *ngIf="dadosForm.get('firstName')?.invalid && (dadosForm.get('firstName')?.touched || formDir.submitted)">
-        <small *ngIf="dadosForm.get('firstName')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
-        <small *ngIf="dadosForm.get('firstName')?.errors?.['minlength']" class="p-error"> O campo Nome precisa ter no mínimo 5 caracteres </small>
+      <div *ngIf="dadosForm.get('nome')?.invalid && (dadosForm.get('nome')?.touched || formDir.submitted)">
+        <small *ngIf="dadosForm.get('nome')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
+        <small *ngIf="dadosForm.get('nome')?.errors?.['minlength']" class="p-error"> O campo Nome precisa ter no mínimo 5 caracteres </small>
       </div>
     </div>
 
-    <div class="p-field mb-4">
+    <div *ngIf="!alterarSenha" class="p-field mb-4">
       <label>Login:</label>
       <div class="p-inputgroup">
         <span class="p-inputgroup-addon">
@@ -29,7 +35,7 @@
       </div>
     </div>
 
-    <div class="p-field mb-4">
+    <div *ngIf="!alterarSenha" class="p-field mb-4">
       <label>Email:</label>
       <div class="p-inputgroup">
         <span class="p-inputgroup-addon">
@@ -52,11 +58,11 @@
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-lock"></i>
         </span>
-        <input type="password" pInputText name="oldPassword" autocomplete="doNot" formControlName="oldPassword" />
+        <input type="password" pInputText name="currentPassword" autocomplete="doNot" formControlName="currentPassword" />
       </div>
 
-      <div *ngIf="dadosForm.get('senha')?.invalid && (dadosForm.get('senha')?.touched || formDir.submitted)">
-        <small *ngIf="dadosForm.get('senha')?.errors?.['required']" class="p-error"> O campo é obrigatório </small>
+      <div *ngIf="dadosForm.get('currentPassword')?.invalid && (dadosForm.get('currentPassword')?.touched || formDir.submitted)">
+        <small *ngIf="dadosForm.get('currentPassword')?.errors?.['required']" class="p-error"> O campo é obrigatório </small>
       </div>
     </div>
 
@@ -69,9 +75,9 @@
         <input type="password" pInputText autocomplete="anystring" formControlName="newPassword" />
       </div>
 
-      <div *ngIf="dadosForm.get('senha')?.invalid && (dadosForm.get('senha')?.touched || formDir.submitted)">
-        <small *ngIf="dadosForm.get('senha')?.errors?.['required']" class="p-error"> O campo é obrigatório </small>
-        <small *ngIf="dadosForm.get('senha')?.errors?.['minlength']" class="p-error"> O campo precisa ter no mínimo 10 caracteres </small>
+      <div *ngIf="dadosForm.get('newPassword')?.invalid && (dadosForm.get('newPassword')?.touched || formDir.submitted)">
+        <small *ngIf="dadosForm.get('newPassword')?.errors?.['required']" class="p-error"> O campo é obrigatório </small>
+        <small *ngIf="dadosForm.get('newPassword')?.errors?.['minlength']" class="p-error"> O campo precisa ter no mínimo 10 caracteres </small>
       </div>
     </div>
 

@@ -20,13 +20,14 @@
     "@angular/platform-browser": "^18.2.2",
     "@angular/platform-browser-dynamic": "^18.2.2",
     "@angular/router": "^18.2.3",
+    "@primeng/themes": "^19.0.2",
     "firebase": "^10.13.1",
     "info-pulse-frontend": "file:",
     "lodash": "^4.17.21",
     "lodash-contrib": "^4.1200.1",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
-    "primeng": "^17.18.9",
+    "primeng": "^17.18.15",
     "reading-time-estimator": "^1.11.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -45,7 +46,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "postcss": "^8.4.44",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
     "typescript": "~5.4.5"
   }
 }

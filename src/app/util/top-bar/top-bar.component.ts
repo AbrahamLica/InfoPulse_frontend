@@ -16,6 +16,7 @@ import { MenuItem } from 'primeng/api';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { PainelUsuarioComponent } from 'src/app/pages/painel-usuario/painel-usuario.component';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -36,30 +37,45 @@ export class TopBarComponent {
   sidebarVisible: boolean = false;
   isDarkMode = false;
 
-  constructor(private dialogService: DialogService, private router: Router, private usuarioService: UsuarioService) {
-    let usuario = this.usuarioService.getDadosUsuario();
+  constructor(private dialogService: DialogService, private router: Router, private usuarioService: UsuarioService, private apiService: ApiService) {
 
-    this.items = [
-      {
-        label: usuario?.user?.login,
-        items: [
+    let usuario: any = ""
+
+    this.apiService
+    .makeGetRequest(
+      `usuarios?size=99999&userId.equals=${this.usuarioService.getDadosUsuario()?.user?.id}`
+    )
+    .subscribe({
+      next: async (response: any) => {
+        usuario = response[0];
+        
+        this.items = [
           {
-            label: 'Painel do usuário',
-            icon: 'pi pi-user',
-            command: () => {
-              this.irParaPainelUsuario();
-            },
+            label: usuario?.nome,
+            items: [
+              {
+                label: 'Painel do usuário',
+                icon: 'pi pi-user',
+                command: () => {
+                  this.irParaPainelUsuario();
+                },
+              },
+              {
+                label: 'Deslogar',
+                icon: 'pi pi-sign-out',
+                command: () => {
+                  this.usuarioService.deslogar();
+                },
+              },
+            ],
           },
-          {
-            label: 'Deslogar',
-            icon: 'pi pi-sign-out',
-            command: () => {
-              this.usuarioService.deslogar();
-            },
-          },
-        ],
-      },
-    ];
+        ];
+      }
+    })
+
+    
+
+   
   }
 
   irParaPainelUsuario() {

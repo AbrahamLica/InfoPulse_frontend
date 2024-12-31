@@ -35,6 +35,10 @@ export class LoginComponent {
   constructor(private usuarioService: UsuarioService, private apiService: ApiService, private http: HttpClient, private router: Router, private dialogService: DialogService) {}
 
   async login() {
+
+    console.log(this.credentials);
+    
+    
     if (this.credentials) {
       try {
         const result = await this.http.post<{ id_token: string; user: Usuario }>(`${environment.urlBackend}authenticate`, this.credentials).toPromise();

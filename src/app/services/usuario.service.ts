@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import Usuario from '../classes/usuario';
 import VinculoGrupoUsuario from '../classes/vinculoGrupoUsuario';
 import { DadosNavegadorService } from './dados-navegador.service';
+import User from '../classes/user';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class UsuarioService {
 
   dadosUsuario: {
     id_token: string;
-    user: Usuario | null;
+    user: User | null;
   } | undefined;
 
   constructor(

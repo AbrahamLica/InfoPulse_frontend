@@ -2,7 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { ApiService } from 'src/app/services/api.service';
-import { AbstractControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
@@ -15,21 +20,31 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import Usuario from 'src/app/classes/usuario';
-import { first } from 'lodash';
 
 @Component({
   selector: 'app-painel-usuario',
   standalone: true,
-  imports: [DropdownModule, CommonModule, FormsModule, ButtonModule, InputTextareaModule, InputTextModule, ToastModule, ProgressSpinnerModule, ReactiveFormsModule, CheckboxModule],
+  imports: [
+    DropdownModule,
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    InputTextareaModule,
+    InputTextModule,
+    ToastModule,
+    ProgressSpinnerModule,
+    ReactiveFormsModule,
+    CheckboxModule,
+  ],
   templateUrl: './painel-usuario.component.html',
   styleUrl: './painel-usuario.component.scss',
   providers: [MessageService, AlertService],
 })
 export class PainelUsuarioComponent {
   dadosForm!: FormGroup;
-  usuarioLogado!: Usuario;
+  usuarioLogado!: any;
   alterarSenha: boolean = false;
+  idUsuarioLogado = 0;
 
   constructor(
     public config: DynamicDialogConfig,
@@ -39,27 +54,44 @@ export class PainelUsuarioComponent {
     private alertService: AlertService,
     private usuarioService: UsuarioService
   ) {
-    this.dadosForm = new FormGroup({
-      firstName: new FormControl('', [Validators.required, Validators.minLength(5)]),
-      login: new FormControl('', [Validators.required]),
-      email: new FormControl('', Validators.required),
-      oldPassword: new FormControl('', [Validators.required]),
-      newPassword: new FormControl('', [Validators.required]),
-      confirmNewPassword: new FormControl('', [Validators.required]),
-    });
+    this.dadosForm = new FormGroup(
+      {
+        nome: new FormControl('', [
+          Validators.required,
+          Validators.minLength(5),
+        ]),
+        login: new FormControl('', [Validators.required]),
+        email: new FormControl('', Validators.required),
+        currentPassword: new FormControl(''),
+        newPassword: new FormControl(''),
+        confirmNewPassword: new FormControl(''),
+      },
+      { validators: this.passwordsIguaisValidator }
+    );
 
-    this.usuarioLogado = this.usuarioService.getDadosUsuario()?.user ?? ({} as Usuario);
-
-    this.dadosForm.patchValue({
-      firstName: this.usuarioLogado?.firstName,
-      login: this.usuarioLogado?.login,
-      email: this.usuarioLogado?.email,
-    });
+    this.apiService
+      .makeGetRequest(
+        `usuarios?size=99999&userId.equals=${
+          this.usuarioService.getDadosUsuario()?.user?.id
+        }`
+      )
+      .subscribe({
+        next: async (response: any) => {
+          this.idUsuarioLogado = response[0].id;
+          this.usuarioLogado = response[0];
+          this.dadosForm.patchValue({
+            nome: this.usuarioLogado?.nome,
+            login: this.usuarioLogado?.login,
+            email: this.usuarioLogado?.email,
+          });
+          console.log(this.usuarioLogado);
+        },
+      });
   }
 
   passwordsIguaisValidator(group: AbstractControl) {
-    const password = group.get('password');
-    const passwordConfirm = group.get('passwordConfirm');
+    const password = group.get('newPassword');
+    const passwordConfirm = group.get('confirmNewPassword');
 
     if (!password || password.invalid || !password.value || !passwordConfirm) {
       return null;
@@ -75,22 +107,93 @@ export class PainelUsuarioComponent {
   habilitarAlterarSenha() {
     this.alterarSenha = true;
 
+    // Adiciona os validadores aos campos de senha
+    this.dadosForm.get('currentPassword')?.setValidators([Validators.required]);
+    this.dadosForm
+      .get('newPassword')
+      ?.setValidators([Validators.required, Validators.minLength(5)]);
+    this.dadosForm
+      .get('confirmNewPassword')
+      ?.setValidators([Validators.required]);
+
+    // Atualiza as validações
+    this.dadosForm.get('currentPassword')?.updateValueAndValidity();
+    this.dadosForm.get('newPassword')?.updateValueAndValidity();
+    this.dadosForm.get('confirmNewPassword')?.updateValueAndValidity();
+
     this.dadosForm.patchValue({
-      oldPassword: ' ',
+      currentPassword: ' ',
       newPassword: ' ',
       confirmNewPassword: ' ',
     });
 
     setTimeout(() => {
       this.dadosForm.patchValue({
-        oldPassword: '',
+        currentPassword: '',
         newPassword: '',
         confirmNewPassword: '',
       });
     }, 10);
   }
 
-  cancelar() {}
+  cancelar() {
+    this.ref.close(false);
+  }
 
-  salvar() {}
+  salvar() {
+    let bodyPassword: any = {
+      currentPassword: this.dadosForm.get('currentPassword')?.value,
+      newPassword: this.dadosForm.get('newPassword')?.value,
+    };
+
+    if (this.dadosForm.valid) {
+      if (this.alterarSenha == true) {
+        this.apiService
+          .makePostRequest(`account/change-password`, bodyPassword)
+          .subscribe({
+            next: async (response: any) => {
+              
+            },
+            complete: () => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Senha alterada com sucesso!',
+                icon: 'pi-check',
+                key: 'tl',
+                life: 3000,
+              });
+              setTimeout(() => {
+                this.ref.close();
+              }, 3000);
+            }
+          });
+      } else {
+        this.apiService
+          .makePatchRequest(`v1/usuarios/${this.idUsuarioLogado}`, {
+            id: this.idUsuarioLogado,
+            nome: this.dadosForm.get('nome')?.value,
+            login: this.dadosForm.get('login')?.value,
+            email: this.dadosForm.get('email')?.value,
+            user: this.usuarioLogado,
+          })
+          .subscribe({
+            next: async (response: any) => {
+              
+            },
+            complete: () => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Dados do usuário alterados com sucesso!',
+                icon: 'pi-check',
+                key: 'tl',
+                life: 3000,
+              });
+              setTimeout(() => {
+                this.ref.close();
+              }, 3000);
+            }
+          });
+      }
+    }
+  }
 }

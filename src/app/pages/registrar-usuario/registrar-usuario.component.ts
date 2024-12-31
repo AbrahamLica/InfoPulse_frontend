@@ -33,7 +33,6 @@ import { Router, RouterModule } from '@angular/router';
     ReactiveFormsModule,
     CheckboxModule,
     RouterModule,
-    ToastModule,
   ],
   templateUrl: './registrar-usuario.component.html',
   styleUrl: './registrar-usuario.component.scss',
@@ -56,35 +55,36 @@ export class RegistrarUsuarioComponent {
   ) {
     this.usuarioForm = new FormGroup(
       {
-        firstName: new FormControl(' ', [Validators.required, Validators.minLength(5)]),
+        nome: new FormControl(' ', [Validators.required, Validators.minLength(5)]),
         login: new FormControl(' ', [Validators.required, Validators.minLength(10)]),
-        password: new FormControl(' ', [Validators.required, Validators.minLength(10)]),
-        passwordConfirm: new FormControl(' ', [Validators.required, Validators.minLength(10)]),
+        senha: new FormControl(' ', [Validators.required, Validators.minLength(10)]),
+        senhaConfirm: new FormControl(' ', [Validators.required, Validators.minLength(10)]),
         email: new FormControl(' ', Validators.required),
       },
       { validators: this.passwordsIguaisValidator }
     );
 
     setTimeout(() => {
+
       this.usuarioForm.patchValue({
-        firstName: '',
+        nome: '',
         login: '',
-        password: '',
-        passwordConfirm: '',
+        senha: '',
+        senhaConfirm: '',
         email: '',
       });
     }, 100);
   }
 
   passwordsIguaisValidator(group: AbstractControl) {
-    const password = group.get('password');
-    const passwordConfirm = group.get('passwordConfirm');
+    const senha = group.get('senha');
+    const senhaConfirm = group.get('senhaConfirm');
 
-    if (!password || password.invalid || !password.value || !passwordConfirm) {
+    if (!senha || senha.invalid || !senha.value || !senhaConfirm) {
       return null;
     }
 
-    return password.value === passwordConfirm.value ? null : { mismatch: true };
+    return senha.value === senhaConfirm.value ? null : { mismatch: true };
   }
 
   haspasswordMismatch(): boolean {

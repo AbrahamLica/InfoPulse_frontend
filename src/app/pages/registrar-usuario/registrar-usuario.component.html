@@ -11,11 +11,11 @@
             <span class="p-inputgroup-addon">
               <i class="fa-solid fa-font"></i>
             </span>
-            <input type="text" pInputText formControlName="firstName" autocomplete="doNotAutoComplete" />
+            <input type="text" pInputText formControlName="nome" autocomplete="doNotAutoComplete" />
           </div>
-          <div *ngIf="usuarioForm.get('firstName')?.invalid && (usuarioForm.get('firstName')?.touched || formDir.submitted)">
-            <small *ngIf="usuarioForm.get('firstName')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
-            <small *ngIf="usuarioForm.get('firstName')?.errors?.['minlength']" class="p-error"> O campo Nome precisa ter no mínimo 5 caracteres </small>
+          <div *ngIf="usuarioForm.get('nome')?.invalid && (usuarioForm.get('nome')?.touched || formDir.submitted)">
+            <small *ngIf="usuarioForm.get('nome')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
+            <small *ngIf="usuarioForm.get('nome')?.errors?.['minlength']" class="p-error"> O campo Nome precisa ter no mínimo 5 caracteres </small>
           </div>
         </div>
 
@@ -50,30 +50,30 @@
         </div>
 
         <div class="p-field mb-4">
-          <label>password: *</label>
+          <label>senha: *</label>
           <div class="p-inputgroup">
             <span class="p-inputgroup-addon">
               <i class="fa-solid fa-lock"></i>
             </span>
-            <input type="password" pInputText formControlName="password" usuarioForm autocomplete="doNotAutoComplete" />
+            <input type="password" pInputText formControlName="senha" usuarioForm autocomplete="doNotAutoComplete" />
           </div>
 
-          <div *ngIf="usuarioForm.get('password')?.invalid && (usuarioForm.get('password')?.touched || formDir.submitted)">
-            <small *ngIf="usuarioForm.get('password')?.errors?.['required']" class="p-error"> O campo password é obrigatório </small>
-            <small *ngIf="usuarioForm.get('password')?.errors?.['minlength']" class="p-error"> O campo password precisa ter no mínimo 10 caracteres </small>
+          <div *ngIf="usuarioForm.get('senha')?.invalid && (usuarioForm.get('senha')?.touched || formDir.submitted)">
+            <small *ngIf="usuarioForm.get('senha')?.errors?.['required']" class="p-error"> O campo senha é obrigatório </small>
+            <small *ngIf="usuarioForm.get('senha')?.errors?.['minlength']" class="p-error"> O campo senha precisa ter no mínimo 10 caracteres </small>
           </div>
         </div>
 
         <div class="p-field mb-4">
-          <label>Confirme a password: *</label>
+          <label>Confirme a senha: *</label>
           <div class="p-inputgroup">
             <span class="p-inputgroup-addon">
               <i class="fa-solid fa-lock"></i>
             </span>
-            <input type="password" pInputText formControlName="passwordConfirm" usuarioForm autocomplete="off" />
+            <input type="password" pInputText formControlName="senhaConfirm" usuarioForm autocomplete="off" />
           </div>
 
-          <div *ngIf="usuarioForm.get('passwordConfirm')?.touched || formDir.submitted">
+          <div *ngIf="usuarioForm.get('senhaConfirm')?.touched || formDir.submitted">
             <small *ngIf="haspasswordMismatch()" class="p-error"> As senhas não são iguais </small>
           </div>
         </div>

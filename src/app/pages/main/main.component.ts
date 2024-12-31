@@ -58,7 +58,7 @@ export class MainComponent {
 
     // Caso contrário, carregue as notícias
     forkJoin({
-      noticiasExternas: this.apiService.makeGetRequestApi('https://api.worldnewsapi.com/top-news?source-country=us&language=en&api-key=52347244a1aa47c1bb7627b5d2a82660').pipe(
+      noticiasExternas: this.apiService.makeGetRequestApi('https://api.worldaanewsapi.com/top-news?source-country=us&language=en&api-key=52347244a1aa47c1bb7627b5d2a82660').pipe(
         catchError((error) => {
           console.error('Erro ao carregar notícias externas:', error);
           return of([]);
