@@ -12,7 +12,7 @@
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-font"></i>
         </span>
-        <input type="text" class="rounded-md p-2" style="border: 1px solid black;" pInputText autocomplete="anystring" formControlName="nome" />
+        <input  type="text" pInputText autocomplete="anystring" formControlName="nome" />
       </div>
       <div *ngIf="dadosForm.get('nome')?.invalid && (dadosForm.get('nome')?.touched || formDir.submitted)">
         <small *ngIf="dadosForm.get('nome')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
@@ -26,7 +26,7 @@
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-user"></i>
         </span>
-        <input type="text" pInputText autocomplete="anystring" formControlName="login" />
+        <input  type="text" pInputText autocomplete="anystring" formControlName="login" />
       </div>
 
       <div *ngIf="dadosForm.get('login')?.invalid && (dadosForm.get('login')?.touched || formDir.submitted)">
@@ -41,7 +41,7 @@
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-at"></i>
         </span>
-        <input type="text" pInputText autocomplete="anystring" formControlName="email" />
+        <input  type="text" pInputText autocomplete="anystring" formControlName="email" />
       </div>
 
       <div *ngIf="dadosForm.get('email')?.invalid && (dadosForm.get('email')?.touched || formDir.submitted)">
@@ -58,7 +58,7 @@
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-lock"></i>
         </span>
-        <input type="password" pInputText name="currentPassword" autocomplete="doNot" formControlName="currentPassword" />
+        <input  type="password" pInputText name="currentPassword" autocomplete="doNot" formControlName="currentPassword" />
       </div>
 
       <div *ngIf="dadosForm.get('currentPassword')?.invalid && (dadosForm.get('currentPassword')?.touched || formDir.submitted)">
@@ -72,7 +72,7 @@
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-lock"></i>
         </span>
-        <input type="password" pInputText autocomplete="anystring" formControlName="newPassword" />
+        <input  type="password" pInputText autocomplete="anystring" formControlName="newPassword" />
       </div>
 
       <div *ngIf="dadosForm.get('newPassword')?.invalid && (dadosForm.get('newPassword')?.touched || formDir.submitted)">
@@ -87,7 +87,7 @@
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-lock"></i>
         </span>
-        <input type="password" pInputText autocomplete="anystring" formControlName="confirmNewPassword" />
+        <input  type="password" pInputText autocomplete="anystring" formControlName="confirmNewPassword" />
       </div>
 
       <div *ngIf="dadosForm.get('confirmNewPassword')?.touched || formDir.submitted">

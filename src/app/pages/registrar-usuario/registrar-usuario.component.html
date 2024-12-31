@@ -1,4 +1,4 @@
-<div class="flex align-items-center justify-content-center flex-column w-screen h-screen">
+<div class="flex align-items-center justify-content-center flex-column w-full p-5 bg-gray-300">
   <img src="assets/logo.png" alt="" class="mb-3" />
 
   <div class="p-4 w-26rem border-round-3xl shadow-6">
@@ -9,10 +9,10 @@
       <div class="p-fluid p-2 w-full">
 
 
-        <div class="p-field mb-4">
+        <div class="p-field mb-4" style="border: 1px solid gray;">
           <label>Nome Completo: *</label>
           <div class="p-inputgroup">
-            <span class="p-inputgroup-addon">
+            <span class="p-inputgroup-addon" style="border-right: 1px solid gray;">
               <i class="fa-solid fa-font"></i>
             </span>
             <input type="text" pInputText formControlName="nome" autocomplete="doNotAutoComplete" />
@@ -26,7 +26,7 @@
         <div class="p-field mb-4">
           <label>Login: *</label>
           <div class="p-inputgroup">
-            <span class="p-inputgroup-addon">
+            <span class="p-inputgroup-addon" style="border-right: 1px solid gray;">
               <i class="fa-solid fa-user"></i>
             </span>
             <input type="text" pInputText formControlName="login" usuarioForm autocomplete="doNotAutoComplete" name="new-login" />
@@ -41,7 +41,7 @@
         <div class="p-field mb-4">
           <label>Email: *</label>
           <div class="p-inputgroup">
-            <span class="p-inputgroup-addon">
+            <span class="p-inputgroup-addon" style="border-right: 1px solid gray;">
               <i class="fa-solid fa-at"></i>
             </span>
             <input type="text" pInputText formControlName="email" usuarioForm autocomplete="doNotAutoComplete" />
@@ -56,7 +56,7 @@
         <div class="p-field mb-4">
           <label>senha: *</label>
           <div class="p-inputgroup">
-            <span class="p-inputgroup-addon">
+            <span class="p-inputgroup-addon" style="border-right: 1px solid gray;">
               <i class="fa-solid fa-lock"></i>
             </span>
             <input type="password" pInputText formControlName="senha" usuarioForm autocomplete="doNotAutoComplete" />
@@ -71,7 +71,7 @@
         <div class="p-field mb-4">
           <label>Confirme a senha: *</label>
           <div class="p-inputgroup">
-            <span class="p-inputgroup-addon">
+            <span class="p-inputgroup-addon" style="border-right: 1px solid gray;">
               <i class="fa-solid fa-lock"></i>
             </span>
             <input type="password" pInputText formControlName="senhaConfirm" usuarioForm autocomplete="off" />
