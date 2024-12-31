@@ -20,7 +20,6 @@
     "@angular/platform-browser": "^18.2.2",
     "@angular/platform-browser-dynamic": "^18.2.2",
     "@angular/router": "^18.2.3",
-    "@primeng/themes": "^19.0.2",
     "firebase": "^10.13.1",
     "info-pulse-frontend": "file:",
     "lodash": "^4.17.21",

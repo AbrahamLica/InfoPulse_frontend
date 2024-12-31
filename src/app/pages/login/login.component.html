@@ -1,27 +1,26 @@
-<div class="flex align-items-center justify-content-center w-screen h-screen">
-  <div class="p-4 w-26rem border-round-3xl shadow-6">
+<div class="flex align-items-center justify-content-center w-screen h-screen bg-gray-300">
+  <div class="p-7 min-w-26rem border-round-3xl shadow-8">
     <form class="p-fluid" autocomplete="off">
-      <div class="text-center mb-4 bg-red-300">
+      <div class="text-center mb-4">
         <h1>Login</h1>
-        <h2>Entre com as suas credenciais</h2>
+        <h2 class="mb-5" >Entre com as suas credenciais</h2>
       </div>
 
       <div class="mb-5">
         <p-floatLabel>
           <input type="text" pInputText [(ngModel)]="credentials.username" placeholder="Digite seu login" name="login" />
-
-          <label for="username">Login</label>
+          <label class="text-lg" for="username">Login</label>
         </p-floatLabel>
       </div>
 
       <div>
         <p-floatLabel>
           <p-password [(ngModel)]="credentials.password" [toggleMask]="true" placeholder="Digite sua senha" name="password" showClear="true" [feedback]="false" />
-          <label for="password">Senha</label>
+          <label class="text-lg" for="password">Senha</label>
         </p-floatLabel>
       </div>
 
-      <p-button styleClass="w-full mt-4" type="submit" label="Login" (click)="login()" />
+      <p-button styleClass="mt-4 mb-4 p-2" type="submit" label="Login" (click)="login()"></p-button>
     </form>
 
     <p class="text-center">Não tem uma conta?<span (click)="registrarUsuario()" class="ml-2 underline cursor-pointer"> Registre-se aqui.</span></p>

@@ -30,14 +30,12 @@
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeicons/primeicons.css",
               {
-                "input": "node_modules/primeng/resources/themes/lara-light-purple/theme.css",
-                "bundleName": "theme-light",
-                "inject": false
+                "input": "node_modules/primeng/resources/themes/lara-light-indigo/theme.css",
+                "bundleName": "theme-light"
               },
               {
-                "input": "node_modules/primeng/resources/themes/lara-dark-purple/theme.css",
-                "bundleName": "theme-dark",
-                "inject": false
+                "input": "node_modules/primeng/resources/themes/lara-light-indigo/theme.css",
+                "bundleName": "theme-dark"
               }
             ],
             "scripts": [],
@@ -98,14 +96,12 @@
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeicons/primeicons.css",
               {
-                "input": "node_modules/primeng/resources/themes/lara-light-purple/theme.css",
-                "bundleName": "theme-light",
-                "inject": false
+                "input": "node_modules/primeng/resources/themes/lara-light-indigo/theme.css",
+                "bundleName": "theme-light"
               },
               {
-                "input": "node_modules/primeng/resources/themes/lara-dark-purple/theme.css",
-                "bundleName": "theme-dark",
-                "inject": false
+                "input": "node_modules/primeng/resources/themes/lara-light-indigo/theme.css",
+                "bundleName": "theme-dark"
               }
             ],
             "scripts": []
