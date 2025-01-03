@@ -5,6 +5,14 @@
   </a>
 </h1>
 
+[JAVASCRIPT__BADGE]: https://img.shields.io/badge/Javascript-000?style=for-the-badge&logo=javascript
+[TYPESCRIPT__BADGE]: https://img.shields.io/badge/typescript-D4FAFF?style=for-the-badge&logo=typescript
+[ANGULAR__BADGE]: https://img.shields.io/badge/Angular-red?style=for-the-badge&logo=angular
+
+![javascript][JAVASCRIPT__BADGE]
+![typescript][TYPESCRIPT__BADGE]
+![angular][ANGULAR__BADGE]
+
 <div align="center">
   📰 **InfoPulse** - Your Web News System
   <br />
@@ -20,9 +28,11 @@
 
 <div align="center">
   <br />
-  ![Project license](https://img.shields.io/github/license/AbrahamLica/InfoPulse_frontend.svg?style=flat-square)
-  ![Pull Requests welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg?style=flat-square)
-  ![code with love by AbrahamLica](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-AbrahamLica-ff1414.svg?style=flat-square)
+  [![Project license](https://img.shields.io/github/license/AbrahamLica/InfoPulse_frontend.svg?style=flat-square)](LICENSE)
+
+[![Pull Requests welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg?style=flat-square)](https://github.com/AbrahamLica/InfoPulse_frontend/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with love by AbrahamLica](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-AbrahamLica-ff1414.svg?style=flat-square)](https://github.com/AbrahamLica)
+
 </div>
 
 <details open="open">
@@ -106,23 +116,31 @@ To set up the project on your local machine, follow these steps:
 
 🔗 Clone the repository <br>
 First, clone the project to your local machine using Git:
-bash
+
+```bash
 git clone https://github.com/AbrahamLica/InfoPulse_frontend.git
+```
 
 📂 Navigate to the project folder <br>
 Change into the project directory:
-bash
+
+```bash
 cd InfoPulse_frontend
+```
 
 ⚙️ Install dependencies <br>
 Install the required dependencies using npm. To avoid any potential version conflicts, use the --legacy-peer-deps flag:
-bash
+
+```bash
 npm install --legacy-peer-deps
+```
 
 🚀 Start the development server <br>
 Once the dependencies are installed, start the application locally:
-bash
-ng serve -o <br>
+
+```bash
+ng serve -o
+```
 
 After completing these steps, the application will be up and running on your local machine. 🎉
 
@@ -147,7 +165,7 @@ If you want to say thank you or/and support active development of InfoPulse:
 
 🌟 Add a GitHub Star to the project. <br>
 🐦 Tweet about InfoPulse. <br>
-📝 Write interesting articles about the project on Dev.to, Medium or your personal blog. <br>
+📝 Write interesting articles about the project on Dev.to, Medium or your personal blog. <br> <br>
 Together, we can make InfoPulse even better! 🚀
 
 ## Contributing
@@ -163,7 +181,7 @@ The original setup of this repository is by [Abraham Melquisedeque Pereira Licá
 The original setup of this repository is by
 
 <div align="center">
-  <img src="src/assets/me.jpg" alt="Abraham Melquisedeque Pereira Licá" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover;">
+  <img src="src/assets/me.jpg" alt="Abraham Melquisedeque Pereira Licá" style="border-radius: 50%; width: 200px; object-fit: cover;">
   <br>
   Abraham Melquisedeque Pereira Licá
 </div>
