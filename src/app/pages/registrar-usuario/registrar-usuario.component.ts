@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { ApiService } from 'src/app/services/api.service';
 import { AbstractControl, FormGroup, FormsModule, Validators } from '@angular/forms';
@@ -43,6 +43,8 @@ export class RegistrarUsuarioComponent {
 
   usuarioForm!: FormGroup;
   usuarioLogado!: Usuario;
+  #document = inject(DOCUMENT);
+  isDarkMode = false;
 
   constructor(
     public config: DynamicDialogConfig,
@@ -53,6 +55,14 @@ export class RegistrarUsuarioComponent {
     private usuarioService: UsuarioService,
     private router: Router
   ) {
+    
+    const linkElement = this.#document.getElementById('app-theme') as HTMLLinkElement;
+    if (linkElement.href.includes('light')) {
+      this.isDarkMode = true;
+    } else {
+      this.isDarkMode = false;
+    }
+
     this.usuarioForm = new FormGroup(
       {
         nome: new FormControl(' ', [Validators.required, Validators.minLength(5)]),

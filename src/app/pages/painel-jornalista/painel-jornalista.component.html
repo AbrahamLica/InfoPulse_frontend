@@ -7,7 +7,7 @@
   <p-toast position="top-center" key="tc" />
   <p-toast position="top-right" key="tr" />
 
-  <div class="w-full flex align-items-center p-3 border-bottom-1 border-gray-200">
+  <div class="w-full flex align-items-center p-3">
     <div>
       <p-button icon="pi pi-plus" label="Nova notícia" styleClass="w-12rem" (click)="criarNoticia()"></p-button>
     </div>
@@ -17,8 +17,8 @@
     </div>
   </div>
 
-  <div class="w-full flex align-items-center justify-content-around p-3 border-bottom-1 border-gray-200">
-    <div class="flex align-items-center mx-3 p-2 border-1 border-round border-gray-300">
+  <div class="w-full flex align-items-center justify-content-around p-3 border-y-1 border-primary">
+    <div class="flex align-items-center mx-3 p-2">
       <div class="p-field mr-4">
         <p-calendar dateFormat="dd/mm/yy" [maxDate]="hoje" appendTo="body" [(ngModel)]="dataInicial" placeholder="Data Inicial Criação"></p-calendar>
       </div>
@@ -52,7 +52,7 @@
     <p-dataView #dv [value]="filteredNoticias" [rows]="5" [paginator]="true" filterBy="titulo">
       <ng-template pTemplate="list" let-noticias>
         <div class="item-noticia" *ngFor="let item of noticias; let first = first">
-          <div class="flex justify-content-between w-full p-2" [ngClass]="item.ativo ? ' opacity-100' : 'opacity-60'">
+          <div class="flex justify-content-between w-full p-2 " [ngClass]="item.ativo ? ' opacity-100' : 'opacity-60'">
             <div class="w-5 mr-3">
               <p-image
                 src="{{ item.imagemContentType }}"

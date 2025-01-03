@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/app/classes/environment';
 import Usuario from 'src/app/classes/usuario';
 import { ApiService } from 'src/app/services/api.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -28,15 +28,25 @@ export class LoginComponent {
   credentials: { username?: string; password?: string; rememberMe?: boolean } = {
     rememberMe: true,
   };
-
+  #document = inject(DOCUMENT);
   showPassword = false;
   value: string = '';
+  isDarkMode = false;
 
-  constructor(private usuarioService: UsuarioService, private apiService: ApiService, private http: HttpClient, private router: Router, private dialogService: DialogService) {}
+  constructor(private usuarioService: UsuarioService, private apiService: ApiService, private http: HttpClient, private router: Router, private dialogService: DialogService) {
+    const linkElement = this.#document.getElementById('app-theme') as HTMLLinkElement;
+    if (linkElement.href.includes('light')) {
+      this.isDarkMode = true;
+    } else {
+      this.isDarkMode = false;
+    }
+
+  }
 
   async login() {
 
-    console.log(this.credentials);
+    
+    
     
     
     if (this.credentials) {

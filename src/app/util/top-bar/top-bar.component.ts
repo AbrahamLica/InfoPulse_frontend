@@ -29,6 +29,7 @@ export class TopBarComponent {
   #document = inject(DOCUMENT);
   @ViewChild('sidebarRef') sidebarRef!: Sidebar;
   items: MenuItem[] | undefined;
+  linkElement = this.#document.getElementById('app-theme') as HTMLLinkElement;
 
   closeCallback(e: any): void {
     this.sidebarRef.close(e);
@@ -38,6 +39,13 @@ export class TopBarComponent {
   isDarkMode = false;
 
   constructor(private dialogService: DialogService, private router: Router, private usuarioService: UsuarioService, private apiService: ApiService) {
+
+    if (this.linkElement.href.includes('light')) {
+      this.isDarkMode = false
+    } else {
+      this.isDarkMode = true
+    }
+    
 
     let usuario: any = ""
 
@@ -93,12 +101,12 @@ export class TopBarComponent {
   }
 
   toggleLightDark() {
-    const linkElement = this.#document.getElementById('app-theme') as HTMLLinkElement;
-    if (linkElement.href.includes('light')) {
-      linkElement.href = 'theme-dark.css';
+    
+    if (this.linkElement.href.includes('light')) {
+      this.linkElement.href = 'theme-dark.css';
       this.isDarkMode = true;
-    } else {
-      linkElement.href = 'theme-light.css';
+    } else if (this.linkElement.href.includes('dark')){
+      this.linkElement.href = 'theme-light.css';
       this.isDarkMode = false;
     }
   }

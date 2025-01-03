@@ -1,12 +1,12 @@
 <form [formGroup]="categoriaForm" (ngSubmit)="salvar()" #formDir="ngForm">
   <div class="p-fluid p-2 w-full">
     <div class="p-field mb-4">
-      <label>Nome: *</label>
-      <div class="p-inputgroup">
+      <label class="mb-4">Nome: *</label>
+      <div class="p-inputgroup mt-2">
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-font"></i>
         </span>
-        <input type="text" pInputText autocomplete="anystring" formControlName="nome" />
+        <input class="border-1 border-primary" type="text" pInputText autocomplete="anystring" formControlName="nome" />
       </div>
       <div *ngIf="categoriaForm.get('nome')?.invalid && (categoriaForm.get('nome')?.touched || formDir.submitted)">
         <small *ngIf="categoriaForm.get('nome')?.errors?.['required']" class="p-error"> O campo Nome é obrigatório </small>
@@ -16,11 +16,11 @@
 
     <div class="p-field">
       <label>Descrição: *</label>
-      <div class="p-inputgroup">
+      <div class="p-inputgroup mt-2">
         <span class="p-inputgroup-addon">
           <i class="fa-solid fa-square-pen"></i>
         </span>
-        <input type="text" pInputText autocomplete="anystring" formControlName="descricao" />
+        <input class="border-1 border-primary" type="text" pInputText autocomplete="anystring" formControlName="descricao" />
       </div>
       <div *ngIf="categoriaForm.get('descricao')?.invalid && (categoriaForm.get('descricao')?.touched || formDir.submitted)">
         <small *ngIf="categoriaForm.get('descricao')?.errors?.['required']" class="p-error"> O campo Descrição é obrigatório </small>
