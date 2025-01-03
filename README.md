@@ -1,7 +1,7 @@
 <h1 align="center">
   <a href="https://github.com/AbrahamLica/InfoPulse_frontend">
     <!-- Please provide path to your logo here -->
-    <img src="src/assets/logo.png" alt="Logo" width="100" height="100">
+    <img src="src/assets/logo.png" alt="Logo" width="300" height="150">
   </a>
 </h1>
 
@@ -36,7 +36,6 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [Usage](#usage)
 - [Roadmap](#roadmap)
 - [Support](#support)
 - [Project assistance](#project-assistance)
@@ -44,7 +43,6 @@
 - [Authors & contributors](#authors--contributors)
 - [Security](#security)
 - [License](#license)
-- [Acknowledgements](#acknowledgements)
 
 </details>
 
@@ -79,17 +77,17 @@ The project was developed to enhance and showcase my skills as a Fullstack devel
 
 ### Built With
 
-🚀 Technologies Used
+🚀 Technologies Used <br>
 This project was developed with the following technologies:
 
-🌟 JavaScript – Powering the core functionality.
-🛠️ TypeScript – Ensuring type safety and cleaner code.
-🎨 TailwindCSS – For modern and responsive UI styling.
-🌐 Angular – A robust framework for building dynamic and scalable web applications.
-🖌️ PrimeNG – Delivering high-quality UI components.
-📏 PrimeFlex – Simplifying layout management with CSS utilities.
-🔗 Lodash – Enhancing productivity with utility functions.
-🎨 Font Awesome – Adding beautiful icons to the interface.
+🌟 JavaScript – Powering the core functionality. <br>
+🛠️ TypeScript – Ensuring type safety and cleaner code. <br>
+🎨 TailwindCSS – For modern and responsive UI styling. <br>
+🌐 Angular – A robust framework for building dynamic and scalable web applications. <br>
+🖌️ PrimeNG – Delivering high-quality UI components. <br>
+📏 PrimeFlex – Simplifying layout management with CSS utilities. <br>
+🔗 Lodash – Enhancing productivity with utility functions. <br>
+🎨 Font Awesome – Adding beautiful icons to the interface. <br>
 ☁️ Firebase – Used for storing and managing images efficiently.
 
 ## Getting Started
@@ -111,25 +109,24 @@ To run this project locally, make sure you have the following installed:
 To set up the project on your local machine, follow these steps:
 
 🔗 Clone the repository
-First, clone the project to your local machine using Git:
-
+First, clone the project to your local machine using Git: <br>
 bash
-git clone https://github.com/AbrahamLica/InfoPulse_frontend.git
-📂 Navigate to the project folder
+git clone https://github.com/AbrahamLica/InfoPulse_frontend.git <br>
 
-Change into the project directory:
+📂 Navigate to the project folder
+Change into the project directory: <br>
 bash
 cd InfoPulse_frontend
 
 ⚙️ Install dependencies
-Install the required dependencies using npm. To avoid any potential version conflicts, use the --legacy-peer-deps flag:
+Install the required dependencies using npm. To avoid any potential version conflicts, use the --legacy-peer-deps flag: <br>
 bash
 npm install --legacy-peer-deps
 
 🚀 Start the development server
-Once the dependencies are installed, start the application locally:
+Once the dependencies are installed, start the application locally: <br>
 bash
-ng serve -o
+ng serve -o <br>
 
 After completing these steps, the application will be up and running on your local machine. 🎉
 
@@ -142,9 +139,6 @@ See the [open issues](https://github.com/AbrahamLica/InfoPulse_frontend/issues) 
 - [Newest Bugs](https://github.com/AbrahamLica/InfoPulse_frontend/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 
 ## Support
-
-> **[?]**
-> Provide additional ways to contact the project maintainer/maintainers.
 
 Reach out to the maintainer at one of the following places:
 
