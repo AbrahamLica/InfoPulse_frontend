@@ -105,22 +105,22 @@ To run this project locally, make sure you have the following installed:
 To set up the project on your local machine, follow these steps:
 
 🔗 Clone the repository <br>
-First, clone the project to your local machine using Git: <br>
+First, clone the project to your local machine using Git:
 bash
-git clone https://github.com/AbrahamLica/InfoPulse_frontend.git <br>
+git clone https://github.com/AbrahamLica/InfoPulse_frontend.git
 
 📂 Navigate to the project folder <br>
-Change into the project directory: <br>
+Change into the project directory:
 bash
 cd InfoPulse_frontend
 
 ⚙️ Install dependencies <br>
-Install the required dependencies using npm. To avoid any potential version conflicts, use the --legacy-peer-deps flag: <br>
+Install the required dependencies using npm. To avoid any potential version conflicts, use the --legacy-peer-deps flag:
 bash
 npm install --legacy-peer-deps
 
 🚀 Start the development server <br>
-Once the dependencies are installed, start the application locally: <br>
+Once the dependencies are installed, start the application locally:
 bash
 ng serve -o <br>
 
@@ -130,24 +130,24 @@ After completing these steps, the application will be up and running on your loc
 
 See the open issues for a list of proposed features (and known issues).
 
-🏆 Top Feature Requests (Add your votes using the 👍 reaction)
-🐞 Top Bugs (Add your votes using the 👍 reaction)
+🏆 Top Feature Requests (Add your votes using the 👍 reaction) <br>
+🐞 Top Bugs (Add your votes using the 👍 reaction) <br>
 🐛 Newest Bugs
 
 ## Support
 
 Reach out to the maintainer at one of the following places:
 
-📝 GitHub issues
+📝 GitHub issues <br>
 📬 Contact options listed on this GitHub profile
 
 ## Project assistance
 
 If you want to say thank you or/and support active development of InfoPulse:
 
-🌟 Add a GitHub Star to the project.
-🐦 Tweet about InfoPulse.
-📝 Write interesting articles about the project on Dev.to, Medium or your personal blog.
+🌟 Add a GitHub Star to the project. <br>
+🐦 Tweet about InfoPulse. <br>
+📝 Write interesting articles about the project on Dev.to, Medium or your personal blog. <br>
 Together, we can make InfoPulse even better! 🚀
 
 ## Contributing
@@ -163,7 +163,7 @@ The original setup of this repository is by [Abraham Melquisedeque Pereira Licá
 The original setup of this repository is by
 
 <div align="center">
-  <img src="src/assets/me.png" alt="Abraham Melquisedeque Pereira Licá" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover;">
+  <img src="src/assets/me.jpg" alt="Abraham Melquisedeque Pereira Licá" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover;">
   <br>
   Abraham Melquisedeque Pereira Licá
 </div>
