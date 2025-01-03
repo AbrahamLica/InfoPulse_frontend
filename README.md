@@ -56,23 +56,24 @@ This is a Web News System that allows users to create, read, update, and delete 
 The project was developed to enhance and showcase my skills as a Fullstack developer.
 
 <details>
-<summary>Screenshots</summary>
-<br>
-|                               Home Page                               |                               Home Page                                |
-| :-------------------------------------------------------------------: | :--------------------------------------------------------------------: |
-| <img src="screenshots/home.png" title="Home Page" width="100%">       | <img src="screenshots/home-2.png" title="Home Page" width="100%"> |
+  <summary>Screenshots</summary>
+  <br>
 
-|                            Register Page                            |                            Login Page                             |
-| :-----------------------------------------------------------------: | :---------------------------------------------------------------: |
-| <img src="screenshots/register.png" title="Home Page" width="100%"> | <img src="screenshots/login.png" title="Login Page" width="100%"> |
+|                            Home Page                             |                             Home Page                              |
+| :--------------------------------------------------------------: | :----------------------------------------------------------------: |
+| <img src="screenshots/home.png" title="Home Page" width="400px"> | <img src="screenshots/home-2.png" title="Home Page" width="400px"> |
 
-|                            Create category                            |                            Create News                            |
-| :-------------------------------------------------------------------: | :---------------------------------------------------------------: |
-| <img src="screenshots/c-category.png" title="Cat. Page" width="100%"> | <img src="screenshots/c-news.png" title="News Page" width="100%"> |
+|                              Register Page                               |                             Login Page                             |
+| :----------------------------------------------------------------------: | :----------------------------------------------------------------: |
+| <img src="screenshots/register.png" title="Register Page" width="400px"> | <img src="screenshots/login.png" title="Login Page" width="400px"> |
 
-|                            Panel News Page                             |                             News Page                             |
-| :--------------------------------------------------------------------: | :---------------------------------------------------------------: |
-| <img src="screenshots/panel.png" title="Panel News Page" width="100%"> | <img src="screenshots/news-2.png" title="News Page" width="100%"> |
+|                               Create category                                |                             Create News                              |
+| :--------------------------------------------------------------------------: | :------------------------------------------------------------------: |
+| <img src="screenshots/c-category.png" title="Create Category" width="400px"> | <img src="screenshots/c-news.png" title="Create News" width="400px"> |
+
+|                             Panel News Page                             |                             News Page                              |
+| :---------------------------------------------------------------------: | :----------------------------------------------------------------: |
+| <img src="screenshots/panel.png" title="Panel News Page" width="400px"> | <img src="screenshots/news-2.png" title="News Page" width="400px"> |
 
 </details>
 
