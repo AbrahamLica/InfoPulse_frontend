@@ -84,7 +84,6 @@ export class PainelUsuarioComponent {
             login: this.usuarioLogado?.login,
             email: this.usuarioLogado?.email,
           });
-          console.log(this.usuarioLogado);
         },
       });
   }
@@ -151,9 +150,7 @@ export class PainelUsuarioComponent {
         this.apiService
           .makePostRequest(`account/change-password`, bodyPassword)
           .subscribe({
-            next: async (response: any) => {
-              
-            },
+            next: async (response: any) => {},
             complete: () => {
               this.messageService.add({
                 severity: 'success',
@@ -165,7 +162,7 @@ export class PainelUsuarioComponent {
               setTimeout(() => {
                 this.ref.close();
               }, 3000);
-            }
+            },
           });
       } else {
         this.apiService
@@ -177,9 +174,7 @@ export class PainelUsuarioComponent {
             user: this.usuarioLogado,
           })
           .subscribe({
-            next: async (response: any) => {
-              
-            },
+            next: async (response: any) => {},
             complete: () => {
               this.messageService.add({
                 severity: 'success',
@@ -191,7 +186,7 @@ export class PainelUsuarioComponent {
               setTimeout(() => {
                 this.ref.close();
               }, 3000);
-            }
+            },
           });
       }
     }

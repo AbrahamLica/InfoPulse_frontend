@@ -33,8 +33,6 @@ export class CriarCategoriaComponent {
     });
 
     if (this.config.data.categoria) {
-      console.log(this.config.data.categoria);
-
       this.categoriaForm.patchValue(this.config.data.categoria);
     }
   }

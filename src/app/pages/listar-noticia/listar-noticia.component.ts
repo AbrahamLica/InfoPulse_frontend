@@ -137,7 +137,6 @@ export class ListarNoticiaComponent {
 
   extractTimeOnly(dataISO: string): any {
     if (this.noticiaExterna) {
-      console.log('n');
     } else {
       if (dataISO) {
         const horario = dataISO.split('T')[1].split('.')[0];
