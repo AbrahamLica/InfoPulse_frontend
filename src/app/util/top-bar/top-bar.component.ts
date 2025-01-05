@@ -98,7 +98,26 @@ export class TopBarComponent {
           ];
         },
         error: (e) => {
-          console.log(e);
+
+          console.log("deu erro");
+          
+
+          console.log(this.usuarioService.getDadosUsuario()?.user?.firstName);
+          
+          this.items = [
+            {
+              label: this.usuarioService.getDadosUsuario()?.user?.firstName,
+              items: [
+                {
+                  label: 'Deslogar',
+                  icon: 'pi pi-sign-out',
+                  command: () => {
+                    this.usuarioService.deslogar();
+                  },
+                },
+              ],
+            },
+          ];
           
         }
       });
