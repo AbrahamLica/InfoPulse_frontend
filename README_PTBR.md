@@ -178,8 +178,6 @@ Por favor, leia nossas diretrizes de contribuição, e obrigado por se envolver!
 
 ## Autores & contribuintes
 
-A configuração original deste repositório foi feita por Abraham Melquisedeque Pereira Licá.
-
 A configuração original deste repositório foi feita por
 
 <div align="center"> <img src="src/assets/me.jpg" alt="Abraham Melquisedeque Pereira Licá" style="border-radius: 50%; width: 200px; object-fit: cover;"> <br> Abraham Melquisedeque Pereira Licá </div>
