@@ -58,8 +58,9 @@
 
 ## Sobre
 
-Este é um **Sistema de Notícias Web** que permite aos usuários **criar, ler, atualizar e excluir artigos de notícias** (CRUD), gerenciar categorias e acessar funcionalidades adicionais. 📚
-O projeto foi desenvolvido para aprimorar e mostrar minhas habilidades como **Desenvolvedor Fullstack**. 🚀
+Este é um **Sistema de Notícias Web** que permite aos usuários **criar, ler, atualizar e excluir artigos de notícias** (CRUD), gerenciar categorias e acessar funcionalidades adicionais. 📚 O projeto foi desenvolvido para aprimorar e demonstrar minhas habilidades como **Desenvolvedor Fullstack**. 🚀
+
+Além disso, este sistema integra-se com uma API externa chamada <a href="https://worldnewsapi.com/" target="_blank">World News API</a>, que permite ao sistema exibir notícias globais que não foram adicionadas pelos usuários da plataforma. Essa funcionalidade garante que o sistema não fique limitado apenas às notícias locais cadastradas pelos usuários, mas também ofereça acesso a notícias do mundo inteiro. 🌍
 
 <details>
   <summary>Capturas de tela</summary>

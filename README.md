@@ -60,8 +60,9 @@
 
 ## About
 
-This is a **Web News System** that allows users to **create, read, update, and delete news articles** (CRUD), manage categories, and access additional features. 📚
-The project was developed to enhance and showcase my skills as a **Fullstack Developer**. 🚀
+This is a **Web News System** that allows users to **create, read, update, and delete news articles** (CRUD), manage categories, and access additional features. 📚 The project was developed to enhance and showcase my skills as a **Fullstack Developer**. 🚀
+
+In addition, this system integrates with an external API called <a href="https://worldnewsapi.com/" target="_blank">World News API</a>, which allows the system to display global news that was not added by users of the platform. This feature ensures that the system is not limited to locally added news but also provides users with access to worldwide news. 🌍
 
 <details>
   <summary>Screenshots</summary>
