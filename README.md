@@ -16,7 +16,9 @@
 <div align="center">
   📰 InfoPulse - Your Web News System
   <br />
-  <a href="#about"><strong>Explore the screenshots »</strong></a>
+  <a href="#about"><strong>Explore the screenshots »</strong></a> 
+  <br />
+  If you are looking for the PT-BR version, <a href="https://github.com/AbrahamLica/InfoPulse_frontend/README_PTBR">click here</a>
   <br />
   <br />
   🐞 <a href="https://github.com/AbrahamLica/InfoPulse_frontend/issues/new?assignees=&labels=bug&template=01_BUG_REPORT.md&title=bug%3A+">Report a Bug</a>
