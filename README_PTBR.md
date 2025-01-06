@@ -39,18 +39,18 @@
 <details open="open">
   <summary>Índice</summary>
 
-- [Sobre](#about)
-  - [Construído com](#built-with)
-- [Começando](#getting-started)
-  - [Pré-requisitos](#prerequisites)
-  - [Instalação](#installation)
-- [Roteiro](#roadmap)
-- [Suporte](#support)
-- [Assistência ao projeto](#project-assistance)
-- [Contribuindo](#contributing)
-- [Autores & contribuintes](#authors--contributors)
-- [Segurança](#security)
-- [Licença](#license)
+- [Sobre](#sobre)
+  - [Construído com](#Construído-com)
+- [Começando](#Começando)
+  - [Pré-requisitos](#Pré-requisitos)
+  - [Instalação](#Instalação)
+- [Roteiro](#Roteiro)
+- [Suporte](#Suporte)
+- [Assistência ao projeto](#Assistência-ao-projeto)
+- [Contribuindo](#Contribuindo)
+- [Autores & contribuintes](#Autores-&-contribuintes)
+- [Segurança](#Segurança)
+- [Licença](#Licença)
 
 </details>
 
