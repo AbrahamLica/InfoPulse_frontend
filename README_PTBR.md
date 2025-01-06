@@ -18,8 +18,6 @@
   <br />
   <a href="#about"><strong>Explore as capturas de tela »</strong></a> 
   <br />
-  Se você está procurando a versão em PT-BR, <a href="https://github.com/AbrahamLica/InfoPulse_frontend/README_PTBR">clique aqui</a>
-  <br />
   <br />
   🐞 <a href="https://github.com/AbrahamLica/InfoPulse_frontend/issues/new?assignees=&labels=bug&template=01_BUG_REPORT.md&title=bug%3A+">Reportar um Bug</a>
   ·
